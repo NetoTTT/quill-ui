@@ -7,7 +7,7 @@ in [COMPATIBILITY.md](COMPATIBILITY.md).
 
 | Package | Contents |
 | --- | --- |
-| `com.quillui` | `QuillTheme`, `QuillRender`, `QuillTooltips`, `QuillColors` |
+| `com.quillui` | `QuillTheme`, `QuillSpacing`, `QuillTypography`, `QuillRadii`, `QuillElevation`, `QuillColors`, `QuillRender`, `QuillTooltips` |
 | `com.quillui.action` | `QuillActionSink`, `QuillCommandSink` |
 | `com.quillui.layout` | `QuillRect`, `QuillInsets`, `QuillColumn`, `QuillRow`, `QuillGrid` |
 | `com.quillui.screen` | `QuillScreen` |
@@ -15,7 +15,7 @@ in [COMPATIBILITY.md](COMPATIBILITY.md).
 | `com.quillui.api` | `QuillApi` constants and compatibility helpers |
 
 Classes outside these packages are implementation details. There are no such packages in
-`0.1.0-alpha.4`; this boundary exists so future internals can change without becoming API.
+`0.1.0-alpha.5`; this boundary exists so future internals can change without becoming API.
 
 ## Binary level
 

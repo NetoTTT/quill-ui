@@ -11,7 +11,8 @@ public class QuillRender {
 	}
 
 	public static void panel(GuiGraphicsExtractor graphics, int x, int y, int width, int height) {
-		graphics.fill(x + 4, y + 4, x + width + 4, y + height + 4, QuillTheme.PANEL_SHADOW);
+		int shadow = QuillElevation.PANEL_OFFSET;
+		graphics.fill(x + shadow, y + shadow, x + width + shadow, y + height + shadow, QuillTheme.PANEL_SHADOW);
 		graphics.fill(x, y, x + width, y + height, QuillTheme.PANEL_BG);
 		border(graphics, x, y, width, height, QuillTheme.PANEL_BORDER);
 	}

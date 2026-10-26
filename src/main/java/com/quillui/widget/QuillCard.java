@@ -1,6 +1,7 @@
 package com.quillui.widget;
 
 import com.quillui.QuillRender;
+import com.quillui.QuillSpacing;
 import com.quillui.QuillTheme;
 import com.quillui.layout.QuillInsets;
 import com.quillui.layout.QuillRect;
@@ -14,7 +15,7 @@ import net.minecraft.network.chat.Component;
  */
 public final class QuillCard {
 	private static final int HEADER_HEIGHT = 18;
-	private static final int PADDING = 8;
+	private static final int PADDING = QuillSpacing.SPACE_2;
 
 	private final QuillRect bounds;
 	private final Component title;

@@ -2,6 +2,7 @@ package com.quillui.widget;
 
 import com.quillui.QuillRender;
 import com.quillui.QuillTheme;
+import com.quillui.QuillTypography;
 import com.mojang.blaze3d.platform.InputConstants;
 import java.util.function.Consumer;
 import net.minecraft.client.Minecraft;
@@ -102,7 +103,7 @@ public class QuillToggle extends AbstractWidget {
 				Minecraft.getInstance().font,
 				getMessage(),
 				x,
-				y + (height - 8) / 2,
+				y + QuillTypography.centeredTextY(height),
 				textColor
 		);
 	}

@@ -1,9 +1,26 @@
 # Roadmap
 
-## Current focus — UI foundation
+## Structural roadmap
 
-- `QuillCard` and `QuillToggle` added in `0.1.0-alpha.3`.
-- `QuillColors` RGB/ARGB/HEX helpers added in `0.1.0-alpha.4`.
+This is the agreed order. Stop after each item so the build and visuals can be tested.
+
+1. **Separate token groups** — `QuillColors` (done), `QuillSpacing`, `QuillTypography`,
+   `QuillRadii`, `QuillElevation`. Keep `QuillTheme` compatibility aliases.
+2. **Theme instance** — `QuillThemeData` plus a default theme, replacing static-only theme access.
+   Breaking change; must happen before `1.0.0`.
+3. **Composition** — `QuillPanel`/`QuillCard` accepting children and constraints, not only drawing
+   a rectangle.
+4. **Explicit local state** — a lightweight `QuillState` or screen rebuild after an action; no hooks.
+5. **Focus and navigation** — tab order, visible focus, shortcuts and accessibility.
+6. **Testing** — headless layout tests, golden/screenshot tests and a demo mod.
+
+### Current position
+
+- Item 1: implemented in `0.1.0-alpha.5`; waiting for build/visual validation.
+- Items 2–6: pending.
+
+## UI foundation backlog
+
 - Form controls: text field, slider and dropdown.
 - `QuillToast` / notification and empty-state components.
 - Responsive helpers and a scroll container.

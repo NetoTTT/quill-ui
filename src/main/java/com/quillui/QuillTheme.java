@@ -5,13 +5,13 @@ package com.quillui;
  * spacing values; changing a token then updates every screen that uses it.
  */
 public class QuillTheme {
-	/* Spacing scale: a 4 px base grid. */
-	public static final int SPACE_1 = 4;
-	public static final int SPACE_2 = 8;
-	public static final int SPACE_3 = 12;
-	public static final int SPACE_4 = 16;
-	public static final int SPACE_5 = 20;
-	public static final int SPACE_6 = 24;
+	/* Spacing aliases retained for source compatibility; prefer QuillSpacing. */
+	public static final int SPACE_1 = QuillSpacing.SPACE_1;
+	public static final int SPACE_2 = QuillSpacing.SPACE_2;
+	public static final int SPACE_3 = QuillSpacing.SPACE_3;
+	public static final int SPACE_4 = QuillSpacing.SPACE_4;
+	public static final int SPACE_5 = QuillSpacing.SPACE_5;
+	public static final int SPACE_6 = QuillSpacing.SPACE_6;
 
 	/* Panel and header. */
 	public static final int PANEL_BG = 0xF00E1217;
