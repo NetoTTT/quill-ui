@@ -1,5 +1,7 @@
 # Quill UI
 
+![Quill UI icon](docs/art/quill_ui_icon_512.png)
+
 A small, opinionated **client-side UI framework for Fabric** (Minecraft 26.3, Java 25).
 
 Quill UI provides the visual and layout foundation used by LaborCraft: theme tokens, panel/header
