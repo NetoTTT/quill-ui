@@ -10,8 +10,8 @@ independent from any economy, jobs or gameplay code, so other mods can use it.
 
 ## Status
 
-`0.1.0` — first usable foundation. The API is intentionally small and may evolve before a stable
-`1.0.0`.
+`0.1.0-alpha.1` — first usable foundation. The API is intentionally small and may evolve before a
+stable `1.0.0`. This build is published on the **alpha** channel, not as a stable release.
 
 ## Modules
 
@@ -31,7 +31,7 @@ independent from any economy, jobs or gameplay code, so other mods can use it.
 gradlew.bat build --console=plain --no-daemon
 ```
 
-The jar is written to `build/libs/quill-ui-0.1.0.jar`.
+The jar is written to `build/libs/quill-ui-0.1.0-alpha.1.jar`.
 
 ## Install
 
