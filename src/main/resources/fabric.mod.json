@@ -1,0 +1,23 @@
+{
+	"schemaVersion": 1,
+	"id": "quillui",
+	"version": "${version}",
+	"name": "Quill UI",
+	"description": "A small, opinionated client-side UI framework for Fabric: theme tokens, layout primitives, panels, tabs, buttons and lists.",
+	"authors": [
+		"NetoTTT"
+	],
+	"contact": {
+		"homepage": "https://github.com/NetoTTT/quill-ui",
+		"sources": "https://github.com/NetoTTT/quill-ui",
+		"issues": "https://github.com/NetoTTT/quill-ui/issues"
+	},
+	"license": "GPL-3.0-or-later",
+	"environment": "client",
+	"depends": {
+		"fabricloader": ">=0.19.5",
+		"minecraft": "~26.3",
+		"java": ">=25",
+		"fabric-api": "*"
+	}
+}
