@@ -47,6 +47,13 @@ Rules:
 5. The host mod keeps domain payloads and screen content; Quill owns reusable presentation.
 6. No public API class is added without Javadoc and a compatibility check.
 
+## Minecraft versions
+
+Quill UI targets one Minecraft version per release. A single jar is not expected to run across
+Minecraft versions, and version-specific client features are exposed through fallbacks, capability
+flags, or optional modules. See [docs/SUPPORTED-VERSIONS.md](docs/SUPPORTED-VERSIONS.md) and
+[docs/decisions/0002-multi-version.md](docs/decisions/0002-multi-version.md).
+
 ## Breaking-change policy
 
 The package move and `QuillThemeData` are breaking and will ship together as the next minor alpha

@@ -102,3 +102,4 @@ GNU Lesser General Public License v3.0 or later. See [LICENSE](LICENSE).
 - [Roadmap, including future NeoForge port](docs/ROADMAP.md)
 - [Architecture](ARCHITECTURE.md)
 - [Contributing](CONTRIBUTING.md)
+- [Supported Minecraft versions](docs/SUPPORTED-VERSIONS.md)

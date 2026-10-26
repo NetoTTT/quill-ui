@@ -4,7 +4,7 @@
 
 - JDK 25
 - Gradle wrapper (do not install a separate Gradle)
-- Minecraft 26.3 / Fabric Loader 0.19.5+ / Fabric API 0.164.0+26.3
+- Current Minecraft target: 26.3 / Fabric Loader 0.19.5+ / Fabric API 0.164.0+26.3 (see [SUPPORTED-VERSIONS.md](docs/SUPPORTED-VERSIONS.md))
 
 ## Build and test
 
