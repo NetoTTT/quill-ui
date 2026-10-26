@@ -1,4 +1,9 @@
 {
 	"quillui.close": "Close",
-	"quillui.close.tip": "Closes this screen."
+	"quillui.close.tip": "Closes this screen.",
+	"quillui.map": "Map",
+	"quillui.map.layer.surface": "Surface",
+	"quillui.map.layer.underground": "Underground · Y=%s",
+	"quillui.map.layer.auto_surface": "Auto · surface",
+	"quillui.map.layer.auto_underground": "Auto · underground Y=%s"
 }
