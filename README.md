@@ -100,3 +100,5 @@ GNU Lesser General Public License v3.0 or later. See [LICENSE](LICENSE).
 - [Colours](docs/08-COLORS.md)
 - [Token groups](docs/09-TOKENS.md)
 - [Roadmap, including future NeoForge port](docs/ROADMAP.md)
+- [Architecture](ARCHITECTURE.md)
+- [Contributing](CONTRIBUTING.md)
