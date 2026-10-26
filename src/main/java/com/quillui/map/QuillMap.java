@@ -110,6 +110,7 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 	private BlockPos panStartCenter;
 	private double panStartMouseX;
 	private double panStartMouseY;
+	private int undergroundScanDepth = 48;
 	private Consumer<QuillMap> selectionListener;
 	private Predicate<Entity> entityFilter;
 	private Function<Entity, QuillMapMarker> entityMarkerFactory;
@@ -162,6 +163,18 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 		}
 		this.center = center;
 		this.dirty = true;
+	}
+
+	public void setUndergroundScanDepth(int depth) {
+		undergroundScanDepth = Math.max(4, Math.min(256, depth));
+		floorCache.clear();
+		dirty = true;
+	}
+
+	public void resize(int width, int height) {
+		this.width = Math.max(1, width);
+		this.height = Math.max(1, height);
+		dirty = true;
 	}
 
 	public void panBy(int dx, int dz) {
@@ -509,12 +522,13 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 		return result;
 	}
 
-	private static int scanFloor(
+	private int scanFloor(
 			ClientLevel level, int x, int z, int pivot, BlockPos.MutableBlockPos pos
 	) {
 		BlockState state = level.getBlockState(pos.set(x, pivot, z));
 		if (!occludes(state)) {
-			for (int y = pivot - 1; y >= level.getMinY(); y--) {
+			int bottom = Math.max(level.getMinY(), pivot - undergroundScanDepth);
+			for (int y = pivot - 1; y >= bottom; y--) {
 				state = level.getBlockState(pos.set(x, y, z));
 				if (occludes(state)) {
 					return y + 1;
@@ -726,13 +740,13 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 	public int screenToBlockX(double mouseX) {
 		double relX = mouseX - (getX() + width / 2.0D);
 		int delta = (int) Math.floor(relX / pixelsPerBlock);
-		return Mth.clamp(center.getX() + delta, center.getX() - maxRadius, center.getX() + maxRadius);
+		return center.getX() + delta;
 	}
 
 	public int screenToBlockZ(double mouseY) {
 		double relY = mouseY - (getY() + height / 2.0D);
 		int delta = (int) Math.floor(relY / pixelsPerBlock);
-		return Mth.clamp(center.getZ() + delta, center.getZ() - maxRadius, center.getZ() + maxRadius);
+		return center.getZ() + delta;
 	}
 
 	public BlockPos blockAt(double mouseX, double mouseY) {
