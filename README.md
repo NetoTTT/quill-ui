@@ -96,3 +96,4 @@ GNU Lesser General Public License v3.0 or later. See [LICENSE](LICENSE).
 - [Integration modes](docs/07-INTEGRATION.md)
 - [Public API](docs/API.md)
 - [Compatibility policy](docs/COMPATIBILITY.md)
+- [Roadmap, including future NeoForge port](docs/ROADMAP.md)
