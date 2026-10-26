@@ -10,8 +10,10 @@ independent from any economy, jobs or gameplay code, so other mods can use it.
 
 ## Status
 
-`0.1.0-alpha.1` — first usable foundation. The API is intentionally small and may evolve before a
+`0.1.0-alpha.2` — first usable foundation. The API is intentionally small and may evolve before a
 stable `1.0.0`. This build is published on the **alpha** channel, not as a stable release.
+The public API surface and compatibility policy are documented in
+[docs/API.md](docs/API.md) and [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md).
 
 ## Modules
 
@@ -31,7 +33,7 @@ stable `1.0.0`. This build is published on the **alpha** channel, not as a stabl
 gradlew.bat build --console=plain --no-daemon
 ```
 
-The jar is written to `build/libs/quill-ui-0.1.0-alpha.1.jar`.
+The jar is written to `build/libs/quill-ui-0.1.0-alpha.2.jar`.
 
 ## Install
 
@@ -81,7 +83,7 @@ public final class ExampleScreen extends QuillScreen {
 
 ## License
 
-GNU General Public License v3.0 or later. See [LICENSE](LICENSE).
+GNU Lesser General Public License v3.0 or later. See [LICENSE](LICENSE).
 
 ## Documentation
 
@@ -91,3 +93,6 @@ GNU General Public License v3.0 or later. See [LICENSE](LICENSE).
 - [Widgets and screen](docs/04-WIDGETS.md)
 - [Actions and backend](docs/05-ACTIONS.md)
 - [Migrating from LaborCraft's LC UI](docs/06-MIGRATION.md)
+- [Integration modes](docs/07-INTEGRATION.md)
+- [Public API](docs/API.md)
+- [Compatibility policy](docs/COMPATIBILITY.md)
