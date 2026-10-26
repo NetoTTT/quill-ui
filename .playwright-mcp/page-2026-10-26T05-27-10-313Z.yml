@@ -1,0 +1,210 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - link "Quill UI home" [ref=e6] [cursor=pointer]:
+        - /url: "#/"
+        - generic [ref=e7]: Quill UI
+      - navigation "Primary" [ref=e10]:
+        - link "Docs" [ref=e11] [cursor=pointer]:
+          - /url: "#/introduction/overview"
+        - link "Components" [ref=e12] [cursor=pointer]:
+          - /url: "#/components/overview"
+        - link "Guides" [ref=e13] [cursor=pointer]:
+          - /url: "#/guides/first-interface"
+        - link "Reference" [ref=e14] [cursor=pointer]:
+          - /url: "#/reference/api"
+      - generic [ref=e15]:
+        - button "Search documentation" [ref=e16] [cursor=pointer]:
+          - generic [ref=e20]: Search
+          - generic [ref=e21]: /
+        - link "GitHub repository" [ref=e22] [cursor=pointer]:
+          - /url: https://github.com/NetoTTT/quill-ui
+  - main [ref=e25]:
+    - generic [ref=e27]:
+      - generic [ref=e28]:
+        - generic [ref=e29]: Client-side UI framework for Fabric · 0.1.0-alpha.5
+        - heading "Build consistent Minecraft interfaces." [level=1] [ref=e31]
+        - paragraph [ref=e32]: "Quill UI gives Fabric mods a shared visual language: theme tokens, layout primitives, panels, cards, tabs, buttons, scroll lists and a clean backend action boundary."
+        - generic [ref=e33]:
+          - link "Get Started" [ref=e34] [cursor=pointer]:
+            - /url: "#/introduction/quick-start"
+          - link "Explore Components" [ref=e37] [cursor=pointer]:
+            - /url: "#/components/overview"
+        - paragraph [ref=e38]:
+          - text: Minecraft 26.3 · Java 25 · Fabric ·
+          - link "github.com/NetoTTT/quill-ui" [ref=e39] [cursor=pointer]:
+            - /url: https://github.com/NetoTTT/quill-ui
+      - generic "Preview of Quill UI components" [ref=e40]:
+        - generic [ref=e41]:
+          - generic [ref=e42]:
+            - generic [ref=e44]: Component preview
+            - generic [ref=e45]: HTML + CSS
+          - generic [ref=e47]:
+            - generic [ref=e48]:
+              - generic [ref=e49]: Quill Settings
+              - generic [ref=e51]:
+                - tablist "Example tabs" [ref=e52]:
+                  - tab "General" [selected] [ref=e53]
+                  - tab "Advanced" [ref=e54]
+                - switch "Sound effects" [checked] [ref=e55] [cursor=pointer]
+                - switch "Reduced motion" [ref=e59] [cursor=pointer]
+                - generic [ref=e63]:
+                  - generic [ref=e64]:
+                    - button "Save" [ref=e65] [cursor=pointer]
+                    - generic:
+                      - generic: Save settings
+                      - generic: Sends the current values.
+                      - generic: /example save
+                  - button "Cancel" [ref=e66] [cursor=pointer]
+            - listbox "Example list" [ref=e68]:
+              - option "General 1" [ref=e69]:
+                - generic [ref=e70]: General
+                - generic [ref=e71]: "1"
+              - option "Controls 2" [ref=e72]:
+                - generic [ref=e73]: Controls
+                - generic [ref=e74]: "2"
+              - option "Audio 3" [ref=e75]:
+                - generic [ref=e76]: Audio
+                - generic [ref=e77]: "3"
+              - option "Video 4" [ref=e78]:
+                - generic [ref=e79]: Video
+                - generic [ref=e80]: "4"
+              - option "Accessibility 5" [ref=e81]:
+                - generic [ref=e82]: Accessibility
+                - generic [ref=e83]: "5"
+        - paragraph [ref=e86]: "Illustrative: the same components, approximated in plain HTML/CSS."
+    - region [ref=e87]:
+      - generic [ref=e88]:
+        - generic [ref=e89]:
+          - paragraph [ref=e90]: Quick start
+          - heading "From jar to screen in three steps" [level=2] [ref=e91]
+          - list [ref=e92]:
+            - listitem [ref=e93]:
+              - link "1 Install the jar Minecraft 26.3, Fabric Loader 0.19.5+, Fabric API and Java 25." [ref=e94] [cursor=pointer]:
+                - /url: "#/introduction/installation"
+                - generic [ref=e95]: "1"
+                - generic [ref=e96]:
+                  - generic [ref=e97]: Install the jar
+                  - generic [ref=e98]: Minecraft 26.3, Fabric Loader 0.19.5+, Fabric API and Java 25.
+            - listitem [ref=e99]:
+              - link "2 Extend QuillScreen Build the content in buildContent() with real widgets." [ref=e100] [cursor=pointer]:
+                - /url: "#/introduction/quick-start"
+                - generic [ref=e101]: "2"
+                - generic [ref=e102]:
+                  - generic [ref=e103]: Extend QuillScreen
+                  - generic [ref=e104]: Build the content in buildContent() with real widgets.
+            - listitem [ref=e105]:
+              - link "3 Send actions Route every change through an action sink, never client state." [ref=e106] [cursor=pointer]:
+                - /url: "#/guides/backend-actions"
+                - generic [ref=e107]: "3"
+                - generic [ref=e108]:
+                  - generic [ref=e109]: Send actions
+                  - generic [ref=e110]: Route every change through an action sink, never client state.
+        - figure "Java ExampleScreen.java Copy code to clipboard" [ref=e111]:
+          - generic [ref=e112]:
+            - generic [ref=e113]:
+              - generic [ref=e114]: Java
+              - generic [ref=e115]: ExampleScreen.java
+            - button "Copy code to clipboard" [ref=e116] [cursor=pointer]:
+              - generic [ref=e120]: Copy
+          - code [ref=e122]: "public final class ExampleScreen extends QuillScreen { public ExampleScreen() { super(Component.literal(\"Example\"), 420, 240); } @Override protected void buildContent() { QuillColumn column = new QuillColumn( panelX + QuillSpacing.SPACE_4, panelY + 60, panelWidth() - QuillSpacing.SPACE_4 * 2, QuillSpacing.SPACE_2 ); QuillRect slot = column.next(24); addRenderableWidget(new QuillButton( slot.x(), slot.y(), slot.width(), slot.height(), Component.literal(\"Run action\"), QuillButton.Variant.PRIMARY, () -> QuillCommandSink.get().execute(\"example run\") )); addRenderableWidget(closeButton(this::onClose)); } }"
+    - region [ref=e123]:
+      - generic [ref=e124]:
+        - generic [ref=e125]:
+          - generic [ref=e126]:
+            - paragraph [ref=e127]: Components
+            - heading "A small set, fully themed" [level=2] [ref=e128]
+          - link "All components" [ref=e129] [cursor=pointer]:
+            - /url: "#/components/overview"
+        - generic [ref=e132]:
+          - generic [ref=e133]:
+            - generic [ref=e134]:
+              - button "Save" [ref=e135] [cursor=pointer]
+              - button "Locked" [disabled] [ref=e136]
+            - link [ref=e137] [cursor=pointer]:
+              - /url: "#/components/button"
+              - heading "Buttons" [level=3] [ref=e138]
+              - paragraph [ref=e141]: Primary, secondary, danger and ghost variants with selection and tooltips.
+          - generic [ref=e142]:
+            - generic [ref=e144]:
+              - generic [ref=e145]: Status
+              - generic [ref=e146]: Ready
+            - link [ref=e147] [cursor=pointer]:
+              - /url: "#/components/card"
+              - heading "Cards" [level=3] [ref=e148]
+              - paragraph [ref=e151]: Bordered surfaces with an optional heading and a content rectangle.
+          - generic [ref=e152]:
+            - listbox "Example list" [ref=e154]:
+              - option "General 1" [ref=e155]:
+                - generic [ref=e156]: General
+                - generic [ref=e157]: "1"
+              - option "Controls 2" [ref=e158]:
+                - generic [ref=e159]: Controls
+                - generic [ref=e160]: "2"
+              - option "Audio 3" [ref=e161]:
+                - generic [ref=e162]: Audio
+                - generic [ref=e163]: "3"
+            - link [ref=e166] [cursor=pointer]:
+              - /url: "#/components/scroll-list"
+              - heading "Scroll lists" [level=3] [ref=e167]
+              - paragraph [ref=e170]: Fixed-row lists with wheel scrolling, clipping and a passive scrollbar.
+          - generic [ref=e171]:
+            - tablist "Example tabs" [ref=e173]:
+              - tab "General" [selected] [ref=e174]
+              - tab "Advanced" [ref=e175]
+            - link [ref=e176] [cursor=pointer]:
+              - /url: "#/components/tabs"
+              - heading "Tabs" [level=3] [ref=e177]
+              - paragraph [ref=e180]: Equal-width tab buttons that keep the selected visual in sync.
+          - generic [ref=e181]:
+            - generic [ref=e183]:
+              - switch "Sound" [checked] [ref=e184] [cursor=pointer]
+              - switch "Motion" [ref=e188] [cursor=pointer]
+            - link [ref=e192] [cursor=pointer]:
+              - /url: "#/components/toggle"
+              - heading "Toggles" [level=3] [ref=e193]
+              - paragraph [ref=e196]: Compact on/off switches with keyboard support.
+          - generic [ref=e197]:
+            - generic [ref=e199]:
+              - generic [ref=e200]: Save
+              - generic [ref=e201]: Sends values
+              - generic [ref=e202]: /example save
+            - link [ref=e203] [cursor=pointer]:
+              - /url: "#/components/tooltips"
+              - heading "Tooltips" [level=3] [ref=e204]
+              - paragraph [ref=e207]: Title, gray body and an optional gold command hint.
+    - region [ref=e208]:
+      - paragraph [ref=e209]: Core ideas
+      - heading "What Quill UI is built around" [level=2] [ref=e210]
+      - generic [ref=e211]:
+        - link "Theme tokens One immutable palette plus spacing, typography, radius and elevation tokens." [ref=e212] [cursor=pointer]:
+          - /url: "#/fundamentals/theme"
+          - generic [ref=e216]:
+            - generic [ref=e217]: Theme tokens
+            - generic [ref=e218]: One immutable palette plus spacing, typography, radius and elevation tokens.
+        - link "Layout primitives Rects, insets, columns, rows and grids that keep screens on the 4 px grid." [ref=e219] [cursor=pointer]:
+          - /url: "#/fundamentals/layout"
+          - generic [ref=e224]:
+            - generic [ref=e225]: Layout primitives
+            - generic [ref=e226]: Rects, insets, columns, rows and grids that keep screens on the 4 px grid.
+        - link "Real widgets Themed buttons, cards, scroll lists, tabs and toggles that render themselves." [ref=e227] [cursor=pointer]:
+          - /url: "#/components/overview"
+          - generic [ref=e232]:
+            - generic [ref=e233]: Real widgets
+            - generic [ref=e234]: Themed buttons, cards, scroll lists, tabs and toggles that render themselves.
+        - link "Backend boundary Screens emit actions through QuillActionSink and never mutate game state." [ref=e235] [cursor=pointer]:
+          - /url: "#/guides/backend-actions"
+          - generic [ref=e242]:
+            - generic [ref=e243]: Backend boundary
+            - generic [ref=e244]: Screens emit actions through QuillActionSink and never mutate game state.
+      - paragraph [ref=e245]: Quill UI targets one Minecraft version per release. The current build targets Fabric 26.3 on Java 25.
+  - contentinfo [ref=e246]:
+    - generic [ref=e247]:
+      - generic [ref=e248]: Quill UI
+      - navigation "Footer" [ref=e251]:
+        - link "Repository" [ref=e252] [cursor=pointer]:
+          - /url: https://github.com/NetoTTT/quill-ui
+        - link "Documentation" [ref=e253] [cursor=pointer]:
+          - /url: "#/introduction/overview"
+        - link "LGPL-3.0-or-later" [ref=e254] [cursor=pointer]:
+          - /url: https://github.com/NetoTTT/quill-ui/blob/main/LICENSE

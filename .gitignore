@@ -6,3 +6,6 @@ out/
 *.iml
 *.log
 tools/pixelart/
+website/node_modules/
+website/dist/
+website/.vite/

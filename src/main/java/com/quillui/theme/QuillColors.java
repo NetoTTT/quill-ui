@@ -1,4 +1,4 @@
-package com.quillui;
+package com.quillui.theme;
 
 /**
  * Colour helpers for Minecraft's packed ARGB integers.

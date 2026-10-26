@@ -1,8 +1,8 @@
 package com.quillui.widget;
 
-import com.quillui.QuillRender;
-import com.quillui.QuillTheme;
-import com.quillui.QuillTypography;
+import com.quillui.render.QuillRender;
+import com.quillui.theme.QuillThemeData;
+import com.quillui.theme.QuillTypography;
 import com.mojang.blaze3d.platform.InputConstants;
 import java.util.function.Consumer;
 import net.minecraft.client.Minecraft;
@@ -24,6 +24,7 @@ public class QuillToggle extends AbstractWidget {
 	private static final int KNOB_INSET = 2;
 
 	private final Consumer<Boolean> onChange;
+	private final QuillThemeData theme;
 	private boolean value;
 
 	public QuillToggle(
@@ -35,9 +36,23 @@ public class QuillToggle extends AbstractWidget {
 			boolean value,
 			Consumer<Boolean> onChange
 	) {
+		this(x, y, width, height, message, value, onChange, QuillThemeData.DEFAULT);
+	}
+
+	public QuillToggle(
+			int x,
+			int y,
+			int width,
+			int height,
+			Component message,
+			boolean value,
+			Consumer<Boolean> onChange,
+			QuillThemeData theme
+	) {
 		super(x, y, width, height, message);
 		this.value = value;
 		this.onChange = onChange;
+		this.theme = theme;
 	}
 
 	public boolean value() {
@@ -62,14 +77,14 @@ public class QuillToggle extends AbstractWidget {
 		int trackBorder;
 
 		if (!active) {
-			trackBackground = QuillTheme.BUTTON_DISABLED;
-			trackBorder = QuillTheme.BUTTON_DISABLED_BORDER;
+			trackBackground = theme.color(QuillThemeData.ColorRole.BUTTON_DISABLED);
+			trackBorder = theme.color(QuillThemeData.ColorRole.BUTTON_DISABLED_BORDER);
 		} else if (value) {
-			trackBackground = hovered ? QuillTheme.ACCENT_HOVER : QuillTheme.ACCENT;
-			trackBorder = QuillTheme.ACCENT_HOVER;
+			trackBackground = hovered ? theme.color(QuillThemeData.ColorRole.ACCENT_HOVER) : theme.color(QuillThemeData.ColorRole.ACCENT);
+			trackBorder = theme.color(QuillThemeData.ColorRole.ACCENT_HOVER);
 		} else {
-			trackBackground = hovered ? QuillTheme.BUTTON_HOVER : QuillTheme.BUTTON_BG;
-			trackBorder = QuillTheme.BUTTON_BORDER;
+			trackBackground = hovered ? theme.color(QuillThemeData.ColorRole.BUTTON_HOVER) : theme.color(QuillThemeData.ColorRole.BUTTON_BG);
+			trackBorder = theme.color(QuillThemeData.ColorRole.BUTTON_BORDER);
 		}
 
 		graphics.fill(trackX, trackY, trackX + TRACK_WIDTH, trackY + TRACK_HEIGHT, trackBackground);
@@ -78,7 +93,7 @@ public class QuillToggle extends AbstractWidget {
 		int knobX = value
 				? trackX + TRACK_WIDTH - KNOB_SIZE - KNOB_INSET
 				: trackX + KNOB_INSET;
-		int knobColor = active ? QuillTheme.TITLE : QuillTheme.BUTTON_DISABLED_TEXT;
+		int knobColor = active ? theme.color(QuillThemeData.ColorRole.TITLE) : theme.color(QuillThemeData.ColorRole.BUTTON_DISABLED_TEXT);
 		graphics.fill(
 				knobX,
 				trackY + KNOB_INSET,
@@ -94,11 +109,11 @@ public class QuillToggle extends AbstractWidget {
 					trackY - 1,
 					TRACK_WIDTH + 2,
 					TRACK_HEIGHT + 2,
-					QuillTheme.ACCENT
+					theme.color(QuillThemeData.ColorRole.ACCENT)
 			);
 		}
 
-		int textColor = active ? QuillTheme.TEXT : QuillTheme.BUTTON_DISABLED_TEXT;
+		int textColor = active ? theme.color(QuillThemeData.ColorRole.TEXT) : theme.color(QuillThemeData.ColorRole.BUTTON_DISABLED_TEXT);
 		graphics.text(
 				Minecraft.getInstance().font,
 				getMessage(),

@@ -1,6 +1,15 @@
 # Theme tokens
 
-`QuillTheme` is the single source for visual constants. Do not copy hex values into screens.
+The theme is a `QuillThemeData` instance. Widgets and screens accept one and fall back to
+`QuillThemeData.DEFAULT`; `QuillTheme` keeps static aliases for the default theme so existing code
+continues to work.
+
+```java
+QuillThemeData theme = QuillThemeData.DEFAULT
+        .with(QuillThemeData.ColorRole.ACCENT, 0xFF66CCFF);
+```
+
+Do not copy hex values into screens.
 
 ## Spacing
 

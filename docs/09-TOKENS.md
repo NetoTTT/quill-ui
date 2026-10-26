@@ -41,5 +41,5 @@ The panel renderer already uses `QuillElevation.PANEL_OFFSET`. Rounded primitive
 
 ## Compatibility
 
-Token classes are additive API. `QuillTheme` remains the compatibility surface for existing
-screens. The theme-instance migration (`QuillThemeData`) is a later, breaking step.
+Token classes are public API. `QuillTheme` remains the static default-theme compatibility surface;
+new widgets accept a `QuillThemeData` instance and fall back to `QuillThemeData.DEFAULT`.

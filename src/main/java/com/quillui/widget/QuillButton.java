@@ -1,7 +1,7 @@
 package com.quillui.widget;
 
-import com.quillui.QuillRender;
-import com.quillui.QuillTheme;
+import com.quillui.render.QuillRender;
+import com.quillui.theme.QuillThemeData;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -27,6 +27,7 @@ public class QuillButton extends AbstractWidget {
 	}
 
 	private final Variant variant;
+	private final QuillThemeData theme;
 	private final Runnable action;
 	private boolean selected;
 	private Tooltip tooltip;
@@ -35,9 +36,23 @@ public class QuillButton extends AbstractWidget {
 	public QuillButton(
 			int x, int y, int width, int height, Component message, Variant variant, Runnable action
 	) {
+		this(x, y, width, height, message, variant, action, QuillThemeData.DEFAULT);
+	}
+
+	public QuillButton(
+			int x,
+			int y,
+			int width,
+			int height,
+			Component message,
+			Variant variant,
+			Runnable action,
+			QuillThemeData theme
+	) {
 		super(x, y, width, height, message);
 		this.variant = variant;
 		this.action = action;
+		this.theme = theme;
 	}
 
 	public QuillButton selected(boolean selected) {
@@ -68,37 +83,37 @@ public class QuillButton extends AbstractWidget {
 		int textColor;
 
 		if (!active) {
-			background = QuillTheme.BUTTON_DISABLED;
-			border = QuillTheme.BUTTON_DISABLED_BORDER;
-			textColor = QuillTheme.BUTTON_DISABLED_TEXT;
+			background = theme.color(QuillThemeData.ColorRole.BUTTON_DISABLED);
+			border = theme.color(QuillThemeData.ColorRole.BUTTON_DISABLED_BORDER);
+			textColor = theme.color(QuillThemeData.ColorRole.BUTTON_DISABLED_TEXT);
 		} else {
 			switch (variant) {
 				case PRIMARY -> {
-					background = hovered ? QuillTheme.PRIMARY_BG_HOVER : QuillTheme.PRIMARY_BG;
-					border = hovered ? QuillTheme.ACCENT_HOVER : QuillTheme.ACCENT;
-					textColor = hovered ? QuillTheme.ACCENT_HOVER : QuillTheme.ACCENT;
+					background = hovered ? theme.color(QuillThemeData.ColorRole.PRIMARY_BG_HOVER) : theme.color(QuillThemeData.ColorRole.PRIMARY_BG);
+					border = hovered ? theme.color(QuillThemeData.ColorRole.ACCENT_HOVER) : theme.color(QuillThemeData.ColorRole.ACCENT);
+					textColor = hovered ? theme.color(QuillThemeData.ColorRole.ACCENT_HOVER) : theme.color(QuillThemeData.ColorRole.ACCENT);
 				}
 				case DANGER -> {
-					background = hovered ? QuillTheme.DANGER_BG : QuillTheme.BUTTON_BG;
-					border = QuillTheme.DANGER;
-					textColor = QuillTheme.DANGER;
+					background = hovered ? theme.color(QuillThemeData.ColorRole.DANGER_BG) : theme.color(QuillThemeData.ColorRole.BUTTON_BG);
+					border = theme.color(QuillThemeData.ColorRole.DANGER);
+					textColor = theme.color(QuillThemeData.ColorRole.DANGER);
 				}
 				case GHOST -> {
-					background = hovered || isFocused() ? QuillTheme.BUTTON_BG : 0;
-					border = isFocused() ? QuillTheme.ACCENT : 0;
-					textColor = hovered ? QuillTheme.TITLE : QuillTheme.MUTED;
+					background = hovered || isFocused() ? theme.color(QuillThemeData.ColorRole.BUTTON_BG) : 0;
+					border = isFocused() ? theme.color(QuillThemeData.ColorRole.ACCENT) : 0;
+					textColor = hovered ? theme.color(QuillThemeData.ColorRole.TITLE) : theme.color(QuillThemeData.ColorRole.MUTED);
 				}
 				default -> {
-					background = hovered ? QuillTheme.BUTTON_HOVER : QuillTheme.BUTTON_BG;
-					border = QuillTheme.BUTTON_BORDER;
-					textColor = QuillTheme.TEXT;
+					background = hovered ? theme.color(QuillThemeData.ColorRole.BUTTON_HOVER) : theme.color(QuillThemeData.ColorRole.BUTTON_BG);
+					border = theme.color(QuillThemeData.ColorRole.BUTTON_BORDER);
+					textColor = theme.color(QuillThemeData.ColorRole.TEXT);
 				}
 			}
 
 			if (selected) {
-				background = QuillTheme.SELECTED_BG;
-				border = QuillTheme.ACCENT;
-				textColor = QuillTheme.TITLE;
+				background = theme.color(QuillThemeData.ColorRole.SELECTED_BG);
+				border = theme.color(QuillThemeData.ColorRole.ACCENT);
+				textColor = theme.color(QuillThemeData.ColorRole.TITLE);
 			}
 		}
 
@@ -111,11 +126,11 @@ public class QuillButton extends AbstractWidget {
 		}
 
 		if (active && isFocused()) {
-			QuillRender.border(graphics, x - 1, y - 1, width + 2, height + 2, QuillTheme.ACCENT);
+			QuillRender.border(graphics, x - 1, y - 1, width + 2, height + 2, theme.color(QuillThemeData.ColorRole.ACCENT));
 		}
 
 		if (selected) {
-			graphics.fill(x, y, x + 2, y + height, QuillTheme.ACCENT);
+			graphics.fill(x, y, x + 2, y + height, theme.color(QuillThemeData.ColorRole.ACCENT));
 		}
 
 		graphics.centeredText(

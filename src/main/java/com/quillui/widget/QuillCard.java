@@ -1,8 +1,8 @@
 package com.quillui.widget;
 
-import com.quillui.QuillRender;
-import com.quillui.QuillSpacing;
-import com.quillui.QuillTheme;
+import com.quillui.render.QuillRender;
+import com.quillui.theme.QuillSpacing;
+import com.quillui.theme.QuillThemeData;
 import com.quillui.layout.QuillInsets;
 import com.quillui.layout.QuillRect;
 import net.minecraft.client.gui.Font;
@@ -19,10 +19,16 @@ public final class QuillCard {
 
 	private final QuillRect bounds;
 	private final Component title;
+	private final QuillThemeData theme;
 
 	public QuillCard(int x, int y, int width, int height, Component title) {
+		this(x, y, width, height, title, QuillThemeData.DEFAULT);
+	}
+
+	public QuillCard(int x, int y, int width, int height, Component title, QuillThemeData theme) {
 		this.bounds = new QuillRect(x, y, width, height);
 		this.title = title == null || title.getString().isBlank() ? null : title;
+		this.theme = theme;
 	}
 
 	public QuillRect bounds() {
@@ -34,14 +40,14 @@ public final class QuillCard {
 	}
 
 	public void render(GuiGraphicsExtractor graphics, Font font) {
-		QuillRender.section(graphics, bounds.x(), bounds.y(), bounds.width(), bounds.height());
+		QuillRender.section(graphics, bounds.x(), bounds.y(), bounds.width(), bounds.height(), theme);
 		if (title != null) {
 			graphics.text(
 					font,
 					title,
 					bounds.x() + PADDING,
 					bounds.y() + 5,
-					QuillTheme.TEXT_SOFT
+					theme.color(QuillThemeData.ColorRole.TEXT_SOFT)
 			);
 		}
 	}

@@ -1,4 +1,4 @@
-package com.quillui;
+package com.quillui.render;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.Tooltip;

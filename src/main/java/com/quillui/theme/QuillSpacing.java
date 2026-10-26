@@ -1,4 +1,4 @@
-package com.quillui;
+package com.quillui.theme;
 
 /**
  * Four-pixel spacing scale used by Quill UI.

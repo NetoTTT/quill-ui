@@ -1,4 +1,4 @@
-package com.quillui;
+package com.quillui.theme;
 
 /**
  * Corner-radius tokens for pixel UI. Rendering support for rounded primitives is intentionally

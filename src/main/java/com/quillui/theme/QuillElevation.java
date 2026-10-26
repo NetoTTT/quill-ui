@@ -1,4 +1,4 @@
-package com.quillui;
+package com.quillui.theme;
 
 /**
  * Shadow/elevation offsets. The panel shadow uses {@link #PANEL_OFFSET} and the panel shadow colour

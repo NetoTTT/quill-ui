@@ -1,6 +1,6 @@
 package com.quillui.widget;
 
-import com.quillui.QuillTheme;
+import com.quillui.theme.QuillThemeData;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.Minecraft;
@@ -38,6 +38,7 @@ public class QuillScrollList<T> extends AbstractWidget {
 	private final int rowHeight;
 	private final RowRenderer<T> rowRenderer;
 	private final ClickHandler<T> clickHandler;
+	private final QuillThemeData theme;
 	private double scroll;
 
 	public QuillScrollList(
@@ -49,10 +50,24 @@ public class QuillScrollList<T> extends AbstractWidget {
 			RowRenderer<T> rowRenderer,
 			ClickHandler<T> clickHandler
 	) {
+		this(x, y, width, height, rowHeight, rowRenderer, clickHandler, QuillThemeData.DEFAULT);
+	}
+
+	public QuillScrollList(
+			int x,
+			int y,
+			int width,
+			int height,
+			int rowHeight,
+			RowRenderer<T> rowRenderer,
+			ClickHandler<T> clickHandler,
+			QuillThemeData theme
+	) {
 		super(x, y, width, height, Component.empty());
 		this.rowHeight = rowHeight;
 		this.rowRenderer = rowRenderer;
 		this.clickHandler = clickHandler;
+		this.theme = theme;
 	}
 
 	public void replaceItems(List<T> newItems) {
@@ -167,13 +182,13 @@ public class QuillScrollList<T> extends AbstractWidget {
 
 		if (maxScroll() > 0) {
 			int barX = scrollbarX();
-			graphics.fill(barX, getY(), barX + SCROLLBAR_WIDTH, getY() + height, QuillTheme.BUTTON_DISABLED);
+			graphics.fill(barX, getY(), barX + SCROLLBAR_WIDTH, getY() + height, theme.color(QuillThemeData.ColorRole.BUTTON_DISABLED));
 			graphics.fill(
 					barX,
 					scrollbarThumbY(),
 					barX + SCROLLBAR_WIDTH,
 					scrollbarThumbY() + scrollbarThumbHeight(),
-					QuillTheme.ACCENT
+					theme.color(QuillThemeData.ColorRole.ACCENT)
 			);
 		}
 	}

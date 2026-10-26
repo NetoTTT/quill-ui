@@ -7,7 +7,8 @@ in [COMPATIBILITY.md](COMPATIBILITY.md).
 
 | Package | Contents |
 | --- | --- |
-| `com.quillui` | `QuillTheme`, `QuillSpacing`, `QuillTypography`, `QuillRadii`, `QuillElevation`, `QuillColors`, `QuillRender`, `QuillTooltips` |
+| `com.quillui.theme` | `QuillThemeData`, `QuillTheme`, `QuillSpacing`, `QuillTypography`, `QuillRadii`, `QuillElevation`, `QuillColors` |
+| `com.quillui.render` | `QuillRender`, `QuillTooltips` |
 | `com.quillui.action` | `QuillActionSink`, `QuillCommandSink` |
 | `com.quillui.layout` | `QuillRect`, `QuillInsets`, `QuillColumn`, `QuillRow`, `QuillGrid` |
 | `com.quillui.screen` | `QuillScreen` |
@@ -15,7 +16,10 @@ in [COMPATIBILITY.md](COMPATIBILITY.md).
 | `com.quillui.api` | `QuillApi` constants and compatibility helpers |
 
 Classes outside these packages are implementation details. There are no such packages in
-`0.1.0-alpha.5`; this boundary exists so future internals can change without becoming API.
+`0.2.0-alpha.1`; this boundary exists so future internals can change without becoming API.
+
+`API_LEVEL` is `2` after the package move and the introduction of `QuillThemeData`. The old root
+classes are gone; existing static `QuillTheme` fields now resolve to the default theme for migration.
 
 ## Binary level
 

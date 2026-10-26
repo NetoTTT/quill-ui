@@ -4,7 +4,7 @@
 
 | Quill UI | Minecraft | Fabric Loader | Status |
 | --- | --- | --- | --- |
-| `0.1.x-alpha` | 26.3 | 0.19.5+ | Current |
+| `0.2.0-alpha.1` | 26.3 | 0.19.5+ | Current |
 
 ## Policy
 

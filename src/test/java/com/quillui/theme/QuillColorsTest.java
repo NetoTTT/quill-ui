@@ -1,4 +1,4 @@
-package com.quillui;
+package com.quillui.theme;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

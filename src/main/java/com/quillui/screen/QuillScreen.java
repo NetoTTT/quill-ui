@@ -1,8 +1,8 @@
 package com.quillui.screen;
 
-import com.quillui.QuillRender;
-import com.quillui.QuillTheme;
-import com.quillui.QuillTooltips;
+import com.quillui.render.QuillRender;
+import com.quillui.theme.QuillThemeData;
+import com.quillui.render.QuillTooltips;
 import com.quillui.widget.QuillButton;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
@@ -14,14 +14,22 @@ import net.minecraft.network.chat.Component;
  */
 public abstract class QuillScreen extends Screen {
 	private final int panelWidth;
+	private final QuillThemeData theme;
 	private final int panelHeight;
 	protected int panelX;
 	protected int panelY;
 
 	protected QuillScreen(Component title, int panelWidth, int panelHeight) {
+		this(title, panelWidth, panelHeight, QuillThemeData.DEFAULT);
+	}
+
+	protected QuillScreen(
+			Component title, int panelWidth, int panelHeight, QuillThemeData theme
+	) {
 		super(title);
 		this.panelWidth = panelWidth;
 		this.panelHeight = panelHeight;
+		this.theme = theme;
 	}
 
 	@Override
@@ -54,29 +62,29 @@ public abstract class QuillScreen extends Screen {
 			GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta
 	) {
 		super.extractBackground(graphics, mouseX, mouseY, delta);
-		QuillRender.panel(graphics, panelX, panelY, panelWidth, panelHeight);
+		QuillRender.panel(graphics, panelX, panelY, panelWidth, panelHeight, theme);
 	}
 
 	@Override
 	public void extractRenderState(
 			GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta
 	) {
-		QuillRender.header(graphics, panelX, panelY, panelWidth, 48);
-		graphics.fill(panelX + 12, panelY + 14, panelX + 15, panelY + 34, QuillTheme.ACCENT);
-		graphics.text(font, title, panelX + 22, panelY + 14, QuillTheme.TITLE);
-		graphics.text(font, subtitle(), panelX + 22, panelY + 29, QuillTheme.TEXT_SOFT);
+		QuillRender.header(graphics, panelX, panelY, panelWidth, 48, theme);
+		graphics.fill(panelX + 12, panelY + 14, panelX + 15, panelY + 34, theme.color(QuillThemeData.ColorRole.ACCENT));
+		graphics.text(font, title, panelX + 22, panelY + 14, theme.color(QuillThemeData.ColorRole.TITLE));
+		graphics.text(font, subtitle(), panelX + 22, panelY + 29, theme.color(QuillThemeData.ColorRole.TEXT_SOFT));
 
 		super.extractRenderState(graphics, mouseX, mouseY, delta);
 
 		Component footer = footer();
 		if (!footer.getString().isBlank()) {
-			QuillRender.divider(graphics, panelX + 20, panelY + panelHeight - 28, panelWidth - 40);
+			QuillRender.divider(graphics, panelX + 20, panelY + panelHeight - 28, panelWidth - 40, theme);
 			graphics.centeredText(
 					font,
 					footer,
 					panelX + panelWidth / 2,
 					panelY + panelHeight - 16,
-					QuillTheme.MUTED_DARK
+					theme.color(QuillThemeData.ColorRole.MUTED_DARK)
 			);
 		}
 	}
@@ -89,7 +97,8 @@ public abstract class QuillScreen extends Screen {
 				20,
 				Component.literal("X"),
 				QuillButton.Variant.GHOST,
-				action
+				action,
+				theme
 		);
 		close.tip(QuillTooltips.of(
 				Component.translatable("quillui.close"),

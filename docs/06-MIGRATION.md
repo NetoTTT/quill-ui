@@ -4,9 +4,9 @@ Quill UI is extracted from LaborCraft's internal UI. The first migration can be 
 
 | LaborCraft | Quill UI |
 | --- | --- |
-| `com.foque.laborcraft.client.ui.LcTheme` | `com.quillui.QuillTheme` |
-| `com.foque.laborcraft.client.ui.LcRender` | `com.quillui.QuillRender` |
-| `com.foque.laborcraft.client.ui.LcTooltips` | `com.quillui.QuillTooltips` |
+| `com.foque.laborcraft.client.ui.LcTheme` | `com.quillui.theme.QuillTheme` / `QuillThemeData` |
+| `com.foque.laborcraft.client.ui.LcRender` | `com.quillui.render.QuillRender` |
+| `com.foque.laborcraft.client.ui.LcTooltips` | `com.quillui.render.QuillTooltips` |
 | `...ui.widget.LcButton` | `com.quillui.widget.QuillButton` |
 | `...ui.widget.LcScrollList` | `com.quillui.widget.QuillScrollList` |
 | `LaborCraftScreen` | `com.quillui.screen.QuillScreen` (or a thin project adapter) |

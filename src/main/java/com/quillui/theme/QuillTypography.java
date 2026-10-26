@@ -1,4 +1,4 @@
-package com.quillui;
+package com.quillui.theme;
 
 /**
  * Typographic measurements for Minecraft's bitmap font.

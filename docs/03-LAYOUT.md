@@ -17,7 +17,7 @@ A top-to-bottom stack. `next(height)` returns a `QuillRect` and advances the cur
 `height + gap`.
 
 ```java
-QuillColumn column = new QuillColumn(x, y, width, QuillTheme.SPACE_2);
+QuillColumn column = new QuillColumn(x, y, width, QuillSpacing.SPACE_2);
 QuillRect first = column.next(24);
 QuillRect second = column.next(24);
 ```
@@ -27,7 +27,7 @@ QuillRect second = column.next(24);
 The horizontal equivalent:
 
 ```java
-QuillRow row = new QuillRow(x, y, 24, QuillTheme.SPACE_2);
+QuillRow row = new QuillRow(x, y, 24, QuillSpacing.SPACE_2);
 QuillRect left = row.next(120);
 QuillRect right = row.next(120);
 ```
@@ -38,7 +38,7 @@ Fixed-column grid for forms and dashboards. The cell width is derived from the t
 are addressed by index.
 
 ```java
-QuillGrid grid = new QuillGrid(x, y, width, 2, QuillTheme.SPACE_3, 24);
+QuillGrid grid = new QuillGrid(x, y, width, 2, QuillSpacing.SPACE_3, 24);
 QuillRect a = grid.cell(0); // column 0, row 0
 QuillRect b = grid.cell(1); // column 1, row 0
 QuillRect c = grid.cell(2); // column 0, row 1

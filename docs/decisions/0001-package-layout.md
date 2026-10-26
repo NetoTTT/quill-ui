@@ -1,6 +1,6 @@
 # ADR 0001 — Package layout
 
-- **Status:** accepted, implementation pending in `0.2.0-alpha.1`
+- **Status:** implemented in `0.2.0-alpha.1`
 - **Date:** 2026-10-26
 
 ## Context

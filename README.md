@@ -10,7 +10,7 @@ independent from any economy, jobs or gameplay code, so other mods can use it.
 
 ## Status
 
-`0.1.0-alpha.5` — first usable foundation. The API is intentionally small and may evolve before a
+`0.2.0-alpha.1` — first usable foundation. The API is intentionally small and may evolve before a
 stable `1.0.0`. This build is published on the **alpha** channel, not as a stable release.
 The public API surface and compatibility policy are documented in
 [docs/API.md](docs/API.md) and [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md).
@@ -19,7 +19,7 @@ The public API surface and compatibility policy are documented in
 
 | Area | Entry points |
 | --- | --- |
-| Theme | `QuillTheme`, `QuillSpacing`, `QuillTypography`, `QuillRadii`, `QuillElevation` |
+| Theme | `QuillThemeData`, `QuillTheme`, `QuillSpacing`, `QuillTypography`, `QuillRadii`, `QuillElevation` |
 | Colours | `QuillColors` |
 | Drawing | `QuillRender` |
 | Layout | `QuillRect`, `QuillInsets`, `QuillColumn`, `QuillRow`, `QuillGrid` |
@@ -34,7 +34,7 @@ The public API surface and compatibility policy are documented in
 gradlew.bat build --console=plain --no-daemon
 ```
 
-The jar is written to `build/libs/quill-ui-0.1.0-alpha.5.jar`.
+The jar is written to `build/libs/quill-ui-0.2.0-alpha.1.jar`.
 
 ## Install
 
@@ -45,6 +45,13 @@ not need this jar; client screens that use it do.
 ## Quick start
 
 ```java
+import com.quillui.action.QuillCommandSink;
+import com.quillui.layout.QuillColumn;
+import com.quillui.layout.QuillRect;
+import com.quillui.screen.QuillScreen;
+import com.quillui.theme.QuillSpacing;
+import com.quillui.widget.QuillButton;
+
 public final class ExampleScreen extends QuillScreen {
     public ExampleScreen() {
         super(Component.literal("Example"), 420, 260);
@@ -52,9 +59,9 @@ public final class ExampleScreen extends QuillScreen {
 
     @Override
     protected void buildContent() {
-        int x = panelX + QuillTheme.SPACE_4;
-        int width = panelWidth() - QuillTheme.SPACE_4 * 2;
-        QuillColumn column = new QuillColumn(x, panelY + 60, width, QuillTheme.SPACE_2);
+        int x = panelX + QuillSpacing.SPACE_4;
+        int width = panelWidth() - QuillSpacing.SPACE_4 * 2;
+        QuillColumn column = new QuillColumn(x, panelY + 60, width, QuillSpacing.SPACE_2);
 
         QuillRect first = column.next(24);
         QuillButton button = new QuillButton(
@@ -76,7 +83,7 @@ public final class ExampleScreen extends QuillScreen {
 
 ## Design rules
 
-- Use `QuillTheme` tokens instead of literal colours/spacing.
+- Use `QuillThemeData`/token classes instead of literal colours/spacing.
 - Derive positions with layout primitives; do not repeat magic `x/y` values across screens.
 - A screen renders state; it never mutates game state. Every action goes through an
   `QuillActionSink` (or a project-specific C2S payload).

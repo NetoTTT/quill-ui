@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
+import com.quillui.theme.QuillThemeData;
 import net.minecraft.network.chat.Component;
 
 /**
@@ -13,6 +14,7 @@ import net.minecraft.network.chat.Component;
 public final class QuillTabBar {
 	private final List<QuillButton> buttons = new ArrayList<>();
 	private final IntConsumer onChange;
+	private final QuillThemeData theme;
 	private int selected = -1;
 
 	public QuillTabBar(
@@ -24,7 +26,21 @@ public final class QuillTabBar {
 			List<Component> labels,
 			IntConsumer onChange
 	) {
+		this(x, y, width, height, gap, labels, onChange, QuillThemeData.DEFAULT);
+	}
+
+	public QuillTabBar(
+			int x,
+			int y,
+			int width,
+			int height,
+			int gap,
+			List<Component> labels,
+			IntConsumer onChange,
+			QuillThemeData theme
+	) {
 		this.onChange = onChange;
+		this.theme = theme;
 		if (labels.isEmpty()) {
 			return;
 		}
@@ -39,7 +55,8 @@ public final class QuillTabBar {
 					height,
 					labels.get(index),
 					QuillButton.Variant.GHOST,
-					() -> select(tabIndex)
+					() -> select(tabIndex),
+					theme
 			);
 			buttons.add(button);
 		}

@@ -8,7 +8,7 @@ core can later be reused by a NeoForge client port.
 | Package | Responsibility | Minecraft/Fabric |
 | --- | --- | --- |
 | `com.quillui.api` | API level and compatibility metadata | Fabric Loader |
-| `com.quillui.theme` | Colour, spacing, typography, radius and elevation tokens; future `QuillThemeData` | mostly pure |
+| `com.quillui.theme` | Colour, spacing, typography, radius and elevation tokens; `QuillThemeData` | mostly pure |
 | `com.quillui.layout` | Rectangles, insets, columns, rows and grids | pure |
 | `com.quillui.render` | Drawing primitives and tooltip composition | Minecraft client |
 | `com.quillui.widget` | Buttons, cards, lists, tabs and toggles | Minecraft client |
@@ -56,13 +56,11 @@ flags, or optional modules. See [docs/SUPPORTED-VERSIONS.md](docs/SUPPORTED-VERS
 
 ## Breaking-change policy
 
-The package move and `QuillThemeData` are breaking and will ship together as the next minor alpha
-(`0.2.0-alpha.1`). At that point:
+The package move and `QuillThemeData` shipped together in `0.2.0-alpha.1`:
 
-- `QuillApi.API_LEVEL` becomes `2`.
+- `QuillApi.API_LEVEL` is `2`.
 - Migration notes list old → new imports.
-- Existing static `QuillTheme` values remain available as the default theme during the transition
-  where practical.
+- Existing static `QuillTheme` values remain available as the default theme during the transition.
 - The compatibility workflow compares against the last pre-break baseline.
 
 ## Why not one giant root package?

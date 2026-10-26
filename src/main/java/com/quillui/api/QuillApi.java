@@ -15,7 +15,7 @@ public final class QuillApi {
 	/**
 	 * Binary API level. Increment this when an existing public signature is removed or changed.
 	 */
-	public static final int API_LEVEL = 1;
+	public static final int API_LEVEL = 2;
 
 	private QuillApi() {
 	}

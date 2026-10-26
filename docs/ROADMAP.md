@@ -8,7 +8,7 @@ This is the agreed order. Stop after each item so the build and visuals can be t
    `QuillRadii`, `QuillElevation`. Keep `QuillTheme` compatibility aliases.
 2. **Theme instance + package layout** — move tokens to `com.quillui.theme` and rendering helpers
    to `com.quillui.render`, then add `QuillThemeData` plus a default theme, replacing static-only
-   theme access. Breaking change; one `0.2.0-alpha.1` release; must happen before `1.0.0`.
+   theme access. Shipped in `0.2.0-alpha.1`; must be validated before the next step.
 3. **Composition** — `QuillPanel`/`QuillCard` accepting children and constraints, not only drawing
    a rectangle.
 4. **Explicit local state** — a lightweight `QuillState` or screen rebuild after an action; no hooks.
@@ -17,7 +17,8 @@ This is the agreed order. Stop after each item so the build and visuals can be t
 
 ### Current position
 
-- Item 1: implemented in `0.1.0-alpha.5`; waiting for build/visual validation.
+- Item 1: implemented in `0.1.0-alpha.5`.
+- Item 2: implemented in `0.2.0-alpha.1`; waiting for build/visual validation.
 - Items 2–6: pending.
 
 ## UI foundation backlog
