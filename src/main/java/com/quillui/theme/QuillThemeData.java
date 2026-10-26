@@ -1,6 +1,9 @@
 package com.quillui.theme;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -68,6 +71,16 @@ public final class QuillThemeData {
 		return new QuillThemeData(copy);
 	}
 
+	public List<String> contrastWarnings() {
+		List<String> warnings = new ArrayList<>();
+		check(warnings, "TEXT on PANEL_BG", ColorRole.TEXT, ColorRole.PANEL_BG);
+		check(warnings, "TEXT on SURFACE", ColorRole.TEXT, ColorRole.SURFACE);
+		check(warnings, "ON_ACCENT on PRIMARY_BG", ColorRole.ON_ACCENT, ColorRole.PRIMARY_BG);
+		check(warnings, "ON_DANGER on DANGER_BG", ColorRole.ON_DANGER, ColorRole.DANGER_BG);
+		check(warnings, "GHOST_TEXT on PANEL_BG", ColorRole.GHOST_TEXT, ColorRole.PANEL_BG);
+		return Collections.unmodifiableList(warnings);
+	}
+
 	public static Builder builder() {
 		return new Builder();
 	}
@@ -86,6 +99,12 @@ public final class QuillThemeData {
 
 		public QuillThemeData build() {
 			return new QuillThemeData(colors);
+		}
+	}
+
+	private void check(List<String> warnings, String name, ColorRole foreground, ColorRole background) {
+		if (!QuillContrast.meetsText(color(foreground), color(background))) {
+			warnings.add(name + " is " + QuillContrast.describe(color(foreground), color(background)));
 		}
 	}
 

@@ -40,6 +40,12 @@ public final class QuillContrast {
 				+ 0.0722D * linear(blue(color));
 	}
 
+	public static int readableText(int background) {
+		return ratio(0xFF111827, background) >= ratio(0xFFFFFFFF, background)
+				? 0xFF111827
+				: 0xFFFFFFFF;
+	}
+
 	public static String describe(int foreground, int background) {
 		return String.format("%.2f:1", ratio(foreground, background));
 	}
