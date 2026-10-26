@@ -3,6 +3,7 @@
 ## Current focus — UI foundation
 
 - `QuillCard` and `QuillToggle` added in `0.1.0-alpha.3`.
+- `QuillColors` RGB/ARGB/HEX helpers added in `0.1.0-alpha.4`.
 - Form controls: text field, slider and dropdown.
 - `QuillToast` / notification and empty-state components.
 - Responsive helpers and a scroll container.
