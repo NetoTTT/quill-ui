@@ -42,7 +42,8 @@ public final class QuillCard {
 	public void render(GuiGraphicsExtractor graphics, Font font) {
 		QuillRender.section(graphics, bounds.x(), bounds.y(), bounds.width(), bounds.height(), theme);
 		if (title != null) {
-			graphics.text(
+			QuillRender.text(
+					graphics,
 					font,
 					title,
 					bounds.x() + PADDING,

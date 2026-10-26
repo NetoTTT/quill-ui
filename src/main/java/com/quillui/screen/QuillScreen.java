@@ -75,15 +75,16 @@ public abstract class QuillScreen extends Screen {
 	) {
 		QuillRender.header(graphics, panelX, panelY, panelWidth, 48, theme);
 		graphics.fill(panelX + 12, panelY + 14, panelX + 15, panelY + 34, theme.color(QuillThemeData.ColorRole.ACCENT));
-		graphics.text(font, title, panelX + 22, panelY + 14, theme.color(QuillThemeData.ColorRole.TITLE));
-		graphics.text(font, subtitle(), panelX + 22, panelY + 29, theme.color(QuillThemeData.ColorRole.TEXT_SOFT));
+		QuillRender.text(graphics, font, title, panelX + 22, panelY + 14, theme.color(QuillThemeData.ColorRole.TITLE));
+		QuillRender.text(graphics, font, subtitle(), panelX + 22, panelY + 29, theme.color(QuillThemeData.ColorRole.TEXT_SOFT));
 
 		super.extractRenderState(graphics, mouseX, mouseY, delta);
 
 		Component footer = footer();
 		if (!footer.getString().isBlank()) {
 			QuillRender.divider(graphics, panelX + 20, panelY + panelHeight - 28, panelWidth - 40, theme);
-			graphics.centeredText(
+			QuillRender.centeredText(
+					graphics,
 					font,
 					footer,
 					panelX + panelWidth / 2,

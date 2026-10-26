@@ -109,12 +109,13 @@ public class QuillToggle extends AbstractWidget {
 					trackY - 1,
 					TRACK_WIDTH + 2,
 					TRACK_HEIGHT + 2,
-					theme.color(QuillThemeData.ColorRole.ACCENT)
+					theme.color(QuillThemeData.ColorRole.FOCUS_RING)
 			);
 		}
 
 		int textColor = active ? theme.color(QuillThemeData.ColorRole.TEXT) : theme.color(QuillThemeData.ColorRole.BUTTON_DISABLED_TEXT);
-		graphics.text(
+		QuillRender.text(
+				graphics,
 				Minecraft.getInstance().font,
 				getMessage(),
 				x,

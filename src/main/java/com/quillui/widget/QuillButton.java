@@ -99,9 +99,15 @@ public class QuillButton extends AbstractWidget {
 					textColor = theme.color(QuillThemeData.ColorRole.ON_DANGER);
 				}
 				case GHOST -> {
-					background = hovered || isFocused() ? theme.color(QuillThemeData.ColorRole.BUTTON_BG) : 0;
-					border = isFocused() ? theme.color(QuillThemeData.ColorRole.ACCENT) : 0;
-					textColor = hovered ? theme.color(QuillThemeData.ColorRole.TITLE) : theme.color(QuillThemeData.ColorRole.MUTED);
+					background = hovered || isFocused()
+							? theme.color(QuillThemeData.ColorRole.BUTTON_HOVER)
+							: theme.color(QuillThemeData.ColorRole.GHOST_BG);
+					border = isFocused()
+							? theme.color(QuillThemeData.ColorRole.FOCUS_RING)
+							: theme.color(QuillThemeData.ColorRole.GHOST_BORDER);
+					textColor = hovered
+							? theme.color(QuillThemeData.ColorRole.TITLE)
+							: theme.color(QuillThemeData.ColorRole.GHOST_TEXT);
 				}
 				default -> {
 					background = hovered ? theme.color(QuillThemeData.ColorRole.BUTTON_HOVER) : theme.color(QuillThemeData.ColorRole.BUTTON_BG);
@@ -133,7 +139,8 @@ public class QuillButton extends AbstractWidget {
 			graphics.fill(x, y, x + 2, y + height, theme.color(QuillThemeData.ColorRole.ACCENT));
 		}
 
-		graphics.centeredText(
+		QuillRender.centeredText(
+				graphics,
 				Minecraft.getInstance().font,
 				getMessage(),
 				x + width / 2,

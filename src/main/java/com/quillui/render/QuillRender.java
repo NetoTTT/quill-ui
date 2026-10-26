@@ -2,7 +2,9 @@ package com.quillui.render;
 
 import com.quillui.theme.QuillElevation;
 import com.quillui.theme.QuillThemeData;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.network.chat.Component;
 
 /**
  * Drawing primitives used by Quill UI. All geometry is in GUI pixels and is intentionally
@@ -34,6 +36,19 @@ public class QuillRender {
 		);
 		graphics.fill(x, y, x + width, y + height, theme.color(QuillThemeData.ColorRole.PANEL_BG));
 		border(graphics, x, y, width, height, theme.color(QuillThemeData.ColorRole.PANEL_BORDER));
+	}
+
+	public static void text(
+			GuiGraphicsExtractor graphics, Font font, Component text, int x, int y, int color
+	) {
+		graphics.text(font, text, x, y, color, false);
+	}
+
+	public static void centeredText(
+			GuiGraphicsExtractor graphics, Font font, Component text, int centerX, int y, int color
+	) {
+		int x = centerX - font.width(text) / 2;
+		graphics.text(font, text, x, y, color, false);
 	}
 
 	public static void border(GuiGraphicsExtractor graphics, int x, int y, int width, int height, int color) {
