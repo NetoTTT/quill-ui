@@ -29,7 +29,6 @@ import com.quillui.action.QuillCommandSink;
 import com.quillui.layout.QuillColumn;
 import com.quillui.layout.QuillRect;
 import com.quillui.layout.QuillRow;
-import com.quillui.render.*;
 import com.quillui.screen.QuillScreen;
 import com.quillui.theme.QuillSpacing;
 import com.quillui.widget.*;
@@ -177,7 +176,11 @@ QuillThemeData light = QuillThemeData.builder()
       </P>
       <CodeBlock
         code={`
-QuillCard card = new QuillCard(x, y, width, 96, Component.literal("Status"), light);
+QuillCard card = new QuillCard(
+        x, y, width, 96,
+        Component.literal("Status"),
+        light
+);
 
 QuillButton save = new QuillButton(
         x, y, 120, 20,
@@ -196,14 +199,20 @@ QuillToggle toggle = new QuillToggle(
 );`}
       />
 
-      <H2>What cannot be themed yet</H2>
-      <Callout kind="warning">
-        <P>
-          The screen shell (<C>QuillScreen</C>) reads the static <C>QuillTheme</C> facade, so its panel and
-          header keep the default palette in this release. Only widgets and cards receive a custom{" "}
-          <C>QuillThemeData</C>.
-        </P>
-      </Callout>
+      <H2>The screen shell</H2>
+      <P>
+        <C>QuillScreen</C> has a constructor overload that takes the same palette. Pass it and the panel,
+        header, footer and close button use your theme too.
+      </P>
+      <CodeBlock
+        code={`
+public ProfileScreen() {
+    super(Component.literal("Profile"), 360, 240, light);
+}`}
+      />
+      <P>
+        The three-argument constructor uses <C>QuillThemeData.DEFAULT</C> for the shell.
+      </P>
 
       <H2>Choosing roles</H2>
       <UL>

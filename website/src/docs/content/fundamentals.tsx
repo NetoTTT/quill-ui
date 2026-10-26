@@ -127,7 +127,7 @@ QuillThemeData light = QuillThemeData.builder()
       <P>
         <C>QuillTheme</C> exposes <C>SPACE_1</C>…<C>SPACE_6</C> and every colour role as a static constant.
         It is kept for source compatibility; prefer <C>QuillSpacing</C> and <C>QuillThemeData</C> in new
-        code. <C>QuillScreen</C> itself still reads the facade.
+        code. <C>QuillScreen</C> and every widget accept a <C>QuillThemeData</C> instance.
       </P>
 
       <H2>Spacing</H2>
@@ -274,7 +274,8 @@ function Screen() {
       <DocTable
         head={["Member", "Purpose"]}
         rows={[
-          [<C key="a">QuillScreen(title, panelWidth, panelHeight)</C>, "Sets the window title and the fixed panel size."],
+          [<C key="a">QuillScreen(title, width, height)</C>, "Sets the window title and the fixed panel size; uses QuillThemeData.DEFAULT."],
+          [<C key="h">QuillScreen(title, width, height, theme)</C>, "Same, with a custom QuillThemeData for the whole shell."],
           [<C key="b">buildContent()</C>, "Abstract. Called from init(); register widgets here."],
           [<C key="c">subtitle()</C>, "Optional second header line."],
           [<C key="d">footer()</C>, "Optional centered footer; a divider is drawn automatically when non-blank."],
@@ -286,7 +287,8 @@ function Screen() {
       <P>
         The header uses a 3 px accent bar, the title at <C>+22,+14</C> and the subtitle at <C>+22,+29</C>.
         The close button is 20×20 at the top right and carries a tooltip from{" "}
-        <C>quillui.close</C> / <C>quillui.close.tip</C>.
+        <C>quillui.close</C> / <C>quillui.close.tip</C>. The panel, header, divider and close button all read
+        the theme passed to the constructor.
       </P>
 
       <H2>A complete screen</H2>
@@ -353,6 +355,59 @@ public final class SettingsScreen extends QuillScreen {
   );
 }
 
+function Drawing() {
+  return (
+    <>
+      <P>
+        <C>QuillRender</C> contains the static drawing primitives used by the screen and widgets. All
+        geometry is in GUI pixels and one-pixel sharp, so it scales cleanly with Minecraft&apos;s GUI scale.
+      </P>
+
+      <H2>Primitives</H2>
+      <DocTable
+        head={["Method", "Draws"]}
+        rows={[
+          [<C key="p">panel(graphics, x, y, w, h[, theme])</C>, "Drop shadow at +4 px, panel fill and a 1 px border."],
+          [<C key="b">border(graphics, x, y, w, h, color)</C>, "A 1 px rectangle outline in an explicit colour."],
+          [<C key="d">divider(graphics, x, y, w[, theme])</C>, "A 1 px horizontal line using DIVIDER."],
+          [<C key="h">header(graphics, x, y, w, h[, theme])</C>, "Header band using HEADER_BG plus a bottom divider."],
+          [<C key="t">tabStrip(graphics, x, y, w, h[, theme])</C>, "Chip surface with a CHIP_BORDER outline."],
+          [<C key="s">section(graphics, x, y, w, h[, theme])</C>, "Card surface, a top highlight and a SURFACE_BORDER outline."],
+          [<C key="i">inset(graphics, x, y, w, h[, theme])</C>, "Low-contrast inner row using SURFACE_ALT."],
+        ]}
+      />
+      <P>
+        Every overload without a theme uses <C>QuillThemeData.DEFAULT</C>. The screen shell passes its own
+        theme, which is why a custom <C>QuillThemeData</C> applies to the panel and header.
+      </P>
+
+      <H2>Drawing a section</H2>
+      <CodeBlock
+        code={`
+@Override
+public void extractRenderState(
+        GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta
+) {
+    // A grouped section behind the widgets.
+    QuillRender.section(graphics, x, y, width, 72);
+
+    // A divider between two rows.
+    QuillRender.divider(graphics, x + 8, y + 36, width - 16);
+
+    // The widgets and header are drawn by the screen.
+    super.extractRenderState(graphics, mouseX, mouseY, delta);
+}`}
+      />
+      <Callout kind="tip">
+        <P>
+          Prefer <C>QuillCard</C> when you need a heading and a content rectangle. Use <C>QuillRender</C>{" "}
+          directly only for regions the card does not model, such as a divider inside a form.
+        </P>
+      </Callout>
+    </>
+  );
+}
+
 export const fundamentals: DocPage[] = [
   {
     slug: "core-concepts",
@@ -377,5 +432,11 @@ export const fundamentals: DocPage[] = [
     title: "Screens",
     description: "The QuillScreen shell, header, footer and close button.",
     component: Screen,
+  },
+  {
+    slug: "drawing",
+    title: "Drawing Helpers",
+    description: "QuillRender primitives for panels, sections and dividers.",
+    component: Drawing,
   },
 ];

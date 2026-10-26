@@ -4,7 +4,7 @@
 export const SITE = {
   name: "Quill UI",
   tagline: "A small client-side UI framework for Fabric.",
-  version: "0.1.0-alpha.5",
+  version: "0.2.0-alpha.1",
   minecraftVersion: "26.3",
   javaVersion: "25",
   repoUrl: "https://github.com/NetoTTT/quill-ui",

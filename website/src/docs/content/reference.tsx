@@ -35,7 +35,7 @@ function Api() {
       <CodeBlock
         code={`
 public static final String MOD_ID = "quillui";
-public static final int API_LEVEL = 1;
+public static final int API_LEVEL = 2;
 
 public static String version();          // loaded mod version, or "unknown"
 public static boolean supports(int requiredLevel);`}
@@ -56,8 +56,8 @@ public static boolean supports(int requiredLevel);`}
       </UL>
       <Callout kind="note">
         <P>
-          The current source is <C>0.1.0-alpha.5</C> with API level <C>1</C>. A package reorganisation is
-          planned for the next minor alpha and will bump the level when it ships.
+          The current release is <C>0.2.0-alpha.1</C> with API level <C>2</C>. The package reorganisation
+          and <C>QuillThemeData</C> landed together and are covered by the compatibility workflow.
         </P>
       </Callout>
 
@@ -265,9 +265,9 @@ function Troubleshooting() {
 
       <H2>A custom theme is ignored</H2>
       <P>
-        Pass the <C>QuillThemeData</C> to every widget you create. Omitting it uses{" "}
-        <C>QuillThemeData.DEFAULT</C>. The <C>QuillScreen</C> shell always uses the static facade in this
-        release; see <DocLink to="guides/theming">Theming</DocLink>.
+        Pass the <C>QuillThemeData</C> to every widget you create and to the four-argument{" "}
+        <C>QuillScreen</C> constructor. Omitting it uses <C>QuillThemeData.DEFAULT</C>. See{" "}
+        <DocLink to="guides/theming">Theming</DocLink>.
       </P>
 
       <H2>The scroll list does not scroll</H2>

@@ -10,23 +10,23 @@ independent from any economy, jobs or gameplay code, so other mods can use it.
 
 ## Status
 
-`0.2.0-alpha.1` — first usable foundation. The API is intentionally small and may evolve before a
+`0.2.0-alpha.2` — first usable foundation. The API is intentionally small and may evolve before a
 stable `1.0.0`. This build is published on the **alpha** channel, not as a stable release.
 The public API surface and compatibility policy are documented in
 [docs/API.md](docs/API.md) and [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md).
 
 ## Modules
 
-| Area | Entry points |
-| --- | --- |
-| Theme | `QuillThemeData`, `QuillTheme`, `QuillSpacing`, `QuillTypography`, `QuillRadii`, `QuillElevation` |
-| Colours | `QuillColors` |
-| Drawing | `QuillRender` |
-| Layout | `QuillRect`, `QuillInsets`, `QuillColumn`, `QuillRow`, `QuillGrid` |
-| Widgets | `QuillButton`, `QuillScrollList`, `QuillTabBar`, `QuillCard`, `QuillToggle` |
-| Screen | `QuillScreen` |
-| Tooltips | `QuillTooltips` |
-| Backend boundary | `QuillActionSink`, `QuillCommandSink` |
+| Area | Package | Entry points |
+| --- | --- | --- |
+| Theme | `com.quillui.theme` | `QuillThemeData`, `QuillTheme`, `QuillSpacing`, `QuillTypography`, `QuillRadii`, `QuillElevation` |
+| Colours | `com.quillui.theme` | `QuillColors` |
+| Layout | `com.quillui.layout` | `QuillRect`, `QuillInsets`, `QuillColumn`, `QuillRow`, `QuillGrid` |
+| Drawing | `com.quillui.render` | `QuillRender`, `QuillTooltips` |
+| Widgets | `com.quillui.widget` | `QuillButton`, `QuillCard`, `QuillPanel`, `QuillScrollList`, `QuillTabBar`, `QuillToggle` |
+| Screen | `com.quillui.screen` | `QuillScreen` |
+| Backend boundary | `com.quillui.action` | `QuillActionSink`, `QuillCommandSink` |
+| Compatibility | `com.quillui.api` | `QuillApi` |
 
 ## Build
 
@@ -34,7 +34,7 @@ The public API surface and compatibility policy are documented in
 gradlew.bat build --console=plain --no-daemon
 ```
 
-The jar is written to `build/libs/quill-ui-0.2.0-alpha.1.jar`.
+The jar is written to `build/libs/quill-ui-0.2.0-alpha.2.jar`.
 
 ## Install
 
@@ -95,6 +95,7 @@ GNU Lesser General Public License v3.0 or later. See [LICENSE](LICENSE).
 
 ## Documentation
 
+- [Documentation website](https://netottt.github.io/quill-ui/) (source in [`website/`](website))
 - [Getting started](docs/01-GETTING-STARTED.md)
 - [Theme tokens](docs/02-THEME.md)
 - [Layout](docs/03-LAYOUT.md)

@@ -238,6 +238,7 @@ QuillScrollList<Entry> list = new QuillScrollList<>(
         20,                                  // row height
         this::drawRow,                       // RowRenderer<Entry>
         (entry, index) -> select(entry)      // ClickHandler<Entry>
+        // optional last argument: QuillThemeData
 );
 
 list.replaceItems(entries);
@@ -268,6 +269,7 @@ void select(Entry entry) {
       <DocTable
         head={["Method", "Effect"]}
         rows={[
+          [<C key="0">Constructor</C>, "x, y, width, height, row height, RowRenderer<T>, ClickHandler<T>, optional QuillThemeData."],
           [<C key="1">replaceItems(List&lt;T&gt;)</C>, "Replaces the contents and resets the scroll to the top."],
           [<C key="2">size() / isEmpty() / get(int)</C>, "Read access to the backing items."],
           [<C key="3">rowWidth()</C>, "Width available to rows, excluding the scrollbar when shown."],
@@ -314,7 +316,8 @@ QuillTabBar tabs = new QuillTabBar(
 );
 
 tabs.addTo(this::addRenderableWidget);
-tabs.select(0);`}
+tabs.select(0);
+// The constructor also accepts an optional QuillThemeData as the last argument.`}
         />
       </Example>
 

@@ -40,7 +40,7 @@ function Overview() {
 
       <H2>Status</H2>
       <P>
-        The current release is <C>0.1.0-alpha.5</C> with binary API level <C>1</C>. The API is intentionally
+        The current release is <C>0.2.0-alpha.1</C> with binary API level <C>2</C>. The API is intentionally
         small and may evolve before <C>1.0.0</C>. See <DocLink to="reference/api">API reference</DocLink> and{" "}
         <DocLink to="reference/compatibility">Compatibility</DocLink>.
       </P>
@@ -86,7 +86,7 @@ function Installation() {
       <H2>Build the jar</H2>
       <CodeBlock lang="bash" status="none" code={`gradlew.bat build --console=plain --no-daemon`} />
       <P>
-        The jar is written to <C>build/libs/quill-ui-0.1.0-alpha.5.jar</C>. Put it in the instance&apos;s{" "}
+        The jar is written to <C>build/libs/quill-ui-0.2.0-alpha.1.jar</C>. Put it in the instance&apos;s{" "}
         <C>mods/</C> folder.
       </P>
 
@@ -100,7 +100,7 @@ function Installation() {
         title="build.gradle"
         code={`
 dependencies {
-    implementation files("libs/quill-ui-0.1.0-alpha.5.jar")
+    implementation files("libs/quill-ui-0.2.0-alpha.1.jar")
 }`}
       />
 
@@ -118,7 +118,7 @@ dependencies {
       </P>
       <CodeBlock
         code={`
-String version = QuillApi.version(); // "0.1.0-alpha.5" in a Fabric runtime
+String version = QuillApi.version(); // "0.2.0-alpha.1" in a Fabric runtime
 boolean level1 = QuillApi.supports(1);`}
       />
     </>

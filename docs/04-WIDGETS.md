@@ -39,6 +39,23 @@ card.render(graphics, font);
 QuillRect body = card.content();
 ```
 
+## QuillPanel
+
+`QuillPanel` composes controls inside a `QuillCard`. It positions children in a vertical column and
+offers a two-column action row.
+
+```java
+QuillPanel panel = new QuillPanel(x, y, width, height, Component.literal("Settings"), theme);
+QuillToggle enabled = panel.add(new QuillToggle(0, 0, 0, 20, Component.literal("Enabled"), true, this::setEnabled, theme));
+QuillButton save = new QuillButton(0, 0, 0, 20, Component.literal("Save"), QuillButton.Variant.PRIMARY, this::save, theme);
+QuillButton cancel = new QuillButton(0, 0, 0, 20, Component.literal("Cancel"), QuillButton.Variant.GHOST, this::cancel, theme);
+panel.addRow(save, cancel);
+panel.addTo(this::addRenderableWidget);
+```
+
+Render the panel before its widgets in the screen render pass. The panel only lays out and draws
+the card; it does not mutate game state.
+
 ## QuillToggle
 
 `QuillToggle` is a compact labelled on/off control. It changes its local visual state and calls the

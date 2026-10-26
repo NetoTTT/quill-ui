@@ -18,8 +18,9 @@ This is the agreed order. Stop after each item so the build and visuals can be t
 ### Current position
 
 - Item 1: implemented in `0.1.0-alpha.5`.
-- Item 2: implemented in `0.2.0-alpha.1`; waiting for build/visual validation.
-- Items 2–6: pending.
+- Item 2: implemented in `0.2.0-alpha.1`.
+- Item 3: implemented in `0.2.0-alpha.2`; waiting for build/visual validation.
+- Items 4-6: pending.
 
 ## UI foundation backlog
 
