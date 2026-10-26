@@ -6,7 +6,9 @@ import com.quillui.render.QuillRender;
 import com.mojang.blaze3d.platform.NativeImage;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -51,6 +53,25 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 		PAN
 	}
 
+	public enum MouseAction {
+		SELECT,
+		PAN,
+		NONE
+	}
+
+	public record MouseBindings(MouseAction left, MouseAction right, MouseAction middle) {
+		public static final MouseBindings DEFAULT = new MouseBindings(MouseAction.SELECT, MouseAction.PAN, MouseAction.PAN);
+
+		public MouseAction action(int button) {
+			return switch (button) {
+				case 0 -> left;
+				case 1 -> right;
+				case 2 -> middle;
+				default -> MouseAction.NONE;
+			};
+		}
+	}
+
 	private static final int BG_DARK = 0xFF0B1118;
 	private static final int GRID_COLOR = 0xFF1E2936;
 	private static final int NO_FLOOR = Integer.MIN_VALUE;
@@ -77,6 +98,14 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 	private boolean readOnly;
 	private int pixelsPerBlock = 2;
 	private InteractionMode interactionMode = InteractionMode.SELECT;
+	private MouseBindings mouseBindings = MouseBindings.DEFAULT;
+	private boolean showRadiusLimit;
+	private final Map<Long, Integer> floorCache = new LinkedHashMap<>(256, 0.75F, true) {
+		@Override
+		protected boolean removeEldestEntry(Map.Entry<Long, Integer> eldest) {
+			return size() > 200_000;
+		}
+	};
 	private boolean panning;
 	private BlockPos panStartCenter;
 	private double panStartMouseX;
@@ -151,6 +180,27 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 		if (mode != null) {
 			interactionMode = mode;
 		}
+	}
+
+	public MouseBindings mouseBindings() {
+		return mouseBindings;
+	}
+
+	public void setMouseBindings(MouseBindings bindings) {
+		if (bindings != null) {
+			mouseBindings = bindings;
+			interactionMode = bindings.left() == MouseAction.PAN
+					? InteractionMode.PAN
+					: InteractionMode.SELECT;
+		}
+	}
+
+	public boolean radiusLimitVisible() {
+		return showRadiusLimit;
+	}
+
+	public void setRadiusLimitVisible(boolean visible) {
+		showRadiusLimit = visible;
 	}
 
 	public BlockPos from() {
@@ -305,7 +355,9 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 		graphics.enableScissor(getX(), getY(), getX() + width, getY() + height);
 		graphics.blit(textureId, getX(), getY(), getX() + width, getY() + height, 0.0F, 1.0F, 0.0F, 1.0F);
 		drawZones(graphics);
-		drawRadiusLimit(graphics);
+		if (showRadiusLimit) {
+			drawRadiusLimit(graphics);
+		}
 		drawSelection(graphics);
 		drawMarkers(graphics);
 		drawCenterMarker(graphics);
@@ -443,7 +495,21 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 		return mapColor.calculateARGBColor(brightness);
 	}
 
-	private static int findFloor(
+	private int findFloor(
+			ClientLevel level, int x, int z, int pivot, BlockPos.MutableBlockPos pos
+	) {
+		long key = ((long) x << 32) ^ (z & 0xFFFFFFFFL) ^ ((long) pivot << 16);
+		Integer cached = floorCache.get(key);
+		if (cached != null) {
+			return cached;
+		}
+
+		int result = scanFloor(level, x, z, pivot, pos);
+		floorCache.put(key, result);
+		return result;
+	}
+
+	private static int scanFloor(
 			ClientLevel level, int x, int z, int pivot, BlockPos.MutableBlockPos pos
 	) {
 		BlockState state = level.getBlockState(pos.set(x, pivot, z));
@@ -554,18 +620,35 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 
 	private void drawMarkers(GuiGraphicsExtractor graphics) {
 		for (QuillMapMarker marker : markers) {
-			int x = blockToScreenX(marker.position().getX()) + pixelsPerBlock / 2;
-			int y = blockToScreenZ(marker.position().getZ()) + pixelsPerBlock / 2;
-			graphics.fill(x - 4, y - 4, x + 5, y + 5, withAlpha(marker.color(), 0xDD));
-			QuillRender.border(graphics, x - 4, y - 4, 9, 9, 0xFFFFFFFF);
-			if (marker.label() != null && !marker.label().getString().isBlank()) {
-				Font font = Minecraft.getInstance().font;
-				int textWidth = font.width(marker.label());
-				int badgeX = x - textWidth / 2 - 3;
-				int badgeY = y + 7;
-				graphics.fill(badgeX, badgeY, badgeX + textWidth + 6, badgeY + 11, 0xDD111820);
-				QuillRender.text(graphics, font, marker.label(), badgeX + 3, badgeY + 2, 0xFFFFFFFF);
+			drawMarker(graphics, marker);
+		}
+
+		if (entityFilter == null || entityMarkerFactory == null || Minecraft.getInstance().level == null) {
+			return;
+		}
+		for (Entity entity : Minecraft.getInstance().level.entitiesForRendering()) {
+			if (!entityFilter.test(entity)) {
+				continue;
 			}
+			QuillMapMarker marker = entityMarkerFactory.apply(entity);
+			if (marker != null) {
+				drawMarker(graphics, marker);
+			}
+		}
+	}
+
+	private void drawMarker(GuiGraphicsExtractor graphics, QuillMapMarker marker) {
+		int x = blockToScreenX(marker.position().getX()) + pixelsPerBlock / 2;
+		int y = blockToScreenZ(marker.position().getZ()) + pixelsPerBlock / 2;
+		graphics.fill(x - 4, y - 4, x + 5, y + 5, withAlpha(marker.color(), 0xDD));
+		QuillRender.border(graphics, x - 4, y - 4, 9, 9, 0xFFFFFFFF);
+		if (marker.label() != null && !marker.label().getString().isBlank()) {
+			Font font = Minecraft.getInstance().font;
+			int textWidth = font.width(marker.label());
+			int badgeX = x - textWidth / 2 - 3;
+			int badgeY = y + 7;
+			graphics.fill(badgeX, badgeY, badgeX + textWidth + 6, badgeY + 11, 0xDD111820);
+			QuillRender.text(graphics, font, marker.label(), badgeX + 3, badgeY + 2, 0xFFFFFFFF);
 		}
 	}
 
@@ -662,7 +745,8 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 			return false;
 		}
 
-		if (event.button() == 1 || event.button() == 2 || interactionMode == InteractionMode.PAN) {
+		MouseAction action = mouseBindings.action(event.button());
+		if (action == MouseAction.PAN) {
 			panning = true;
 			panStartCenter = center;
 			panStartMouseX = event.x();
@@ -670,7 +754,7 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 			return true;
 		}
 
-		if (!readOnly && interactionMode == InteractionMode.SELECT && event.button() == 0) {
+		if (!readOnly && action == MouseAction.SELECT) {
 			from = blockAt(event.x(), event.y());
 			to = from;
 			dragging = true;
@@ -682,7 +766,7 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 
 	@Override
 	public void onClick(MouseButtonEvent event, boolean doubleClick) {
-		if (readOnly || interactionMode != InteractionMode.SELECT || event.button() != 0) {
+		if (readOnly || mouseBindings.left() != MouseAction.SELECT || event.button() != 0) {
 			return;
 		}
 		from = blockAt(event.x(), event.y());
