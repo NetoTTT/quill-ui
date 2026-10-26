@@ -11,7 +11,9 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvent;
 
 /**
  * A compact on/off control with a label on the left and a switch on the right. The widget only
@@ -25,6 +27,7 @@ public class QuillToggle extends AbstractWidget {
 
 	private final Consumer<Boolean> onChange;
 	private final QuillThemeData theme;
+	private SoundEvent clickSound;
 	private boolean value;
 
 	public QuillToggle(
@@ -53,6 +56,11 @@ public class QuillToggle extends AbstractWidget {
 		this.value = value;
 		this.onChange = onChange;
 		this.theme = theme;
+	}
+
+	public QuillToggle clickSound(SoundEvent sound) {
+		this.clickSound = sound;
+		return this;
 	}
 
 	public boolean value() {
@@ -131,7 +139,7 @@ public class QuillToggle extends AbstractWidget {
 		}
 
 		value = !value;
-		playDownSound(Minecraft.getInstance().getSoundManager());
+		playClickSound();
 		onChange.accept(value);
 	}
 
@@ -144,12 +152,21 @@ public class QuillToggle extends AbstractWidget {
 		int key = event.key();
 		if (key == InputConstants.KEY_RETURN || key == InputConstants.KEY_SPACE) {
 			value = !value;
-			playDownSound(Minecraft.getInstance().getSoundManager());
+			playClickSound();
 			onChange.accept(value);
 			return true;
 		}
 
 		return false;
+	}
+
+	private void playClickSound() {
+		Minecraft client = Minecraft.getInstance();
+		if (clickSound == null) {
+			playDownSound(client.getSoundManager());
+			return;
+		}
+		client.getSoundManager().play(SimpleSoundInstance.forUI(clickSound, 1.0F));
 	}
 
 	@Override

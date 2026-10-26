@@ -1,11 +1,14 @@
 package com.quillui.screen;
 
 import com.quillui.render.QuillRender;
-import com.quillui.theme.QuillThemeData;
 import com.quillui.render.QuillTooltips;
+import com.quillui.theme.QuillThemeData;
 import com.quillui.widget.QuillButton;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
 
 /**
@@ -14,22 +17,35 @@ import net.minecraft.network.chat.Component;
  */
 public abstract class QuillScreen extends Screen {
 	private final int panelWidth;
-	private final QuillThemeData theme;
 	private final int panelHeight;
+	private final QuillThemeData theme;
+	private final QuillScreenLayout layout;
+	private final List<QuillShortcut> shortcuts = new ArrayList<>();
 	protected int panelX;
 	protected int panelY;
 
 	protected QuillScreen(Component title, int panelWidth, int panelHeight) {
-		this(title, panelWidth, panelHeight, QuillThemeData.DEFAULT);
+		this(title, panelWidth, panelHeight, QuillThemeData.DEFAULT, QuillScreenLayout.DEFAULT);
 	}
 
 	protected QuillScreen(
 			Component title, int panelWidth, int panelHeight, QuillThemeData theme
 	) {
+		this(title, panelWidth, panelHeight, theme, QuillScreenLayout.DEFAULT);
+	}
+
+	protected QuillScreen(
+			Component title,
+			int panelWidth,
+			int panelHeight,
+			QuillThemeData theme,
+			QuillScreenLayout layout
+	) {
 		super(title);
 		this.panelWidth = panelWidth;
 		this.panelHeight = panelHeight;
 		this.theme = theme;
+		this.layout = layout;
 	}
 
 	@Override
@@ -57,6 +73,27 @@ public abstract class QuillScreen extends Screen {
 		return panelHeight;
 	}
 
+	protected int headerHeight() {
+		return layout.headerHeight();
+	}
+
+	/** Override to move the header, title, subtitle or close button. */
+	protected QuillScreenLayout layout() {
+		return layout;
+	}
+
+	protected void registerShortcut(int key, Runnable action) {
+		registerShortcut(new QuillShortcut(key, action, false));
+	}
+
+	protected void registerShortcut(int key, Runnable action, boolean allowWhenFocused) {
+		registerShortcut(new QuillShortcut(key, action, allowWhenFocused));
+	}
+
+	protected void registerShortcut(QuillShortcut shortcut) {
+		shortcuts.add(shortcut);
+	}
+
 	@Override
 	public void extractBackground(
 			GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta
@@ -73,10 +110,31 @@ public abstract class QuillScreen extends Screen {
 	public void extractRenderState(
 			GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta
 	) {
-		QuillRender.header(graphics, panelX, panelY, panelWidth, 48, theme);
-		graphics.fill(panelX + 12, panelY + 14, panelX + 15, panelY + 34, theme.color(QuillThemeData.ColorRole.ACCENT));
-		QuillRender.text(graphics, font, title, panelX + 22, panelY + 14, theme.color(QuillThemeData.ColorRole.TITLE));
-		QuillRender.text(graphics, font, subtitle(), panelX + 22, panelY + 29, theme.color(QuillThemeData.ColorRole.TEXT_SOFT));
+		QuillScreenLayout current = layout();
+		QuillRender.header(graphics, panelX, panelY, panelWidth, current.headerHeight(), theme);
+		graphics.fill(
+				panelX + current.titleInsetX() - 10,
+				panelY + current.titleInsetY(),
+				panelX + current.titleInsetX() - 7,
+				panelY + current.titleInsetY() + 20,
+				theme.color(QuillThemeData.ColorRole.ACCENT)
+		);
+		QuillRender.text(
+				graphics,
+				font,
+				title,
+				panelX + current.titleInsetX(),
+				panelY + current.titleInsetY(),
+				theme.color(QuillThemeData.ColorRole.TITLE)
+		);
+		QuillRender.text(
+				graphics,
+				font,
+				subtitle(),
+				panelX + current.titleInsetX(),
+				panelY + current.subtitleInsetY(),
+				theme.color(QuillThemeData.ColorRole.TEXT_SOFT)
+		);
 
 		super.extractRenderState(graphics, mouseX, mouseY, delta);
 
@@ -94,12 +152,25 @@ public abstract class QuillScreen extends Screen {
 		}
 	}
 
+	@Override
+	public boolean keyPressed(KeyEvent event) {
+		boolean focused = getFocused() != null;
+		for (QuillShortcut shortcut : shortcuts) {
+			if (shortcut.key() == event.key() && (shortcut.allowWhenFocused() || !focused)) {
+				shortcut.action().run();
+				return true;
+			}
+		}
+		return super.keyPressed(event);
+	}
+
 	protected QuillButton closeButton(Runnable action) {
+		QuillScreenLayout current = layout();
 		QuillButton close = new QuillButton(
-				panelX + panelWidth - 30,
-				panelY + 8,
-				20,
-				20,
+				panelX + panelWidth - current.closeInsetRight() - current.closeSize(),
+				panelY + current.closeInsetTop(),
+				current.closeSize(),
+				current.closeSize(),
 				Component.literal("X"),
 				QuillButton.Variant.GHOST,
 				action,

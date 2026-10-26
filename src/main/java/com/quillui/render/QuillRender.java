@@ -51,6 +51,33 @@ public class QuillRender {
 		graphics.text(font, text, x, y, color, false);
 	}
 
+	public static void gradient(
+			GuiGraphicsExtractor graphics,
+			int x,
+			int y,
+			int width,
+			int height,
+			QuillGradient gradient
+	) {
+		if (gradient.direction() == QuillGradient.Direction.VERTICAL) {
+			graphics.fillGradient(x, y, x + width, y + height, gradient.startColor(), gradient.endColor());
+			return;
+		}
+
+		for (int column = 0; column < width; column++) {
+			int color = lerp(gradient.startColor(), gradient.endColor(), column / (float) Math.max(1, width - 1));
+			graphics.fill(x + column, y, x + column + 1, y + height, color);
+		}
+	}
+
+	private static int lerp(int from, int to, float amount) {
+		int a = (int) (((from >>> 24) & 0xFF) + ((((to >>> 24) & 0xFF) - ((from >>> 24) & 0xFF)) * amount));
+		int r = (int) (((from >>> 16) & 0xFF) + ((((to >>> 16) & 0xFF) - ((from >>> 16) & 0xFF)) * amount));
+		int g = (int) (((from >>> 8) & 0xFF) + ((((to >>> 8) & 0xFF) - ((from >>> 8) & 0xFF)) * amount));
+		int b = (int) ((from & 0xFF) + (((to & 0xFF) - (from & 0xFF)) * amount));
+		return (a << 24) | (r << 16) | (g << 8) | b;
+	}
+
 	public static void border(GuiGraphicsExtractor graphics, int x, int y, int width, int height, int color) {
 		graphics.fill(x, y, x + width, y + 1, color);
 		graphics.fill(x, y + height - 1, x + width, y + height, color);

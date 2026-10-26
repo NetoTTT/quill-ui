@@ -6,6 +6,7 @@ import java.util.function.Consumer;
 import java.util.function.IntConsumer;
 import com.quillui.theme.QuillThemeData;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvent;
 
 /**
  * Builds a row of equal-width tab buttons. The caller registers the buttons on the screen and
@@ -60,6 +61,11 @@ public final class QuillTabBar {
 			);
 			buttons.add(button);
 		}
+	}
+
+	public QuillTabBar clickSound(SoundEvent sound) {
+		buttons.forEach(button -> button.clickSound(sound));
+		return this;
 	}
 
 	public void addTo(Consumer<QuillButton> consumer) {
