@@ -91,12 +91,12 @@ public class QuillButton extends AbstractWidget {
 				case PRIMARY -> {
 					background = hovered ? theme.color(QuillThemeData.ColorRole.PRIMARY_BG_HOVER) : theme.color(QuillThemeData.ColorRole.PRIMARY_BG);
 					border = hovered ? theme.color(QuillThemeData.ColorRole.ACCENT_HOVER) : theme.color(QuillThemeData.ColorRole.ACCENT);
-					textColor = hovered ? theme.color(QuillThemeData.ColorRole.ACCENT_HOVER) : theme.color(QuillThemeData.ColorRole.ACCENT);
+					textColor = theme.color(QuillThemeData.ColorRole.ON_ACCENT);
 				}
 				case DANGER -> {
 					background = hovered ? theme.color(QuillThemeData.ColorRole.DANGER_BG) : theme.color(QuillThemeData.ColorRole.BUTTON_BG);
 					border = theme.color(QuillThemeData.ColorRole.DANGER);
-					textColor = theme.color(QuillThemeData.ColorRole.DANGER);
+					textColor = theme.color(QuillThemeData.ColorRole.ON_DANGER);
 				}
 				case GHOST -> {
 					background = hovered || isFocused() ? theme.color(QuillThemeData.ColorRole.BUTTON_BG) : 0;
@@ -126,7 +126,7 @@ public class QuillButton extends AbstractWidget {
 		}
 
 		if (active && isFocused()) {
-			QuillRender.border(graphics, x - 1, y - 1, width + 2, height + 2, theme.color(QuillThemeData.ColorRole.ACCENT));
+			QuillRender.border(graphics, x - 1, y - 1, width + 2, height + 2, theme.color(QuillThemeData.ColorRole.FOCUS_RING));
 		}
 
 		if (selected) {

@@ -15,6 +15,7 @@ public class QuillTheme {
 	public static final int SPACE_5 = QuillSpacing.SPACE_5;
 	public static final int SPACE_6 = QuillSpacing.SPACE_6;
 
+	public static final int SCREEN_BG = color(QuillThemeData.ColorRole.SCREEN_BG);
 	public static final int PANEL_BG = color(QuillThemeData.ColorRole.PANEL_BG);
 	public static final int PANEL_BORDER = color(QuillThemeData.ColorRole.PANEL_BORDER);
 	public static final int PANEL_SHADOW = color(QuillThemeData.ColorRole.PANEL_SHADOW);
@@ -31,6 +32,12 @@ public class QuillTheme {
 	public static final int ACCENT_HOVER = color(QuillThemeData.ColorRole.ACCENT_HOVER);
 	public static final int PRIMARY_BG = color(QuillThemeData.ColorRole.PRIMARY_BG);
 	public static final int PRIMARY_BG_HOVER = color(QuillThemeData.ColorRole.PRIMARY_BG_HOVER);
+	public static final int ON_ACCENT = color(QuillThemeData.ColorRole.ON_ACCENT);
+	public static final int ON_DANGER = color(QuillThemeData.ColorRole.ON_DANGER);
+	public static final int GHOST_BG = color(QuillThemeData.ColorRole.GHOST_BG);
+	public static final int GHOST_BORDER = color(QuillThemeData.ColorRole.GHOST_BORDER);
+	public static final int GHOST_TEXT = color(QuillThemeData.ColorRole.GHOST_TEXT);
+	public static final int FOCUS_RING = color(QuillThemeData.ColorRole.FOCUS_RING);
 
 	public static final int DANGER = color(QuillThemeData.ColorRole.DANGER);
 	public static final int DANGER_BG = color(QuillThemeData.ColorRole.DANGER_BG);

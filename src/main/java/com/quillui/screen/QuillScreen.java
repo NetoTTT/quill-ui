@@ -62,6 +62,10 @@ public abstract class QuillScreen extends Screen {
 			GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta
 	) {
 		super.extractBackground(graphics, mouseX, mouseY, delta);
+		int screenBackground = theme.color(QuillThemeData.ColorRole.SCREEN_BG);
+		if ((screenBackground >>> 24) != 0) {
+			graphics.fill(0, 0, width, height, screenBackground);
+		}
 		QuillRender.panel(graphics, panelX, panelY, panelWidth, panelHeight, theme);
 	}
 

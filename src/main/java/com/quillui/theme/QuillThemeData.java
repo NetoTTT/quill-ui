@@ -9,6 +9,7 @@ import java.util.Map;
  */
 public final class QuillThemeData {
 	public enum ColorRole {
+		SCREEN_BG,
 		PANEL_BG,
 		PANEL_BORDER,
 		PANEL_SHADOW,
@@ -23,6 +24,12 @@ public final class QuillThemeData {
 		ACCENT_HOVER,
 		PRIMARY_BG,
 		PRIMARY_BG_HOVER,
+		ON_ACCENT,
+		ON_DANGER,
+		GHOST_BG,
+		GHOST_BORDER,
+		GHOST_TEXT,
+		FOCUS_RING,
 		DANGER,
 		DANGER_BG,
 		SUCCESS,
@@ -84,6 +91,7 @@ public final class QuillThemeData {
 
 	private static EnumMap<ColorRole, Integer> defaultColors() {
 		EnumMap<ColorRole, Integer> colors = new EnumMap<>(ColorRole.class);
+		colors.put(ColorRole.SCREEN_BG, 0x00000000);
 		colors.put(ColorRole.PANEL_BG, 0xF00E1217);
 		colors.put(ColorRole.PANEL_BORDER, 0xFF2B3440);
 		colors.put(ColorRole.PANEL_SHADOW, 0x66000000);
@@ -98,6 +106,12 @@ public final class QuillThemeData {
 		colors.put(ColorRole.ACCENT_HOVER, 0xFFF3C55E);
 		colors.put(ColorRole.PRIMARY_BG, 0xFF241C11);
 		colors.put(ColorRole.PRIMARY_BG_HOVER, 0xFF2F2517);
+		colors.put(ColorRole.ON_ACCENT, 0xFFE0A93B);
+		colors.put(ColorRole.ON_DANGER, 0xFFE06A6A);
+		colors.put(ColorRole.GHOST_BG, 0x00000000);
+		colors.put(ColorRole.GHOST_BORDER, 0x00000000);
+		colors.put(ColorRole.GHOST_TEXT, 0xFF7F8B99);
+		colors.put(ColorRole.FOCUS_RING, 0xFFE0A93B);
 		colors.put(ColorRole.DANGER, 0xFFE06A6A);
 		colors.put(ColorRole.DANGER_BG, 0xFF352024);
 		colors.put(ColorRole.SUCCESS, 0xFF65D39A);
