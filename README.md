@@ -34,7 +34,8 @@ The jar is written to `build/libs/quill-ui-0.1.0.jar`.
 ## Install
 
 Quill UI is a separate client mod. Put its jar next to Fabric API in `mods/`. Mods that compile
-against it should declare it as a dependency; it has no LaborCraft dependency.
+against it should declare it as a dependency; it has no LaborCraft dependency. Dedicated servers do
+not need this jar; client screens that use it do.
 
 ## Quick start
 
@@ -75,6 +76,10 @@ public final class ExampleScreen extends QuillScreen {
 - A screen renders state; it never mutates game state. Every action goes through an
   `QuillActionSink` (or a project-specific C2S payload).
 - Keep cards and action rows on the same 4 px grid.
+
+## License
+
+GNU General Public License v3.0 or later. See [LICENSE](LICENSE).
 
 ## Documentation
 
