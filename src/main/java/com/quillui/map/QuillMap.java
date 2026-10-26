@@ -432,9 +432,7 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 					argb = grid ? GRID_COLOR : BG_DARK;
 				} else if (underground) {
 					argb = undergroundColumnColor(level, worldX, worldZ, temp);
-					if ((argb >>> 24) == 0) {
-						argb = grid ? GRID_COLOR : BG_DARK;
-					} else if (grid) {
+					if (grid && (argb >>> 24) != 0) {
 						argb = tintGrid(argb);
 					}
 				} else {
