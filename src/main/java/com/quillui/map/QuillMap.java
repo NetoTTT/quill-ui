@@ -74,6 +74,7 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 
 	private static final int BG_DARK = 0xFF0B1118;
 	private static final int GRID_COLOR = 0xFF1E2936;
+	private static final int GRID_OVERLAY = 0x661E2936;
 	private static final int NO_FLOOR = Integer.MIN_VALUE;
 	private static final int MAX_SELECTION = 32;
 
@@ -111,6 +112,10 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 	private double panStartMouseX;
 	private double panStartMouseY;
 	private int undergroundScanDepth = 48;
+	private int undergroundSampleStep = 2;
+	private long lastUpdateNanos;
+	private int lastScanCount;
+	private int lastCacheHits;
 	private Consumer<QuillMap> selectionListener;
 	private Predicate<Entity> entityFilter;
 	private Function<Entity, QuillMapMarker> entityMarkerFactory;
@@ -169,6 +174,15 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 		undergroundScanDepth = Math.max(4, Math.min(256, depth));
 		floorCache.clear();
 		dirty = true;
+	}
+
+	public void setUndergroundSampleStep(int step) {
+		undergroundSampleStep = Math.max(1, Math.min(4, step));
+		dirty = true;
+	}
+
+	public long lastUpdateNanos() {
+		return lastUpdateNanos;
 	}
 
 	public void resize(int width, int height) {
@@ -352,8 +366,8 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 				: Minecraft.getInstance().level.getGameTime();
 		boolean underground = undergroundActive();
 		int pivot = effectivePivotY();
-		long refreshTicks = underground ? 200L : 100L;
-		boolean pivotMoved = underground && Math.abs(pivot - pivotY) >= 2;
+		long refreshTicks = underground ? 400L : 100L;
+		boolean pivotMoved = underground && Math.abs(pivot - pivotY) >= 8;
 
 		if (dirty || texture == null || underground != lastUnderground || pivotMoved
 				|| currentTick - lastUpdateTick >= refreshTicks) {
@@ -367,6 +381,9 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 		graphics.fill(getX(), getY(), getX() + width, getY() + height, BG_DARK);
 		graphics.enableScissor(getX(), getY(), getX() + width, getY() + height);
 		graphics.blit(textureId, getX(), getY(), getX() + width, getY() + height, 0.0F, 1.0F, 0.0F, 1.0F);
+		if (underground) {
+			drawGrid(graphics);
+		}
 		drawZones(graphics);
 		if (showRadiusLimit) {
 			drawRadiusLimit(graphics);
@@ -383,6 +400,9 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 	}
 
 	private void updateMapTexture(boolean underground) {
+		long updateStart = System.nanoTime();
+		lastScanCount = 0;
+		lastCacheHits = 0;
 		if (texture == null) {
 			texture = new DynamicTexture("quillui_map", width, height, false);
 			Minecraft.getInstance().getTextureManager().register(textureId, texture);
@@ -406,22 +426,24 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 		BlockPos.MutableBlockPos temp = new BlockPos.MutableBlockPos();
 		BlockPos.MutableBlockPos north = new BlockPos.MutableBlockPos();
 
+		int sampleStep = underground && pixelsPerBlock == 1 ? undergroundSampleStep : 1;
+		int samplePixels = pixelsPerBlock * sampleStep;
 		int firstDx = (int) Math.floor((-halfW) / (double) pixelsPerBlock) - 1;
 		int lastDx = (int) Math.ceil((width - halfW) / (double) pixelsPerBlock) + 1;
 		int firstDz = (int) Math.floor((-halfH) / (double) pixelsPerBlock) - 1;
 		int lastDz = (int) Math.ceil((height - halfH) / (double) pixelsPerBlock) + 1;
 
-		for (int dx = firstDx; dx <= lastDx; dx++) {
+		for (int dx = firstDx; dx <= lastDx; dx += sampleStep) {
 			int worldX = center.getX() + dx;
 			int imageX = halfW + dx * pixelsPerBlock;
-			if (imageX + pixelsPerBlock <= 0 || imageX >= width) {
+			if (imageX + samplePixels <= 0 || imageX >= width) {
 				continue;
 			}
 
-			for (int dz = firstDz; dz <= lastDz; dz++) {
+			for (int dz = firstDz; dz <= lastDz; dz += sampleStep) {
 				int worldZ = center.getZ() + dz;
 				int imageY = halfH + dz * pixelsPerBlock;
-				if (imageY + pixelsPerBlock <= 0 || imageY >= height) {
+				if (imageY + samplePixels <= 0 || imageY >= height) {
 					continue;
 				}
 
@@ -432,9 +454,6 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 					argb = grid ? GRID_COLOR : BG_DARK;
 				} else if (underground) {
 					argb = undergroundColumnColor(level, worldX, worldZ, temp);
-					if (grid && (argb >>> 24) != 0) {
-						argb = tintGrid(argb);
-					}
 				} else {
 					int surfaceY = level.getHeightmapPos(
 							Heightmap.Types.MOTION_BLOCKING,
@@ -465,8 +484,8 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 
 				int drawX = Math.max(0, imageX);
 				int drawY = Math.max(0, imageY);
-				int drawW = Math.min(width - drawX, pixelsPerBlock - (drawX - imageX));
-				int drawH = Math.min(height - drawY, pixelsPerBlock - (drawY - imageY));
+				int drawW = Math.min(width - drawX, samplePixels - (drawX - imageX));
+				int drawH = Math.min(height - drawY, samplePixels - (drawY - imageY));
 				if (drawW > 0 && drawH > 0) {
 					if (drawW == 1 && drawH == 1) {
 						image.setPixel(drawX, drawY, argb);
@@ -479,6 +498,12 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 
 		texture.upload();
 		dirty = false;
+		lastUpdateNanos = System.nanoTime() - updateStart;
+		if (underground) {
+			System.out.printf("[QuillMap] underground %dx%d zoom=%d step=%d: %.1f ms, scans=%d, cacheHits=%d%n",
+					width, height, pixelsPerBlock, undergroundSampleStep, lastUpdateNanos / 1_000_000.0D,
+					lastScanCount, lastCacheHits);
+		}
 	}
 
 	private static int tintGrid(int argb) {
@@ -514,9 +539,11 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 		long key = ((long) x << 32) ^ (z & 0xFFFFFFFFL) ^ ((long) pivot << 16);
 		Integer cached = floorCache.get(key);
 		if (cached != null) {
+			lastCacheHits++;
 			return cached;
 		}
 
+		lastScanCount++;
 		int result = scanFloor(level, x, z, pivot, pos);
 		floorCache.put(key, result);
 		return result;
@@ -591,6 +618,21 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 					? Component.translatable("quillui.map.layer.auto_underground", pivot)
 					: Component.translatable("quillui.map.layer.auto_surface");
 		};
+	}
+
+	private void drawGrid(GuiGraphicsExtractor graphics) {
+		int minX = screenToBlockX(getX());
+		int maxX = screenToBlockX(getX() + width);
+		int minZ = screenToBlockZ(getY());
+		int maxZ = screenToBlockZ(getY() + height);
+		for (int x = Math.floorDiv(minX, 16) * 16; x <= maxX; x += 16) {
+			int screenX = blockToScreenX(x);
+			graphics.fill(screenX, getY(), screenX + 1, getY() + height, GRID_OVERLAY);
+		}
+		for (int z = Math.floorDiv(minZ, 16) * 16; z <= maxZ; z += 16) {
+			int screenZ = blockToScreenZ(z);
+			graphics.fill(getX(), screenZ, getX() + width, screenZ + 1, GRID_OVERLAY);
+		}
 	}
 
 	private void drawZones(GuiGraphicsExtractor graphics) {
