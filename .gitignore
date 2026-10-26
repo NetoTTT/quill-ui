@@ -7,7 +7,4 @@ out/
 *.log
 tools/pixelart/
 lib/
-website/node_modules/
-website/dist/
-website/.vite/
 .playwright-mcp/

@@ -95,7 +95,7 @@ GNU Lesser General Public License v3.0 or later. See [LICENSE](LICENSE).
 
 ## Documentation
 
-- [Documentation website](https://netottt.github.io/quill-ui/) (source in [`website/`](website))
+- [Documentation website](https://netottt.github.io/quill-ui-docs/) ([source](https://github.com/NetoTTT/quill-ui-docs))
 - [Getting started](docs/01-GETTING-STARTED.md)
 - [Theme tokens](docs/02-THEME.md)
 - [Layout](docs/03-LAYOUT.md)
