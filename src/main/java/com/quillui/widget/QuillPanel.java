@@ -85,8 +85,8 @@ public final class QuillPanel {
 		place(right, row.x() + leftWidth + gap, row.y(), rightWidth, right.getHeight());
 	}
 
-	public void addTo(Consumer<AbstractWidget> registrar) {
-		children.forEach(registrar);
+	public void addTo(Consumer<AbstractWidget> consumer) {
+		children.forEach(consumer);
 	}
 
 	public void render(GuiGraphicsExtractor graphics, Font font) {

@@ -62,8 +62,8 @@ public final class QuillTabBar {
 		}
 	}
 
-	public void addTo(Consumer<QuillButton> registrar) {
-		buttons.forEach(registrar);
+	public void addTo(Consumer<QuillButton> consumer) {
+		buttons.forEach(consumer);
 	}
 
 	public void select(int index) {
