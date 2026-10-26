@@ -5,6 +5,7 @@ import com.quillui.theme.QuillThemeData;
 import com.quillui.render.QuillRender;
 import com.mojang.blaze3d.platform.NativeImage;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -24,8 +25,10 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -72,8 +75,23 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 		}
 	}
 
+	private record TileKey(ResourceKey<Level> dimension, int chunkX, int chunkZ, int pivot, boolean underground) {
+	}
+
+	private static final class MapTile {
+		private final int[] colors;
+		private final long generatedTick;
+
+		private MapTile(int[] colors, long generatedTick) {
+			this.colors = colors;
+			this.generatedTick = generatedTick;
+		}
+	}
+
+	private record ChunkCoord(int x, int z, int distance) {
+	}
+
 	private static final int BG_DARK = 0xFF0B1118;
-	private static final int GRID_COLOR = 0xFF1E2936;
 	private static final int GRID_OVERLAY = 0x661E2936;
 	private static final int NO_FLOOR = Integer.MIN_VALUE;
 	private static final int MAX_SELECTION = 32;
@@ -101,10 +119,10 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 	private InteractionMode interactionMode = InteractionMode.SELECT;
 	private MouseBindings mouseBindings = MouseBindings.DEFAULT;
 	private boolean showRadiusLimit;
-	private final Map<Long, Integer> floorCache = new LinkedHashMap<>(256, 0.75F, true) {
+	private final Map<TileKey, MapTile> tileCache = new LinkedHashMap<>(512, 0.75F, true) {
 		@Override
-		protected boolean removeEldestEntry(Map.Entry<Long, Integer> eldest) {
-			return size() > 200_000;
+		protected boolean removeEldestEntry(Map.Entry<TileKey, MapTile> eldest) {
+			return size() > 4096;
 		}
 	};
 	private boolean panning;
@@ -112,10 +130,12 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 	private double panStartMouseX;
 	private double panStartMouseY;
 	private int undergroundScanDepth = 48;
-	private int undergroundSampleStep = 2;
 	private long lastUpdateNanos;
-	private int lastScanCount;
-	private int lastCacheHits;
+	private int lastTilesGenerated;
+	private int lastTileHits;
+	private boolean tilesPending;
+	private long tileBudgetNanos = 4_000_000L;
+	private long tileRefreshTicks = 600L;
 	private Consumer<QuillMap> selectionListener;
 	private Predicate<Entity> entityFilter;
 	private Function<Entity, QuillMapMarker> entityMarkerFactory;
@@ -172,12 +192,7 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 
 	public void setUndergroundScanDepth(int depth) {
 		undergroundScanDepth = Math.max(4, Math.min(256, depth));
-		floorCache.clear();
-		dirty = true;
-	}
-
-	public void setUndergroundSampleStep(int step) {
-		undergroundSampleStep = Math.max(1, Math.min(4, step));
+		tileCache.clear();
 		dirty = true;
 	}
 
@@ -348,6 +363,8 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 
 	@Override
 	public void close() {
+		tileCache.clear();
+		tilesPending = false;
 		if (texture != null) {
 			try {
 				Minecraft.getInstance().getTextureManager().release(textureId);
@@ -381,9 +398,7 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 		graphics.fill(getX(), getY(), getX() + width, getY() + height, BG_DARK);
 		graphics.enableScissor(getX(), getY(), getX() + width, getY() + height);
 		graphics.blit(textureId, getX(), getY(), getX() + width, getY() + height, 0.0F, 1.0F, 0.0F, 1.0F);
-		if (underground) {
-			drawGrid(graphics);
-		}
+		drawGrid(graphics);
 		drawZones(graphics);
 		if (showRadiusLimit) {
 			drawRadiusLimit(graphics);
@@ -401,13 +416,9 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 
 	private void updateMapTexture(boolean underground) {
 		long updateStart = System.nanoTime();
-		lastScanCount = 0;
-		lastCacheHits = 0;
-		if (texture == null) {
-			texture = new DynamicTexture("quillui_map", width, height, false);
-			Minecraft.getInstance().getTextureManager().register(textureId, texture);
-		}
-
+		lastTilesGenerated = 0;
+		lastTileHits = 0;
+		ensureTexture();
 		NativeImage image = texture.getPixels();
 		if (image == null) {
 			return;
@@ -418,106 +429,202 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 			image.fillRect(0, 0, width, height, BG_DARK);
 			texture.upload();
 			dirty = false;
+			tilesPending = false;
+			lastUpdateNanos = System.nanoTime() - updateStart;
 			return;
 		}
 
-		int halfW = width / 2;
-		int halfH = height / 2;
-		BlockPos.MutableBlockPos temp = new BlockPos.MutableBlockPos();
-		BlockPos.MutableBlockPos north = new BlockPos.MutableBlockPos();
-
-		int sampleStep = underground && pixelsPerBlock == 1 ? undergroundSampleStep : 1;
-		int samplePixels = pixelsPerBlock * sampleStep;
-		int firstDx = (int) Math.floor((-halfW) / (double) pixelsPerBlock) - 1;
-		int lastDx = (int) Math.ceil((width - halfW) / (double) pixelsPerBlock) + 1;
-		int firstDz = (int) Math.floor((-halfH) / (double) pixelsPerBlock) - 1;
-		int lastDz = (int) Math.ceil((height - halfH) / (double) pixelsPerBlock) + 1;
-
-		for (int dx = firstDx; dx <= lastDx; dx += sampleStep) {
-			int worldX = center.getX() + dx;
-			int imageX = halfW + dx * pixelsPerBlock;
-			if (imageX + samplePixels <= 0 || imageX >= width) {
-				continue;
-			}
-
-			for (int dz = firstDz; dz <= lastDz; dz += sampleStep) {
-				int worldZ = center.getZ() + dz;
-				int imageY = halfH + dz * pixelsPerBlock;
-				if (imageY + samplePixels <= 0 || imageY >= height) {
-					continue;
-				}
-
-				int argb;
-				boolean loaded = level.hasChunkAt(worldX, worldZ);
-				boolean grid = Math.floorMod(worldX, 16) == 0 || Math.floorMod(worldZ, 16) == 0;
-				if (!loaded) {
-					argb = grid ? GRID_COLOR : BG_DARK;
-				} else if (underground) {
-					argb = undergroundColumnColor(level, worldX, worldZ, temp);
-				} else {
-					int surfaceY = level.getHeightmapPos(
-							Heightmap.Types.MOTION_BLOCKING,
-							temp.set(worldX, center.getY(), worldZ)
-					).getY() - 1;
-					BlockState state = level.getBlockState(temp.set(worldX, surfaceY, worldZ));
-					MapColor mapColor = state.getMapColor(level, temp);
-					if (mapColor == MapColor.NONE) {
-						argb = 0xFF18202A;
-					} else {
-						int northY = surfaceY;
-						if (level.hasChunkAt(worldX, worldZ - 1)) {
-							northY = level.getHeightmapPos(
-									Heightmap.Types.MOTION_BLOCKING,
-									north.set(worldX, center.getY(), worldZ - 1)
-							).getY() - 1;
-						}
-						int dy = surfaceY - northY;
-						MapColor.Brightness brightness = dy > 0
-								? MapColor.Brightness.HIGH
-								: (dy < 0 ? MapColor.Brightness.LOW : MapColor.Brightness.NORMAL);
-						argb = mapColor.calculateARGBColor(brightness);
-					}
-					if (grid) {
-						argb = tintGrid(argb);
-					}
-				}
-
-				int drawX = Math.max(0, imageX);
-				int drawY = Math.max(0, imageY);
-				int drawW = Math.min(width - drawX, samplePixels - (drawX - imageX));
-				int drawH = Math.min(height - drawY, samplePixels - (drawY - imageY));
-				if (drawW > 0 && drawH > 0) {
-					if (drawW == 1 && drawH == 1) {
-						image.setPixel(drawX, drawY, argb);
-					} else {
-						image.fillRect(drawX, drawY, drawW, drawH, argb);
-					}
-				}
-			}
-		}
-
+		image.fillRect(0, 0, width, height, BG_DARK);
+		ensureVisibleTiles(level, underground, level.getGameTime(), updateStart);
+		composeTiles(level, underground, image);
 		texture.upload();
-		dirty = false;
+		dirty = tilesPending;
 		lastUpdateNanos = System.nanoTime() - updateStart;
-		if (underground) {
-			System.out.printf("[QuillMap] underground %dx%d zoom=%d step=%d: %.1f ms, scans=%d, cacheHits=%d%n",
-					width, height, pixelsPerBlock, undergroundSampleStep, lastUpdateNanos / 1_000_000.0D,
-					lastScanCount, lastCacheHits);
+		if (underground && !tilesPending) {
+			System.out.printf("[QuillMap] underground %dx%d zoom=%d: %.1f ms, generated=%d, hits=%d, pending=%s%n",
+					width, height, pixelsPerBlock, lastUpdateNanos / 1_000_000.0D,
+					lastTilesGenerated, lastTileHits, tilesPending);
 		}
 	}
 
-	private static int tintGrid(int argb) {
-		int a = (argb >> 24) & 0xFF;
-		int r = Math.min(255, ((argb >> 16) & 0xFF) + 38);
-		int g = Math.min(255, ((argb >> 8) & 0xFF) + 38);
-		int b = Math.min(255, (argb & 0xFF) + 38);
-		return (a << 24) | (r << 16) | (g << 8) | b;
+	private void ensureTexture() {
+		if (texture != null) {
+			NativeImage pixels = texture.getPixels();
+			if (pixels != null && pixels.getWidth() == width && pixels.getHeight() == height) {
+				return;
+			}
+			try {
+				Minecraft.getInstance().getTextureManager().release(textureId);
+			} catch (Exception ignored) {
+			}
+			texture = null;
+		}
+		texture = new DynamicTexture("quillui_map", width, height, false);
+		Minecraft.getInstance().getTextureManager().register(textureId, texture);
+	}
+
+	private void ensureVisibleTiles(
+			ClientLevel level, boolean underground, long tick, long updateStart
+	) {
+		List<ChunkCoord> chunks = visibleChunks();
+		long deadline = updateStart + tileBudgetNanos;
+		ResourceKey<Level> dimension = level.dimension();
+		boolean pending = false;
+
+		for (ChunkCoord chunk : chunks) {
+			TileKey key = new TileKey(dimension, chunk.x(), chunk.z(), underground ? pivotY : 0, underground);
+			MapTile existing = tileCache.get(key);
+			if (existing != null && tick - existing.generatedTick <= tileRefreshTicks) {
+				lastTileHits++;
+				continue;
+			}
+			if (!level.hasChunkAt((chunk.x() << 4) + 8, (chunk.z() << 4) + 8)) {
+				continue;
+			}
+			if (lastTilesGenerated > 0 && System.nanoTime() >= deadline) {
+				pending = true;
+				continue;
+			}
+
+			MapTile built = buildTile(level, chunk.x(), chunk.z(), underground, tick);
+			if (built == null) {
+				pending = true;
+			} else {
+				tileCache.put(key, built);
+				lastTilesGenerated++;
+			}
+		}
+		tilesPending = pending;
+	}
+
+	private List<ChunkCoord> visibleChunks() {
+		int minChunkX = Math.floorDiv(screenToBlockX(getX()), 16);
+		int maxChunkX = Math.floorDiv(screenToBlockX(getX() + width - 1), 16);
+		int minChunkZ = Math.floorDiv(screenToBlockZ(getY()), 16);
+		int maxChunkZ = Math.floorDiv(screenToBlockZ(getY() + height - 1), 16);
+		int centerChunkX = Math.floorDiv(center.getX(), 16);
+		int centerChunkZ = Math.floorDiv(center.getZ(), 16);
+		List<ChunkCoord> chunks = new ArrayList<>();
+		for (int chunkX = minChunkX; chunkX <= maxChunkX; chunkX++) {
+			for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++) {
+				int distance = Math.abs(chunkX - centerChunkX) + Math.abs(chunkZ - centerChunkZ);
+				chunks.add(new ChunkCoord(chunkX, chunkZ, distance));
+			}
+		}
+		chunks.sort(Comparator.comparingInt(ChunkCoord::distance));
+		return chunks;
+	}
+
+	private MapTile buildTile(
+			ClientLevel level, int chunkX, int chunkZ, boolean underground, long tick
+	) {
+		int baseX = chunkX << 4;
+		int baseZ = chunkZ << 4;
+		if (!level.hasChunkAt(baseX + 8, baseZ + 8)) {
+			return null;
+		}
+		int[] colors = new int[256];
+		BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+		BlockPos.MutableBlockPos north = new BlockPos.MutableBlockPos();
+		for (int localX = 0; localX < 16; localX++) {
+			int worldX = baseX + localX;
+			for (int localZ = 0; localZ < 16; localZ++) {
+				int worldZ = baseZ + localZ;
+				if (!level.hasChunkAt(worldX, worldZ)) {
+					continue;
+				}
+				int color = underground
+						? undergroundColumnColor(level, worldX, worldZ, pos)
+						: surfaceColumnColor(level, worldX, worldZ, pos, north);
+				colors[(localZ << 4) | localX] = color;
+			}
+		}
+		return new MapTile(colors, tick);
+	}
+
+	private int surfaceColumnColor(
+			ClientLevel level, int worldX, int worldZ,
+			BlockPos.MutableBlockPos pos, BlockPos.MutableBlockPos north
+	) {
+		int surfaceY = level.getHeightmapPos(
+				Heightmap.Types.MOTION_BLOCKING,
+				pos.set(worldX, center.getY(), worldZ)
+		).getY() - 1;
+		BlockState state = level.getBlockState(pos.set(worldX, surfaceY, worldZ));
+		MapColor mapColor = state.getMapColor(level, pos);
+		if (mapColor == MapColor.NONE) {
+			return 0xFF18202A;
+		}
+		int northY = surfaceY;
+		if (level.hasChunkAt(worldX, worldZ - 1)) {
+			northY = level.getHeightmapPos(
+					Heightmap.Types.MOTION_BLOCKING,
+					north.set(worldX, center.getY(), worldZ - 1)
+			).getY() - 1;
+		}
+		int dy = surfaceY - northY;
+		MapColor.Brightness brightness = dy > 0
+				? MapColor.Brightness.HIGH
+				: (dy < 0 ? MapColor.Brightness.LOW : MapColor.Brightness.NORMAL);
+		return mapColor.calculateARGBColor(brightness);
+	}
+
+	private void composeTiles(ClientLevel level, boolean underground, NativeImage image) {
+		ResourceKey<Level> dimension = level.dimension();
+		int minChunkX = Math.floorDiv(screenToBlockX(getX()), 16);
+		int maxChunkX = Math.floorDiv(screenToBlockX(getX() + width - 1), 16);
+		int minChunkZ = Math.floorDiv(screenToBlockZ(getY()), 16);
+		int maxChunkZ = Math.floorDiv(screenToBlockZ(getY() + height - 1), 16);
+
+		for (int chunkX = minChunkX; chunkX <= maxChunkX; chunkX++) {
+			for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++) {
+				TileKey key = new TileKey(dimension, chunkX, chunkZ, underground ? pivotY : 0, underground);
+				MapTile tile = tileCache.get(key);
+				if (tile == null) {
+					continue;
+				}
+				for (int localX = 0; localX < 16; localX++) {
+					int worldX = (chunkX << 4) + localX;
+					int screenX = blockToScreenX(worldX);
+					if (screenX + pixelsPerBlock <= getX() || screenX >= getX() + width) {
+						continue;
+					}
+					for (int localZ = 0; localZ < 16; localZ++) {
+						int worldZ = (chunkZ << 4) + localZ;
+						int screenY = blockToScreenZ(worldZ);
+						if (screenY + pixelsPerBlock <= getY() || screenY >= getY() + height) {
+							continue;
+						}
+						int color = tile.colors[(localZ << 4) | localX];
+						if (color == 0) {
+							color = BG_DARK;
+						}
+						fillBlock(image, screenX - getX(), screenY - getY(), color);
+					}
+				}
+			}
+		}
+	}
+
+	private void fillBlock(NativeImage image, int imageX, int imageY, int color) {
+		int x0 = Math.max(0, imageX);
+		int y0 = Math.max(0, imageY);
+		int x1 = Math.min(width, imageX + pixelsPerBlock);
+		int y1 = Math.min(height, imageY + pixelsPerBlock);
+		if (x1 <= x0 || y1 <= y0) {
+			return;
+		}
+		if (x1 - x0 == 1 && y1 - y0 == 1) {
+			image.setPixel(x0, y0, color);
+		} else {
+			image.fillRect(x0, y0, x1 - x0, y1 - y0, color);
+		}
 	}
 
 	private int undergroundColumnColor(
 			ClientLevel level, int x, int z, BlockPos.MutableBlockPos pos
 	) {
-		int floorY = findFloor(level, x, z, pivotY, pos);
+		int floorY = scanFloor(level, x, z, pivotY, pos);
 		if (floorY == NO_FLOOR) {
 			return 0;
 		}
@@ -531,22 +638,6 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 				? MapColor.Brightness.NORMAL
 				: (depth <= 8 ? MapColor.Brightness.LOW : MapColor.Brightness.LOWEST);
 		return mapColor.calculateARGBColor(brightness);
-	}
-
-	private int findFloor(
-			ClientLevel level, int x, int z, int pivot, BlockPos.MutableBlockPos pos
-	) {
-		long key = ((long) x << 32) ^ (z & 0xFFFFFFFFL) ^ ((long) pivot << 16);
-		Integer cached = floorCache.get(key);
-		if (cached != null) {
-			lastCacheHits++;
-			return cached;
-		}
-
-		lastScanCount++;
-		int result = scanFloor(level, x, z, pivot, pos);
-		floorCache.put(key, result);
-		return result;
 	}
 
 	private int scanFloor(
