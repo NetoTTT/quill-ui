@@ -2,8 +2,8 @@
 
 ## Current focus — UI foundation
 
-- `QuillCard` / `QuillSection` for reusable content grouping.
-- Form controls: text field, toggle, slider and dropdown.
+- `QuillCard` and `QuillToggle` added in `0.1.0-alpha.3`.
+- Form controls: text field, slider and dropdown.
 - `QuillToast` / notification and empty-state components.
 - Responsive helpers and a scroll container.
 - Migrate LaborCraft's Employee, Station, Profile, Hiring and Config screens to the framework.

@@ -10,7 +10,7 @@ independent from any economy, jobs or gameplay code, so other mods can use it.
 
 ## Status
 
-`0.1.0-alpha.2` — first usable foundation. The API is intentionally small and may evolve before a
+`0.1.0-alpha.3` — first usable foundation. The API is intentionally small and may evolve before a
 stable `1.0.0`. This build is published on the **alpha** channel, not as a stable release.
 The public API surface and compatibility policy are documented in
 [docs/API.md](docs/API.md) and [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md).
@@ -22,7 +22,7 @@ The public API surface and compatibility policy are documented in
 | Theme | `QuillTheme` |
 | Drawing | `QuillRender` |
 | Layout | `QuillRect`, `QuillInsets`, `QuillColumn`, `QuillRow`, `QuillGrid` |
-| Widgets | `QuillButton`, `QuillScrollList`, `QuillTabBar` |
+| Widgets | `QuillButton`, `QuillScrollList`, `QuillTabBar`, `QuillCard`, `QuillToggle` |
 | Screen | `QuillScreen` |
 | Tooltips | `QuillTooltips` |
 | Backend boundary | `QuillActionSink`, `QuillCommandSink` |
@@ -33,7 +33,7 @@ The public API surface and compatibility policy are documented in
 gradlew.bat build --console=plain --no-daemon
 ```
 
-The jar is written to `build/libs/quill-ui-0.1.0-alpha.2.jar`.
+The jar is written to `build/libs/quill-ui-0.1.0-alpha.3.jar`.
 
 ## Install
 

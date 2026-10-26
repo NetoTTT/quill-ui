@@ -28,6 +28,31 @@ addRenderableWidget(list);
 
 Draw rows using the coordinates passed to the row renderer; do not assume absolute positions.
 
+## QuillCard
+
+`QuillCard` is a non-interactive render/layout helper: a bordered surface with an optional compact
+heading and a `content()` rectangle for child controls.
+
+```java
+QuillCard card = new QuillCard(x, y, width, 96, Component.literal("Status"));
+card.render(graphics, font);
+QuillRect body = card.content();
+```
+
+## QuillToggle
+
+`QuillToggle` is a compact labelled on/off control. It changes its local visual state and calls the
+consumer; the screen still sends the real action through its backend.
+
+```java
+addRenderableWidget(new QuillToggle(
+        x, y, 180, 20,
+        Component.literal("Enabled"),
+        currentValue,
+        value -> QuillCommandSink.get().execute("example set enabled " + value)
+));
+```
+
 ## QuillTabBar
 
 `QuillTabBar` creates equal-width tab buttons and keeps the selected visual:
