@@ -23,6 +23,20 @@ Classes outside these packages are implementation details. There are no such pac
 `API_LEVEL` is `2` after the package move and the introduction of `QuillThemeData`. The old root
 classes are gone; existing static `QuillTheme` fields now resolve to the default theme for migration.
 
+## Target indicator
+
+`QuillTargetIndicator` uses theme roles by default; raw ARGB values are only low-level overrides.
+
+```java
+QuillTargetIndicator indicator = new QuillTargetIndicator(theme, QuillThemeData.ColorRole.ACCENT)
+        .setTarget(targetPos)
+        .setBackgroundColor(QuillThemeData.ColorRole.SURFACE_HEADER);
+```
+
+Register `QuillTargetIndicatorHud` with Fabric's HUD registry, or call `indicator.render(graphics)`
+from an existing HUD element. The colour follows the active theme unless `setColor(int)` is used
+explicitly.
+
 ## Binary level
 
 `QuillApi.API_LEVEL` is the binary API generation:

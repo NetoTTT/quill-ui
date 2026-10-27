@@ -1,6 +1,8 @@
 package com.quillui.hud;
 
 import com.quillui.render.QuillRender;
+import com.quillui.theme.QuillColors;
+import com.quillui.theme.QuillThemeData;
 import java.util.function.Function;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -22,11 +24,12 @@ public final class QuillTargetIndicator {
 		void render(GuiGraphicsExtractor graphics, int x, int y, int size);
 	}
 
-	private static final int DEFAULT_BACKGROUND = 0xCC101820;
-
 	private Vec3 target;
-	private int color = 0xFFFFC65A;
-	private int backgroundColor = DEFAULT_BACKGROUND;
+	private QuillThemeData theme = QuillThemeData.DEFAULT;
+	private QuillThemeData.ColorRole colorRole = QuillThemeData.ColorRole.ACCENT;
+	private QuillThemeData.ColorRole backgroundColorRole = QuillThemeData.ColorRole.SURFACE_HEADER;
+	private Integer customColor;
+	private Integer customBackground;
 	private IconRenderer iconRenderer;
 	private Function<Double, Component> distanceFormatter = distance ->
 			Component.literal(Math.round(distance) + " m");
@@ -41,8 +44,24 @@ public final class QuillTargetIndicator {
 	private int badgeSize = 11;
 	private double onScreenThreshold = 0.98D;
 
+	public QuillTargetIndicator() {
+	}
+
+	public QuillTargetIndicator(QuillThemeData theme) {
+		this(theme, QuillThemeData.ColorRole.ACCENT);
+	}
+
+	public QuillTargetIndicator(QuillThemeData.ColorRole colorRole) {
+		this(QuillThemeData.DEFAULT, colorRole);
+	}
+
+	public QuillTargetIndicator(QuillThemeData theme, QuillThemeData.ColorRole colorRole) {
+		this.theme = theme == null ? QuillThemeData.DEFAULT : theme;
+		this.colorRole = colorRole == null ? QuillThemeData.ColorRole.ACCENT : colorRole;
+	}
+
 	public QuillTargetIndicator(int color) {
-		this.color = color;
+		this.customColor = color;
 	}
 
 	public QuillTargetIndicator setTarget(Vec3 target) {
@@ -64,13 +83,32 @@ public final class QuillTargetIndicator {
 		return target;
 	}
 
+	public QuillTargetIndicator setColor(QuillThemeData.ColorRole colorRole) {
+		this.colorRole = colorRole == null ? QuillThemeData.ColorRole.ACCENT : colorRole;
+		this.customColor = null;
+		return this;
+	}
+
+	public QuillTargetIndicator setColor(QuillThemeData theme, QuillThemeData.ColorRole colorRole) {
+		this.theme = theme == null ? QuillThemeData.DEFAULT : theme;
+		return setColor(colorRole);
+	}
+
 	public QuillTargetIndicator setColor(int color) {
-		this.color = color;
+		this.customColor = color;
+		return this;
+	}
+
+	public QuillTargetIndicator setBackgroundColor(QuillThemeData.ColorRole backgroundColorRole) {
+		this.backgroundColorRole = backgroundColorRole == null
+				? QuillThemeData.ColorRole.SURFACE_HEADER
+				: backgroundColorRole;
+		this.customBackground = null;
 		return this;
 	}
 
 	public QuillTargetIndicator setBackgroundColor(int backgroundColor) {
-		this.backgroundColor = backgroundColor;
+		this.customBackground = backgroundColor;
 		return this;
 	}
 
@@ -194,6 +232,10 @@ public final class QuillTargetIndicator {
 
 		int cx = (int) px;
 		int cy = (int) py;
+		int color = customColor != null ? customColor : theme.color(colorRole);
+		int backgroundColor = customBackground != null
+				? customBackground
+				: QuillColors.withAlpha(theme.color(backgroundColorRole), 0xCC);
 		graphics.fill(cx - badgeSize, cy - badgeSize, cx + badgeSize, cy + badgeSize, backgroundColor);
 		QuillRender.border(graphics, cx - badgeSize, cy - badgeSize, badgeSize * 2, badgeSize * 2, color);
 
