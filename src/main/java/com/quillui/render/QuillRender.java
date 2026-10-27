@@ -78,6 +78,49 @@ public class QuillRender {
 		return (a << 24) | (r << 16) | (g << 8) | b;
 	}
 
+	public static void line(
+			GuiGraphicsExtractor graphics,
+			int startX, int startY, int endX, int endY, int color
+	) {
+		int dx = Math.abs(endX - startX);
+		int dy = -Math.abs(endY - startY);
+		int stepX = startX < endX ? 1 : -1;
+		int stepY = startY < endY ? 1 : -1;
+		int error = dx + dy;
+		int x = startX;
+		int y = startY;
+		while (true) {
+			graphics.fill(x, y, x + 1, y + 1, color);
+			if (x == endX && y == endY) {
+				break;
+			}
+			int doubledError = error * 2;
+			if (doubledError >= dy) {
+				error += dy;
+				x += stepX;
+			}
+			if (doubledError <= dx) {
+				error += dx;
+				y += stepY;
+			}
+		}
+	}
+
+	public static void circle(
+			GuiGraphicsExtractor graphics, int centerX, int centerY, int radius, int color
+	) {
+		for (int offsetY = -radius; offsetY <= radius; offsetY++) {
+			int halfWidth = (int) Math.floor(Math.sqrt(radius * radius - offsetY * offsetY));
+			graphics.fill(
+					centerX - halfWidth,
+					centerY + offsetY,
+					centerX + halfWidth + 1,
+					centerY + offsetY + 1,
+					color
+			);
+		}
+	}
+
 	public static void border(GuiGraphicsExtractor graphics, int x, int y, int width, int height, int color) {
 		graphics.fill(x, y, x + width, y + 1, color);
 		graphics.fill(x, y + height - 1, x + width, y + height, color);

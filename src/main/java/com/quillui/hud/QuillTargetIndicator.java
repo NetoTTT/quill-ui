@@ -32,7 +32,7 @@ public final class QuillTargetIndicator {
 	private Integer customBackground;
 	private IconRenderer iconRenderer;
 	private Function<Double, Component> distanceFormatter = distance ->
-			Component.literal(Math.round(distance) + " m");
+			Component.translatable("quillui.target.distance", Math.round(distance));
 	private boolean distanceVisible = true;
 	private boolean chevronVisible = true;
 	private boolean showWhenOnScreen;

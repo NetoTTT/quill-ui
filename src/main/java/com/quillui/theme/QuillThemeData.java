@@ -49,7 +49,10 @@ public final class QuillThemeData {
 		SURFACE_BORDER,
 		SURFACE_HEADER,
 		CHIP_BG,
-		CHIP_BORDER
+		CHIP_BORDER,
+		MAP_BG,
+		MAP_GRID,
+		MAP_UNKNOWN
 	}
 
 	public static final QuillThemeData DEFAULT = new QuillThemeData(defaultColors());
@@ -148,6 +151,9 @@ public final class QuillThemeData {
 		colors.put(ColorRole.SURFACE_HEADER, 0xFF10161E);
 		colors.put(ColorRole.CHIP_BG, 0xFF1B242E);
 		colors.put(ColorRole.CHIP_BORDER, 0xFF33404E);
+		colors.put(ColorRole.MAP_BG, 0xFF0B1118);
+		colors.put(ColorRole.MAP_GRID, 0x661E2936);
+		colors.put(ColorRole.MAP_UNKNOWN, 0xFF18202A);
 		return colors;
 	}
 }

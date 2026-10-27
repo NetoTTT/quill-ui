@@ -5,5 +5,7 @@
 	"quillui.map.layer.surface": "Superfície",
 	"quillui.map.layer.underground": "Subsolo · Y=%s",
 	"quillui.map.layer.auto_surface": "Auto · superfície",
-	"quillui.map.layer.auto_underground": "Auto · subsolo Y=%s"
+	"quillui.map.layer.auto_underground": "Auto · subsolo Y=%s",
+	"quillui.target.distance": "%s m",
+	"quillui.map.selection": "%sx%s (%s blocos)"
 }

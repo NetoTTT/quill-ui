@@ -7,11 +7,9 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.NativeImage;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -92,10 +90,7 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 	private record ChunkCoord(int x, int z, int distance) {
 	}
 
-	private static final int BG_DARK = 0xFF0B1118;
-	private static final int GRID_OVERLAY = 0x661E2936;
 	private static final int NO_FLOOR = Integer.MIN_VALUE;
-	private static final int MAX_SELECTION = 32;
 
 	private BlockPos center;
 	private final int maxRadius;
@@ -132,8 +127,6 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 	private double panStartMouseY;
 	private int undergroundScanDepth = 48;
 	private long lastUpdateNanos;
-	private int lastTilesGenerated;
-	private int lastTileHits;
 	private boolean tilesPending;
 	private long tileBudgetNanos = 4_000_000L;
 	private long tileRefreshTicks = 600L;
@@ -208,6 +201,8 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 	public void resize(int width, int height) {
 		this.width = Math.max(1, width);
 		this.height = Math.max(1, height);
+		int span = maxRadius * 2 + 1;
+		this.pixelsPerBlock = Mth.clamp(Math.min(this.width / span, this.height / span), 1, 4);
 		dirty = true;
 	}
 
@@ -439,7 +434,8 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 		}
 
 		updateLayerLabel(underground, pivot);
-		graphics.fill(getX(), getY(), getX() + width, getY() + height, BG_DARK);
+		graphics.fill(getX(), getY(), getX() + width, getY() + height,
+				theme.color(QuillThemeData.ColorRole.MAP_BG));
 		graphics.enableScissor(getX(), getY(), getX() + width, getY() + height);
 		graphics.blit(textureId, getX(), getY(), getX() + width, getY() + height, 0.0F, 1.0F, 0.0F, 1.0F);
 		drawGrid(graphics);
@@ -460,8 +456,6 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 
 	private void updateMapTexture(boolean underground) {
 		long updateStart = System.nanoTime();
-		lastTilesGenerated = 0;
-		lastTileHits = 0;
 		ensureTexture();
 		NativeImage image = texture.getPixels();
 		if (image == null) {
@@ -470,7 +464,7 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 
 		ClientLevel level = Minecraft.getInstance().level;
 		if (level == null) {
-			image.fillRect(0, 0, width, height, BG_DARK);
+			image.fillRect(0, 0, width, height, theme.color(QuillThemeData.ColorRole.MAP_BG));
 			texture.upload();
 			dirty = false;
 			tilesPending = false;
@@ -478,17 +472,12 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 			return;
 		}
 
-		image.fillRect(0, 0, width, height, BG_DARK);
+		image.fillRect(0, 0, width, height, theme.color(QuillThemeData.ColorRole.MAP_BG));
 		ensureVisibleTiles(level, underground, level.getGameTime(), updateStart);
 		composeTiles(level, underground, image);
 		texture.upload();
 		dirty = tilesPending;
 		lastUpdateNanos = System.nanoTime() - updateStart;
-		if (underground && !tilesPending) {
-			System.out.printf("[QuillMap] underground %dx%d zoom=%d: %.1f ms, generated=%d, hits=%d, pending=%s%n",
-					width, height, pixelsPerBlock, lastUpdateNanos / 1_000_000.0D,
-					lastTilesGenerated, lastTileHits, tilesPending);
-		}
 	}
 
 	private void ensureTexture() {
@@ -514,18 +503,18 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 		long deadline = updateStart + tileBudgetNanos;
 		ResourceKey<Level> dimension = level.dimension();
 		boolean pending = false;
+		boolean generatedAny = false;
 
 		for (ChunkCoord chunk : chunks) {
 			TileKey key = new TileKey(dimension, chunk.x(), chunk.z(), underground ? pivotY : 0, underground);
 			MapTile existing = tileCache.get(key);
 			if (existing != null && tick - existing.generatedTick <= tileRefreshTicks) {
-				lastTileHits++;
 				continue;
 			}
 			if (!level.hasChunkAt((chunk.x() << 4) + 8, (chunk.z() << 4) + 8)) {
 				continue;
 			}
-			if (lastTilesGenerated > 0 && System.nanoTime() >= deadline) {
+			if (generatedAny && System.nanoTime() >= deadline) {
 				pending = true;
 				continue;
 			}
@@ -535,7 +524,7 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 				pending = true;
 			} else {
 				tileCache.put(key, built);
-				lastTilesGenerated++;
+				generatedAny = true;
 			}
 		}
 		tilesPending = pending;
@@ -597,7 +586,7 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 		BlockState state = level.getBlockState(pos.set(worldX, surfaceY, worldZ));
 		MapColor mapColor = state.getMapColor(level, pos);
 		if (mapColor == MapColor.NONE) {
-			return 0xFF18202A;
+			return theme.color(QuillThemeData.ColorRole.MAP_UNKNOWN);
 		}
 		int northY = surfaceY;
 		if (level.hasChunkAt(worldX, worldZ - 1)) {
@@ -641,7 +630,7 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 						}
 						int color = tile.colors[(localZ << 4) | localX];
 						if (color == 0) {
-							color = BG_DARK;
+							color = theme.color(QuillThemeData.ColorRole.MAP_BG);
 						}
 						fillBlock(image, screenX - getX(), screenY - getY(), color);
 					}
@@ -762,11 +751,13 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 		int maxZ = screenToBlockZ(getY() + height);
 		for (int x = Math.floorDiv(minX, 16) * 16; x <= maxX; x += 16) {
 			int screenX = blockToScreenX(x);
-			graphics.fill(screenX, getY(), screenX + 1, getY() + height, GRID_OVERLAY);
+			graphics.fill(screenX, getY(), screenX + 1, getY() + height,
+					theme.color(QuillThemeData.ColorRole.MAP_GRID));
 		}
 		for (int z = Math.floorDiv(minZ, 16) * 16; z <= maxZ; z += 16) {
 			int screenZ = blockToScreenZ(z);
-			graphics.fill(getX(), screenZ, getX() + width, screenZ + 1, GRID_OVERLAY);
+			graphics.fill(getX(), screenZ, getX() + width, screenZ + 1,
+					theme.color(QuillThemeData.ColorRole.MAP_GRID));
 		}
 	}
 
@@ -843,24 +834,30 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 		int x = blockToScreenX(marker.position().getX()) + pixelsPerBlock / 2;
 		int y = blockToScreenZ(marker.position().getZ()) + pixelsPerBlock / 2;
 		graphics.fill(x - 4, y - 4, x + 5, y + 5, withAlpha(marker.color(), 0xDD));
-		QuillRender.border(graphics, x - 4, y - 4, 9, 9, 0xFFFFFFFF);
+		QuillRender.border(graphics, x - 4, y - 4, 9, 9,
+				theme.color(QuillThemeData.ColorRole.TITLE));
 		if (marker.label() != null && !marker.label().getString().isBlank()) {
 			Font font = Minecraft.getInstance().font;
 			int textWidth = font.width(marker.label());
 			int badgeX = x - textWidth / 2 - 3;
 			int badgeY = y + 7;
-			graphics.fill(badgeX, badgeY, badgeX + textWidth + 6, badgeY + 11, 0xDD111820);
-			QuillRender.text(graphics, font, marker.label(), badgeX + 3, badgeY + 2, 0xFFFFFFFF);
+			graphics.fill(badgeX, badgeY, badgeX + textWidth + 6, badgeY + 11,
+					withAlpha(theme.color(QuillThemeData.ColorRole.PANEL_BG), 0xDD));
+			QuillRender.text(graphics, font, marker.label(), badgeX + 3, badgeY + 2,
+					theme.color(QuillThemeData.ColorRole.TITLE));
 		}
 	}
 
 	private void drawCenterMarker(GuiGraphicsExtractor graphics) {
 		int x = blockToScreenX(center.getX()) + pixelsPerBlock / 2;
 		int y = blockToScreenZ(center.getZ()) + pixelsPerBlock / 2;
-		graphics.fill(x - 4, y - 4, x + 5, y + 5, 0x99000000);
-		graphics.fill(x - 3, y - 1, x + 4, y + 2, 0xFFFFC65A);
-		graphics.fill(x - 1, y - 3, x + 2, y + 4, 0xFFFFC65A);
-		graphics.fill(x - 1, y - 1, x + 2, y + 2, 0xFFFFFFFF);
+		graphics.fill(x - 4, y - 4, x + 5, y + 5,
+				withAlpha(theme.color(QuillThemeData.ColorRole.PANEL_SHADOW), 0x99));
+		int accent = theme.color(QuillThemeData.ColorRole.ACCENT);
+		graphics.fill(x - 3, y - 1, x + 4, y + 2, accent);
+		graphics.fill(x - 1, y - 3, x + 2, y + 4, accent);
+		graphics.fill(x - 1, y - 1, x + 2, y + 2,
+				theme.color(QuillThemeData.ColorRole.TITLE));
 	}
 
 	private void drawHud(GuiGraphicsExtractor graphics) {
@@ -872,11 +869,12 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 				getY() + 6,
 				getX() + width - 4,
 				getY() + 18,
-				0xAA111820
+				withAlpha(theme.color(QuillThemeData.ColorRole.PANEL_BG), 0xAA)
 		);
 		QuillRender.text(
 				graphics, font, Component.literal(zoom),
-				getX() + width - zoomWidth - 7, getY() + 8, 0xFFB5C2D0
+				getX() + width - zoomWidth - 7, getY() + 8,
+				theme.color(QuillThemeData.ColorRole.TEXT_SOFT)
 		);
 
 		if (hasSelection()) {
@@ -884,19 +882,21 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 			int d = selectionDepth();
 			int blocks = w * d;
 			boolean fits = selectionFitsLimit();
-			String text = w + "x" + d + " (" + blocks + " bl)";
-			int textWidth = font.width(text);
+			Component selectionText = Component.translatable("quillui.map.selection", w, d, blocks);
+			int textWidth = font.width(selectionText);
 			graphics.fill(
 					getX() + 6,
 					getY() + height - 19,
 					getX() + textWidth + 12,
 					getY() + height - 5,
-					0xDD111820
+					withAlpha(theme.color(QuillThemeData.ColorRole.PANEL_BG), 0xDD)
 			);
 			QuillRender.text(
-					graphics, font, Component.literal(text),
+					graphics, font, selectionText,
 					getX() + 9, getY() + height - 16,
-					fits ? 0xFF48D7A0 : 0xFFFF5555
+					fits
+							? theme.color(QuillThemeData.ColorRole.SUCCESS)
+							: theme.color(QuillThemeData.ColorRole.DANGER)
 			);
 		}
 	}

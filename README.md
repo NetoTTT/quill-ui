@@ -10,7 +10,7 @@ independent from any economy, jobs or gameplay code, so other mods can use it.
 
 ## Status
 
-`0.2.0-alpha.5` — generic HUD target indicator, plus the native map foundation. The API is intentionally small and may evolve before a
+`0.2.0-alpha.5` — motion, text/inputs and a generic HUD target indicator, plus the native map foundation. The API is intentionally small and may evolve before a
 stable `1.0.0`. This build is published on the **alpha** channel, not as a stable release.
 The public API surface and compatibility policy are documented in
 [docs/API.md](docs/API.md) and [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md).
@@ -23,11 +23,15 @@ The public API surface and compatibility policy are documented in
 | Colours | `com.quillui.theme` | `QuillColors` |
 | Layout | `com.quillui.layout` | `QuillRect`, `QuillInsets`, `QuillColumn`, `QuillRow`, `QuillGrid` |
 | Drawing | `com.quillui.render` | `QuillRender`, `QuillTooltips` |
-| Widgets | `com.quillui.widget` | `QuillButton`, `QuillCard`, `QuillPanel`, `QuillScrollList`, `QuillTabBar`, `QuillToggle` |
+| Widgets | `com.quillui.widget` | `QuillButton`, `QuillCard`, `QuillPanel`, `QuillScrollList`, `QuillTabBar`, `QuillToggle`, `QuillTextField`, `QuillSlider`, `QuillCheckbox`, `QuillRadio` |
 | Screen | `com.quillui.screen` | `QuillScreen` |
 | Backend boundary | `com.quillui.action` | `QuillActionSink`, `QuillCommandSink` |
 | Map | `com.quillui.map` | `QuillMap`, `QuillMapZone`, `QuillMapMarker` |
 | HUD | `com.quillui.hud` | `QuillTargetIndicator`, `QuillTargetIndicatorHud` |
+| Motion | `com.quillui.motion` | `QuillTicker`, `QuillAnimation`, `QuillCurves`, `QuillTransition`, `QuillMotion` |
+| Text | `com.quillui.text` | `QuillText`, `QuillTextStyle` |
+| Input styles | `com.quillui.input` | `QuillSelectionStyle`, `QuillSelectionStyles` |
+| i18n | `com.quillui.i18n` | `QuillLanguage` |
 | Compatibility | `com.quillui.api` | `QuillApi` |
 
 ## Build
@@ -104,6 +108,8 @@ GNU Lesser General Public License v3.0 or later. See [LICENSE](LICENSE).
 - [Widgets and screen](docs/04-WIDGETS.md)
 - [Actions and backend](docs/05-ACTIONS.md)
 - [Migrating from LaborCraft's LC UI](docs/06-MIGRATION.md)
+- [Input styles](docs/10-INPUT-STYLES.md)
+- [Internationalization](docs/11-I18N.md)
 - [Integration modes](docs/07-INTEGRATION.md)
 - [Public API](docs/API.md)
 - [Compatibility policy](docs/COMPATIBILITY.md)

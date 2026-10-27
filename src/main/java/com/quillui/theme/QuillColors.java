@@ -50,6 +50,14 @@ public final class QuillColors {
 		};
 	}
 
+	public static int lerp(int from, int to, float progress) {
+		float t = Math.max(0.0F, Math.min(1.0F, progress));
+		int a = Math.round(alpha(from) + (alpha(to) - alpha(from)) * t);
+		int r = Math.round(red(from) + (red(to) - red(from)) * t);
+		int g = Math.round(green(from) + (green(to) - green(from)) * t);
+		int b = Math.round(blue(from) + (blue(to) - blue(from)) * t);
+		return argb(a, r, g, b);
+	}
 	public static int withAlpha(int color, int alpha) {
 		return (clamp(alpha) << 24) | (color & 0xFFFFFF);
 	}

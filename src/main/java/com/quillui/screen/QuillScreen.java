@@ -98,6 +98,15 @@ public abstract class QuillScreen extends Screen {
 	}
 
 	@Override
+	public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+		boolean handled = super.mouseClicked(event, doubleClick);
+		if (!handled && getFocused() != null) {
+			setFocused((GuiEventListener) null);
+		}
+		return handled;
+	}
+
+	@Override
 	public boolean mouseDragged(MouseButtonEvent event, double deltaX, double deltaY) {
 		if (event.button() != InputConstants.MOUSE_BUTTON_LEFT) {
 			GuiEventListener target = mouseButtonTarget(event);
@@ -186,11 +195,15 @@ public abstract class QuillScreen extends Screen {
 
 	@Override
 	public boolean keyPressed(KeyEvent event) {
-		boolean focused = getFocused() != null;
-		for (QuillShortcut shortcut : shortcuts) {
-			if (shortcut.key() == event.key() && (shortcut.allowWhenFocused() || !focused)) {
-				shortcut.action().run();
-				return true;
+		GuiEventListener focused = getFocused();
+		boolean textInputFocused = focused != null && focused.capturesInput();
+		if (!textInputFocused) {
+			for (QuillShortcut shortcut : shortcuts) {
+				if (shortcut.key() == event.key()
+						&& (shortcut.allowWhenFocused() || focused == null)) {
+					shortcut.action().run();
+					return true;
+				}
 			}
 		}
 		return super.keyPressed(event);

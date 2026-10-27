@@ -1,6 +1,10 @@
 package com.quillui.widget;
 
+import com.quillui.motion.QuillAnimation;
+import com.quillui.motion.QuillCurves;
+import com.quillui.motion.QuillTicker;
 import com.quillui.render.QuillRender;
+import com.quillui.theme.QuillColors;
 import com.quillui.theme.QuillThemeData;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
@@ -32,6 +36,9 @@ public class QuillButton extends AbstractWidget {
 	private boolean selected;
 	private Tooltip tooltip;
 	private SoundEvent clickSound;
+	private final QuillTicker ticker = new QuillTicker();
+	private final QuillAnimation hoverAnimation = new QuillAnimation(0.12F).setCurve(QuillCurves.EASE_OUT);
+	private boolean hoveredLast;
 
 	public QuillButton(
 			int x, int y, int width, int height, Component message, Variant variant, Runnable action
@@ -78,49 +85,79 @@ public class QuillButton extends AbstractWidget {
 		int y = getY();
 		boolean hovered = isMouseOver(mouseX, mouseY) && active;
 
-		int background;
-		int border;
-		int textColor;
+		float frameDelta = ticker.tick();
+		if (hovered != hoveredLast) {
+			hoverAnimation.playTo(hovered ? 1.0F : 0.0F);
+			hoveredLast = hovered;
+		}
+		hoverAnimation.update(frameDelta);
+		float hover = active ? hoverAnimation.value() : 0.0F;
+
+		int backgroundNormal;
+		int backgroundHover;
+		int borderNormal;
+		int borderHover;
+		int textNormal;
+		int textHover;
 
 		if (!active) {
-			background = theme.color(QuillThemeData.ColorRole.BUTTON_DISABLED);
-			border = theme.color(QuillThemeData.ColorRole.BUTTON_DISABLED_BORDER);
-			textColor = theme.color(QuillThemeData.ColorRole.BUTTON_DISABLED_TEXT);
+			backgroundNormal = theme.color(QuillThemeData.ColorRole.BUTTON_DISABLED);
+			backgroundHover = backgroundNormal;
+			borderNormal = theme.color(QuillThemeData.ColorRole.BUTTON_DISABLED_BORDER);
+			borderHover = borderNormal;
+			textNormal = theme.color(QuillThemeData.ColorRole.BUTTON_DISABLED_TEXT);
+			textHover = textNormal;
 		} else {
 			switch (variant) {
 				case PRIMARY -> {
-					background = hovered ? theme.color(QuillThemeData.ColorRole.PRIMARY_BG_HOVER) : theme.color(QuillThemeData.ColorRole.PRIMARY_BG);
-					border = hovered ? theme.color(QuillThemeData.ColorRole.ACCENT_HOVER) : theme.color(QuillThemeData.ColorRole.ACCENT);
-					textColor = theme.color(QuillThemeData.ColorRole.ON_ACCENT);
+					backgroundNormal = theme.color(QuillThemeData.ColorRole.PRIMARY_BG);
+					backgroundHover = theme.color(QuillThemeData.ColorRole.PRIMARY_BG_HOVER);
+					borderNormal = theme.color(QuillThemeData.ColorRole.ACCENT);
+					borderHover = theme.color(QuillThemeData.ColorRole.ACCENT_HOVER);
+					textNormal = theme.color(QuillThemeData.ColorRole.ON_ACCENT);
+					textHover = textNormal;
 				}
 				case DANGER -> {
-					background = hovered ? theme.color(QuillThemeData.ColorRole.DANGER_BG) : theme.color(QuillThemeData.ColorRole.BUTTON_BG);
-					border = theme.color(QuillThemeData.ColorRole.DANGER);
-					textColor = theme.color(QuillThemeData.ColorRole.ON_DANGER);
+					backgroundNormal = theme.color(QuillThemeData.ColorRole.BUTTON_BG);
+					backgroundHover = theme.color(QuillThemeData.ColorRole.DANGER_BG);
+					borderNormal = theme.color(QuillThemeData.ColorRole.DANGER);
+					borderHover = borderNormal;
+					textNormal = theme.color(QuillThemeData.ColorRole.ON_DANGER);
+					textHover = textNormal;
 				}
 				case GHOST -> {
-					background = hovered || isFocused()
-							? theme.color(QuillThemeData.ColorRole.BUTTON_HOVER)
-							: theme.color(QuillThemeData.ColorRole.GHOST_BG);
-					border = isFocused()
-							? theme.color(QuillThemeData.ColorRole.FOCUS_RING)
-							: theme.color(QuillThemeData.ColorRole.GHOST_BORDER);
-					textColor = hovered
-							? theme.color(QuillThemeData.ColorRole.TITLE)
-							: theme.color(QuillThemeData.ColorRole.GHOST_TEXT);
+					backgroundNormal = theme.color(QuillThemeData.ColorRole.GHOST_BG);
+					backgroundHover = theme.color(QuillThemeData.ColorRole.BUTTON_HOVER);
+					borderNormal = theme.color(QuillThemeData.ColorRole.GHOST_BORDER);
+					borderHover = borderNormal;
+					textNormal = theme.color(QuillThemeData.ColorRole.GHOST_TEXT);
+					textHover = theme.color(QuillThemeData.ColorRole.TITLE);
 				}
 				default -> {
-					background = hovered ? theme.color(QuillThemeData.ColorRole.BUTTON_HOVER) : theme.color(QuillThemeData.ColorRole.BUTTON_BG);
-					border = theme.color(QuillThemeData.ColorRole.BUTTON_BORDER);
-					textColor = theme.color(QuillThemeData.ColorRole.TEXT);
+					backgroundNormal = theme.color(QuillThemeData.ColorRole.BUTTON_BG);
+					backgroundHover = theme.color(QuillThemeData.ColorRole.BUTTON_HOVER);
+					borderNormal = theme.color(QuillThemeData.ColorRole.BUTTON_BORDER);
+					borderHover = borderNormal;
+					textNormal = theme.color(QuillThemeData.ColorRole.TEXT);
+					textHover = textNormal;
 				}
 			}
 
 			if (selected) {
-				background = theme.color(QuillThemeData.ColorRole.SELECTED_BG);
-				border = theme.color(QuillThemeData.ColorRole.ACCENT);
-				textColor = theme.color(QuillThemeData.ColorRole.TITLE);
+				backgroundNormal = theme.color(QuillThemeData.ColorRole.SELECTED_BG);
+				backgroundHover = backgroundNormal;
+				borderNormal = theme.color(QuillThemeData.ColorRole.ACCENT);
+				borderHover = theme.color(QuillThemeData.ColorRole.ACCENT_HOVER);
+				textNormal = theme.color(QuillThemeData.ColorRole.TITLE);
+				textHover = textNormal;
 			}
+		}
+
+		int background = QuillColors.lerp(backgroundNormal, backgroundHover, hover);
+		int border = QuillColors.lerp(borderNormal, borderHover, hover);
+		int textColor = QuillColors.lerp(textNormal, textHover, hover);
+		if (active && isFocused() && variant == Variant.GHOST) {
+			border = theme.color(QuillThemeData.ColorRole.FOCUS_RING);
 		}
 
 		if (background != 0) {

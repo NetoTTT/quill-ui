@@ -58,6 +58,9 @@ public class QuillTheme {
 	public static final int SURFACE_HEADER = color(QuillThemeData.ColorRole.SURFACE_HEADER);
 	public static final int CHIP_BG = color(QuillThemeData.ColorRole.CHIP_BG);
 	public static final int CHIP_BORDER = color(QuillThemeData.ColorRole.CHIP_BORDER);
+	public static final int MAP_BG = color(QuillThemeData.ColorRole.MAP_BG);
+	public static final int MAP_GRID = color(QuillThemeData.ColorRole.MAP_GRID);
+	public static final int MAP_UNKNOWN = color(QuillThemeData.ColorRole.MAP_UNKNOWN);
 
 	protected QuillTheme() {
 	}

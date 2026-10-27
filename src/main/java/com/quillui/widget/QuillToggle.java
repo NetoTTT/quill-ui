@@ -1,5 +1,8 @@
 package com.quillui.widget;
 
+import com.quillui.motion.QuillAnimation;
+import com.quillui.motion.QuillCurves;
+import com.quillui.motion.QuillTicker;
 import com.quillui.render.QuillRender;
 import com.quillui.theme.QuillThemeData;
 import com.quillui.theme.QuillTypography;
@@ -29,6 +32,9 @@ public class QuillToggle extends AbstractWidget {
 	private final QuillThemeData theme;
 	private SoundEvent clickSound;
 	private boolean value;
+	private final QuillTicker ticker = new QuillTicker();
+	private final QuillAnimation knobAnimation = new QuillAnimation(0.14F).setCurve(QuillCurves.EASE_OUT);
+	private boolean knobValueLast;
 
 	public QuillToggle(
 			int x,
@@ -56,6 +62,8 @@ public class QuillToggle extends AbstractWidget {
 		this.value = value;
 		this.onChange = onChange;
 		this.theme = theme;
+		this.knobValueLast = value;
+		this.knobAnimation.jumpTo(value ? 1.0F : 0.0F);
 	}
 
 	public QuillToggle clickSound(SoundEvent sound) {
@@ -78,6 +86,12 @@ public class QuillToggle extends AbstractWidget {
 		int x = getX();
 		int y = getY();
 		boolean hovered = isMouseOver(mouseX, mouseY) && active;
+		float frameDelta = ticker.tick();
+		if (value != knobValueLast) {
+			knobAnimation.playTo(value ? 1.0F : 0.0F);
+			knobValueLast = value;
+		}
+		knobAnimation.update(frameDelta);
 
 		int trackX = x + width - TRACK_WIDTH;
 		int trackY = y + (height - TRACK_HEIGHT) / 2;
@@ -98,9 +112,9 @@ public class QuillToggle extends AbstractWidget {
 		graphics.fill(trackX, trackY, trackX + TRACK_WIDTH, trackY + TRACK_HEIGHT, trackBackground);
 		QuillRender.border(graphics, trackX, trackY, TRACK_WIDTH, TRACK_HEIGHT, trackBorder);
 
-		int knobX = value
-				? trackX + TRACK_WIDTH - KNOB_SIZE - KNOB_INSET
-				: trackX + KNOB_INSET;
+		int knobX = trackX + KNOB_INSET + Math.round(
+				knobAnimation.value() * (TRACK_WIDTH - KNOB_SIZE - KNOB_INSET * 2)
+		);
 		int knobColor = active ? theme.color(QuillThemeData.ColorRole.TITLE) : theme.color(QuillThemeData.ColorRole.BUTTON_DISABLED_TEXT);
 		graphics.fill(
 				knobX,
