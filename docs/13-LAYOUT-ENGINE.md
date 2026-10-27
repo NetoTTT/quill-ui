@@ -62,7 +62,11 @@ the callback that re-arranges the content; the bar paints the thumb and handles 
 `QuillScrollHints` draws top/bottom chevrons when content is hidden.
 
 `QuillWidgetBox.clipTo(rect)` is the first clipping guard: widgets outside the rect are hidden
-instead of drawn over the next section. Real scissor clipping is still pending.
+instead of drawn over the next section.
+
+`QuillClipView` is the scissor host: it owns child widgets, clips them to a viewport, and maps mouse
+input through the current scroll offset. Children keep content coordinates, so partially visible
+widgets are clipped instead of hidden entirely.
 
 `QuillLayoutValidator` checks arranged trees for negative sizes and children outside their parent.
 `QuillScrollBox` children are allowed to overflow, as expected.
