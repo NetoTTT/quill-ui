@@ -1,6 +1,7 @@
 package com.quillui.render;
 
 import com.quillui.layout.QuillRect;
+import com.quillui.theme.QuillColors;
 import com.quillui.theme.QuillThemeData;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 
@@ -20,6 +21,20 @@ public final class QuillScrollHints {
 			return;
 		}
 		int color = theme.color(QuillThemeData.ColorRole.TEXT_SOFT);
+		int background = theme.color(QuillThemeData.ColorRole.PANEL_BG);
+		int transparent = QuillColors.withAlpha(background, 0.0F);
+		if (moreAbove) {
+			graphics.fillGradient(
+					viewport.x(), viewport.y(), viewport.right(), viewport.y() + 10,
+					background, transparent
+			);
+		}
+		if (moreBelow) {
+			graphics.fillGradient(
+					viewport.x(), viewport.bottom() - 10, viewport.right(), viewport.bottom(),
+					transparent, background
+			);
+		}
 		int centerX = viewport.centerX();
 		if (moreAbove) {
 			int y = viewport.y() + 8;
