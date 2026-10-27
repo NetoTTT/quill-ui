@@ -233,6 +233,40 @@ class QuillBoxLayoutTest {
 		));
 	}
 
+	@Test
+	void layoutRespectsCommonViewportSizes() {
+		int[][] viewports = {
+				{320, 240},
+				{480, 270},
+				{640, 360},
+				{960, 540},
+				{1920, 1080}
+		};
+		for (int[] viewport : viewports) {
+			int width = viewport[0];
+			int height = viewport[1];
+			Leaf fixed = new Leaf(80, 20);
+			Leaf flexible = new Leaf(0, 0);
+			QuillFlexBox row = QuillFlexBox.row(8)
+					.crossAxisAlignment(QuillCrossAxisAlignment.STRETCH)
+					.add(fixed)
+					.addFlexible(flexible, 1);
+			QuillPaddingBox root = new QuillPaddingBox(QuillInsets.all(8), row);
+			QuillRect bounds = new QuillRect(0, 0, width, height);
+
+			assertEquals(QuillSize.of(width, height), root.measure(
+					QuillBoxConstraints.tight(QuillSize.of(width, height))
+			));
+			root.arrange(bounds);
+			assertEquals(new QuillRect(8, 8, 80, height - 16), fixed.bounds());
+			assertEquals(new QuillRect(96, 8, width - 104, height - 16), flexible.bounds());
+			assertTrue(root.bounds().contains(
+					flexible.bounds().x() + flexible.bounds().width() - 1,
+					flexible.bounds().y() + flexible.bounds().height() - 1
+			));
+		}
+	}
+
 	private static final class Leaf extends QuillNode {
 		private final QuillSize size;
 
