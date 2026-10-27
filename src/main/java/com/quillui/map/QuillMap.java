@@ -141,6 +141,9 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 	private Consumer<QuillMap> selectionCommitListener;
 	private Predicate<Entity> entityFilter;
 	private Function<Entity, QuillMapMarker> entityMarkerFactory;
+	private boolean entityYRangeEnabled;
+	private int entityYBelow = 3;
+	private int entityYAbove = 3;
 
 	public QuillMap(
 			int x,
@@ -351,6 +354,37 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 		this.selectionCommitListener = selectionCommitListener;
 	}
 
+	/**
+	 * Enables a vertical entity filter relative to the player's current Y level. For example,
+	 * {@code setEntityYRange(3, 5)} shows entities from 3 blocks below to 5 blocks above the
+	 * player. Values are inclusive. Call {@link #setEntityYRangeEnabled(boolean)} with false to
+	 * show every entity again.
+	 */
+	public void setEntityYRange(int blocksBelow, int blocksAbove) {
+		entityYBelow = Math.max(0, Math.min(256, blocksBelow));
+		entityYAbove = Math.max(0, Math.min(256, blocksAbove));
+		entityYRangeEnabled = true;
+	}
+
+	public void setEntityYRangeEnabled(boolean enabled) {
+		entityYRangeEnabled = enabled;
+	}
+
+	public boolean entityYRangeEnabled() {
+		return entityYRangeEnabled;
+	}
+
+	public int entityYBelow() {
+		return entityYBelow;
+	}
+
+	public int entityYAbove() {
+		return entityYAbove;
+	}
+
+	public void clearEntityYRange() {
+		entityYRangeEnabled = false;
+	}
 	/**
 	 * Supplies generic entity markers. The filter and factory are evaluated against the current
 	 * client level for each map render.
@@ -784,7 +818,7 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 			return;
 		}
 		for (Entity entity : Minecraft.getInstance().level.entitiesForRendering()) {
-			if (!entityFilter.test(entity)) {
+			if (!entityFilter.test(entity) || !entityWithinY(entity)) {
 				continue;
 			}
 			QuillMapMarker marker = entityMarkerFactory.apply(entity);
@@ -792,6 +826,17 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 				drawMarker(graphics, marker);
 			}
 		}
+	}
+
+	private boolean entityWithinY(Entity entity) {
+		if (!entityYRangeEnabled) {
+			return true;
+		}
+		if (Minecraft.getInstance().player == null) {
+			return true;
+		}
+		int dy = entity.blockPosition().getY() - Minecraft.getInstance().player.blockPosition().getY();
+		return dy >= -entityYBelow && dy <= entityYAbove;
 	}
 
 	private void drawMarker(GuiGraphicsExtractor graphics, QuillMapMarker marker) {
