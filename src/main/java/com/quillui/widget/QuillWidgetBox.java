@@ -11,12 +11,18 @@ import net.minecraft.client.gui.components.AbstractWidget;
 /** Adapter between a measured layout tree and an existing vanilla/Quill widget. */
 public final class QuillWidgetBox extends QuillNode {
 	private final AbstractWidget widget;
+	private QuillRect clipBounds;
 
 	public QuillWidgetBox(AbstractWidget widget) {
 		if (widget == null) {
 			throw new IllegalArgumentException("widget must not be null");
 		}
 		this.widget = widget;
+	}
+
+	public QuillWidgetBox clipTo(QuillRect clipBounds) {
+		this.clipBounds = clipBounds;
+		return this;
 	}
 
 	@Override
@@ -35,6 +41,14 @@ public final class QuillWidgetBox extends QuillNode {
 		widget.setY(bounds.y());
 		widget.setWidth(bounds.width());
 		widget.setHeight(bounds.height());
+		if (clipBounds != null) {
+			boolean inside = clipBounds.contains(bounds.x(), bounds.y())
+					&& clipBounds.contains(
+							bounds.x() + Math.max(0, bounds.width() - 1),
+							bounds.y() + Math.max(0, bounds.height() - 1)
+					);
+			widget.visible = inside;
+		}
 	}
 
 	public AbstractWidget widget() {

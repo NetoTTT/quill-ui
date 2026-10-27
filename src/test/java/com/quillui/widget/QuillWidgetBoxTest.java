@@ -1,6 +1,8 @@
 package com.quillui.widget;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.quillui.layout.QuillBoxConstraints;
 import com.quillui.layout.QuillRect;
@@ -24,6 +26,20 @@ class QuillWidgetBoxTest {
 		assertEquals(20, widget.getY());
 		assertEquals(90, widget.getWidth());
 		assertEquals(30, widget.getHeight());
+		assertTrue(widget.visible);
+	}
+
+	@Test
+	void clipHidesWidgetsOutsideViewport() {
+		TestWidget widget = new TestWidget(80, 20);
+		QuillWidgetBox box = new QuillWidgetBox(widget)
+				.clipTo(new QuillRect(0, 0, 100, 100));
+
+		box.arrange(new QuillRect(10, 10, 80, 20));
+		assertTrue(widget.visible);
+
+		box.arrange(new QuillRect(10, 90, 80, 20));
+		assertFalse(widget.visible);
 	}
 
 	private static final class TestWidget extends AbstractWidget {
