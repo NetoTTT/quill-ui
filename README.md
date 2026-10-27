@@ -27,7 +27,7 @@ The public API surface and compatibility policy are documented in
 | Screen | `com.quillui.screen` | `QuillScreen` |
 | Backend boundary | `com.quillui.action` | `QuillActionSink`, `QuillCommandSink` |
 | Map | `com.quillui.map` | `QuillMap`, `QuillMapZone`, `QuillMapMarker` |
-| HUD | `com.quillui.hud` | `QuillTargetIndicator` |
+| HUD | `com.quillui.hud` | `QuillTargetIndicator`, `QuillTargetIndicatorHud` |
 | Compatibility | `com.quillui.api` | `QuillApi` |
 
 ## Build
