@@ -24,11 +24,11 @@ jobs:
           chmod +x gradlew
           ./gradlew build --console=plain --no-daemon
 
-      - name: Check binary compatibility against 0.2.0-alpha.3 (stable baseline)
+      - name: Check binary compatibility against 0.2.0-alpha.4 (stable baseline)
         run: |
           NEW_JAR=$(find build/libs -maxdepth 1 -name 'quill-ui-*.jar' ! -name '*-sources.jar' | head -n 1)
           curl -fsSL -o /tmp/quill-baseline.jar \
-            https://github.com/NetoTTT/quill-ui/releases/download/v0.2.0-alpha.3/quill-ui-0.2.0-alpha.3.jar
+            https://github.com/NetoTTT/quill-ui/releases/download/v0.2.0-alpha.4/quill-ui-0.2.0-alpha.4.jar
           curl -fsSL -o /tmp/japicmp.jar \
             https://repo1.maven.org/maven2/com/github/siom79/japicmp/japicmp/0.23.1/japicmp-0.23.1-jar-with-dependencies.jar
           java -jar /tmp/japicmp.jar \
