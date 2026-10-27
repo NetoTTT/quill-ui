@@ -3,6 +3,7 @@ package com.quillui.map;
 import com.quillui.theme.QuillColors;
 import com.quillui.theme.QuillThemeData;
 import com.quillui.render.QuillRender;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.NativeImage;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -67,9 +68,9 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 
 		public MouseAction action(int button) {
 			return switch (button) {
-				case 0 -> left;
-				case 1 -> right;
-				case 2 -> middle;
+				case InputConstants.MOUSE_BUTTON_LEFT -> left;
+				case InputConstants.MOUSE_BUTTON_RIGHT -> right;
+				case InputConstants.MOUSE_BUTTON_MIDDLE -> middle;
 				default -> MouseAction.NONE;
 			};
 		}
@@ -137,6 +138,7 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 	private long tileBudgetNanos = 4_000_000L;
 	private long tileRefreshTicks = 600L;
 	private Consumer<QuillMap> selectionListener;
+	private Consumer<QuillMap> selectionCommitListener;
 	private Predicate<Entity> entityFilter;
 	private Function<Entity, QuillMapMarker> entityMarkerFactory;
 
@@ -339,6 +341,14 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 
 	public void setSelectionListener(Consumer<QuillMap> selectionListener) {
 		this.selectionListener = selectionListener;
+	}
+
+	/**
+	 * Called once when a selection drag finishes. Use this to turn the selected area into a claim,
+	 * build region, query or any other generic area-based action.
+	 */
+	public void setSelectionCommitListener(Consumer<QuillMap> selectionCommitListener) {
+		this.selectionCommitListener = selectionCommitListener;
 	}
 
 	/**
@@ -913,7 +923,8 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 
 	@Override
 	public void onClick(MouseButtonEvent event, boolean doubleClick) {
-		if (readOnly || mouseBindings.left() != MouseAction.SELECT || event.button() != 0) {
+		if (readOnly || mouseBindings.left() != MouseAction.SELECT
+				|| event.button() != InputConstants.MOUSE_BUTTON_LEFT) {
 			return;
 		}
 		from = blockAt(event.x(), event.y());
@@ -956,6 +967,7 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 			to = blockAt(event.x(), event.y());
 			dragging = false;
 			notifySelection();
+			notifySelectionCommit();
 			return true;
 		}
 		return super.mouseReleased(event);
@@ -966,6 +978,7 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 		if (dragging) {
 			to = blockAt(event.x(), event.y());
 			notifySelection();
+			notifySelectionCommit();
 		}
 		dragging = false;
 		panning = false;
@@ -994,6 +1007,12 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 	private void notifySelection() {
 		if (selectionListener != null) {
 			selectionListener.accept(this);
+		}
+	}
+
+	private void notifySelectionCommit() {
+		if (selectionCommitListener != null) {
+			selectionCommitListener.accept(this);
 		}
 	}
 
