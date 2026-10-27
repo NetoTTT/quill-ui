@@ -12,17 +12,18 @@ in [COMPATIBILITY.md](COMPATIBILITY.md).
 | `com.quillui.action` | `QuillActionSink`, `QuillCommandSink` |
 | `com.quillui.layout` | `QuillRect`, `QuillInsets`, `QuillColumn`, `QuillRow`, `QuillGrid` |
 | `com.quillui.screen` | `QuillScreen` |
-| `com.quillui.widget` | `QuillButton`, `QuillScrollList`, `QuillTabBar`, `QuillCard`, `QuillPanel`, `QuillToggle`, `QuillTextField`, `QuillSlider`, `QuillCheckbox`, `QuillRadio` |
+| `com.quillui.widget` | `QuillButton`, `QuillScrollList`, `QuillTabBar`, `QuillCard`, `QuillPanel`, `QuillToggle`, `QuillTextField`, `QuillSlider`, `QuillCheckbox`, `QuillRadio`, `QuillRadioGroup`, `QuillDropdown` |
 | `com.quillui.map` | `QuillMap`, `QuillMapZone`, `QuillMapMarker` |
 | `com.quillui.hud` | `QuillTargetIndicator`, `QuillTargetIndicatorHud` |
 | `com.quillui.motion` | `QuillTicker`, `QuillAnimation`, `QuillCurves`, `QuillCurve`, `QuillTransition`, `QuillMotion` |
 | `com.quillui.text` | `QuillText`, `QuillTextStyle` |
 | `com.quillui.input` | `QuillSelectionStyle`, `QuillSelectionStyles` |
 | `com.quillui.i18n` | `QuillLanguage` |
+| `com.quillui.overlay` | `QuillOverlay`, `QuillPopupMenu`, `QuillModal`, `QuillToast` |
 | `com.quillui.api` | `QuillApi` constants and compatibility helpers |
 
 Classes outside these packages are implementation details. There are no such packages in
-`0.2.0-alpha.5`; this boundary exists so future internals can change without becoming API.
+`0.2.0-alpha.6`; this boundary exists so future internals can change without becoming API.
 
 `API_LEVEL` is `2` after the package move and the introduction of `QuillThemeData`. The old root
 classes are gone; existing static `QuillTheme` fields now resolve to the default theme for migration.

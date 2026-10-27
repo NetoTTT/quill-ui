@@ -7,7 +7,7 @@
 - Fabric API 0.164.0+26.3
 - Java 25
 
-Quill UI is a **separate client mod**. Put `quill-ui-0.2.0-alpha.5.jar` in `mods/` next to Fabric API.
+Quill UI is a **separate client mod**. Put `quill-ui-0.2.0-alpha.6.jar` in `mods/` next to Fabric API.
 
 ## Add as a dependency
 
@@ -15,7 +15,7 @@ For local development, put the built jar in your project's `libs/` folder and ad
 
 ```groovy
 dependencies {
-    implementation files("libs/quill-ui-0.2.0-alpha.5.jar")
+    implementation files("libs/quill-ui-0.2.0-alpha.6.jar")
 }
 ```
 

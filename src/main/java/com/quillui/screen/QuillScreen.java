@@ -1,5 +1,7 @@
 package com.quillui.screen;
 
+import com.quillui.overlay.QuillOverlay;
+import com.quillui.overlay.QuillToast;
 import com.quillui.render.QuillRender;
 import com.quillui.render.QuillTooltips;
 import com.quillui.theme.QuillThemeData;
@@ -24,6 +26,7 @@ public abstract class QuillScreen extends Screen {
 	private final QuillThemeData theme;
 	private final QuillScreenLayout layout;
 	private final List<QuillShortcut> shortcuts = new ArrayList<>();
+	private final List<QuillOverlay> overlays = new ArrayList<>();
 	protected int panelX;
 	protected int panelY;
 
@@ -97,8 +100,73 @@ public abstract class QuillScreen extends Screen {
 		shortcuts.add(shortcut);
 	}
 
+	public void openOverlay(QuillOverlay overlay) {
+		if (overlay == null) {
+			return;
+		}
+		overlays.add(overlay);
+		setFocused((GuiEventListener) null);
+	}
+
+	public void closeOverlay(QuillOverlay overlay) {
+		if (overlay != null) {
+			overlay.close();
+			overlays.remove(overlay);
+		}
+	}
+
+	public void closeOverlays() {
+		for (QuillOverlay overlay : overlays) {
+			overlay.close();
+		}
+		overlays.clear();
+	}
+
+	public QuillToast showToast(Component message) {
+		return showToast(message, 3.0F);
+	}
+
+	public QuillToast showToast(Component message, float seconds) {
+		QuillToast toast = new QuillToast(message, seconds, theme);
+		overlays.add(toast);
+		return toast;
+	}
+
+	protected QuillOverlay topOverlay() {
+		for (int index = overlays.size() - 1; index >= 0; index--) {
+			QuillOverlay overlay = overlays.get(index);
+			if (overlay.isOpen()) {
+				return overlay;
+			}
+		}
+		return null;
+	}
+
+	private void pruneOverlays() {
+		overlays.removeIf(overlay -> !overlay.isOpen());
+	}
+
 	@Override
 	public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+		for (int index = overlays.size() - 1; index >= 0; index--) {
+			QuillOverlay overlay = overlays.get(index);
+			if (!overlay.isOpen()) {
+				continue;
+			}
+			if (overlay.mouseClicked(event, doubleClick)) {
+				pruneOverlays();
+				return true;
+			}
+			if (overlay.dismissOnOutsideClick()) {
+				overlay.close();
+				pruneOverlays();
+				return true;
+			}
+			if (overlay.blocksInput()) {
+				return true;
+			}
+		}
+
 		boolean handled = super.mouseClicked(event, doubleClick);
 		if (!handled && getFocused() != null) {
 			setFocused((GuiEventListener) null);
@@ -107,7 +175,38 @@ public abstract class QuillScreen extends Screen {
 	}
 
 	@Override
+	public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+		for (int index = overlays.size() - 1; index >= 0; index--) {
+			QuillOverlay overlay = overlays.get(index);
+			if (!overlay.isOpen()) {
+				continue;
+			}
+			if (overlay.mouseScrolled(mouseX, mouseY, scrollX, scrollY)) {
+				pruneOverlays();
+				return true;
+			}
+			if (overlay.blocksInput()) {
+				return true;
+			}
+		}
+		return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+	}
+
+	@Override
 	public boolean mouseDragged(MouseButtonEvent event, double deltaX, double deltaY) {
+		for (int index = overlays.size() - 1; index >= 0; index--) {
+			QuillOverlay overlay = overlays.get(index);
+			if (!overlay.isOpen()) {
+				continue;
+			}
+			if (overlay.mouseDragged(event, deltaX, deltaY)) {
+				pruneOverlays();
+				return true;
+			}
+			if (overlay.blocksInput()) {
+				return true;
+			}
+		}
 		if (event.button() != InputConstants.MOUSE_BUTTON_LEFT) {
 			GuiEventListener target = mouseButtonTarget(event);
 			if (target != null && target.mouseDragged(event, deltaX, deltaY)) {
@@ -119,6 +218,19 @@ public abstract class QuillScreen extends Screen {
 
 	@Override
 	public boolean mouseReleased(MouseButtonEvent event) {
+		for (int index = overlays.size() - 1; index >= 0; index--) {
+			QuillOverlay overlay = overlays.get(index);
+			if (!overlay.isOpen()) {
+				continue;
+			}
+			if (overlay.mouseReleased(event)) {
+				pruneOverlays();
+				return true;
+			}
+			if (overlay.blocksInput()) {
+				return true;
+			}
+		}
 		if (event.button() != InputConstants.MOUSE_BUTTON_LEFT) {
 			GuiEventListener target = mouseButtonTarget(event);
 			if (target != null && target.mouseReleased(event)) {
@@ -191,10 +303,30 @@ public abstract class QuillScreen extends Screen {
 					theme.color(QuillThemeData.ColorRole.MUTED_DARK)
 			);
 		}
+
+		for (QuillOverlay overlay : overlays) {
+			if (overlay.isOpen()) {
+				overlay.render(graphics, mouseX, mouseY, delta);
+			}
+		}
+		pruneOverlays();
 	}
 
 	@Override
 	public boolean keyPressed(KeyEvent event) {
+		for (int index = overlays.size() - 1; index >= 0; index--) {
+			QuillOverlay overlay = overlays.get(index);
+			if (!overlay.isOpen()) {
+				continue;
+			}
+			if (overlay.keyPressed(event)) {
+				pruneOverlays();
+				return true;
+			}
+			if (overlay.blocksInput()) {
+				return true;
+			}
+		}
 		GuiEventListener focused = getFocused();
 		boolean textInputFocused = focused != null && focused.capturesInput();
 		if (!textInputFocused) {

@@ -22,7 +22,7 @@ public final class QuillRadio extends AbstractWidget {
 	private static final int RADIUS = 6;
 
 	private final QuillThemeData theme;
-	private final Consumer<Boolean> onChange;
+	private Consumer<Boolean> onChange;
 	private QuillSelectionStyle style;
 	private boolean selected;
 	private boolean deselectable;
@@ -95,6 +95,11 @@ public final class QuillRadio extends AbstractWidget {
 		this.selected = selected;
 		this.onChange = onChange;
 		this.style = style == null ? QuillSelectionStyles.CLASSIC : style;
+	}
+
+	public QuillRadio onChange(Consumer<Boolean> listener) {
+		this.onChange = listener;
+		return this;
 	}
 
 	public QuillRadio setStyle(QuillSelectionStyle style) {

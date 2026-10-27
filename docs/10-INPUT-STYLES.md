@@ -68,3 +68,21 @@ The same strategy can be applied to future input groups:
 - switch track/knob style.
 
 The public input package is the integration boundary for these adapters.
+
+## Radio groups
+
+`QuillRadioGroup` owns exclusivity and the optional/required policy:
+
+```java
+QuillRadioGroup group = new QuillRadioGroup(false)
+        .onChange(index -> status = index)
+        .add(optionA)
+        .add(optionB);
+
+group.required(true); // selected option cannot be cleared
+group.select(0);
+group.clear();       // returns false when required
+```
+
+A non-required group can be empty; a required group enforces that a selected radio cannot be
+deselected, but it does not auto-select an option on construction.
