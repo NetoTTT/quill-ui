@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * One-dimensional flex layout. Content-sized items keep their measured size; flexible items share
- * the remaining main-axis space by weight. The cross axis follows the largest child.
+ * the remaining main-axis space by weight. Cross-axis alignment is configurable.
  */
 public final class QuillFlexBox extends QuillNode {
 	public enum Direction {
@@ -19,6 +19,8 @@ public final class QuillFlexBox extends QuillNode {
 	private final Direction direction;
 	private final int gap;
 	private final List<Item> items = new ArrayList<>();
+	private QuillCrossAxisAlignment crossAxisAlignment = QuillCrossAxisAlignment.START;
+	private boolean stretchCross;
 	private List<QuillSize> childSizes = List.of();
 
 	public QuillFlexBox(Direction direction, int gap) {
@@ -44,6 +46,17 @@ public final class QuillFlexBox extends QuillNode {
 		return this;
 	}
 
+	public QuillFlexBox crossAxisAlignment(QuillCrossAxisAlignment alignment) {
+		this.crossAxisAlignment = alignment == null
+				? QuillCrossAxisAlignment.START
+				: alignment;
+		return this;
+	}
+
+	public QuillCrossAxisAlignment crossAxisAlignment() {
+		return crossAxisAlignment;
+	}
+
 	public int count() {
 		return items.size();
 	}
@@ -57,6 +70,8 @@ public final class QuillFlexBox extends QuillNode {
 		boolean horizontal = direction == Direction.HORIZONTAL;
 		int maxMain = horizontal ? constraints.maxWidth() : constraints.maxHeight();
 		int maxCross = horizontal ? constraints.maxHeight() : constraints.maxWidth();
+		stretchCross = crossAxisAlignment == QuillCrossAxisAlignment.STRETCH
+				&& maxCross != QuillBoxConstraints.UNBOUNDED;
 		long totalGap = (long) gap * (items.size() - 1);
 		int availableMain = maxMain == QuillBoxConstraints.UNBOUNDED
 				? QuillBoxConstraints.UNBOUNDED
@@ -71,7 +86,7 @@ public final class QuillFlexBox extends QuillNode {
 				flexTotal += item.flex();
 				continue;
 			}
-			QuillSize size = item.node().measure(looseChild(horizontal, maxMain, maxCross));
+			QuillSize size = item.node().measure(looseChild(horizontal, maxMain, maxCross, stretchCross));
 			sizes[index] = size;
 			fixedMain += mainOf(size, horizontal);
 		}
@@ -80,7 +95,7 @@ public final class QuillFlexBox extends QuillNode {
 			for (int index = 0; index < items.size(); index++) {
 				if (sizes[index] == null) {
 					sizes[index] = items.get(index).node().measure(
-							looseChild(horizontal, maxMain, maxCross)
+							looseChild(horizontal, maxMain, maxCross, stretchCross)
 					);
 				}
 			}
@@ -106,7 +121,7 @@ public final class QuillFlexBox extends QuillNode {
 			for (int index = 0; index < items.size(); index++) {
 				if (shares[index] > 0 || items.get(index).flex() > 0) {
 					sizes[index] = items.get(index).node().measure(
-							tightChild(horizontal, shares[index], maxCross)
+							tightChild(horizontal, shares[index], maxCross, stretchCross)
 					);
 				}
 			}
@@ -123,6 +138,9 @@ public final class QuillFlexBox extends QuillNode {
 		if (availableMain != QuillBoxConstraints.UNBOUNDED && flexTotal > 0) {
 			main = availableMain + (int) totalGap;
 		}
+		if (stretchCross) {
+			cross = maxCross;
+		}
 
 		childSizes = List.of(sizes);
 		QuillSize own = horizontal ? QuillSize.of(main, cross) : QuillSize.of(cross, main);
@@ -134,11 +152,27 @@ public final class QuillFlexBox extends QuillNode {
 		setBounds(bounds);
 		boolean horizontal = direction == Direction.HORIZONTAL;
 		int cursor = horizontal ? bounds.x() : bounds.y();
+		int crossStart = horizontal ? bounds.y() : bounds.x();
+		int crossSize = horizontal ? bounds.height() : bounds.width();
 		for (int index = 0; index < items.size(); index++) {
 			QuillSize size = childSizes.get(index);
+			int childCross = stretchCross
+					? crossSize
+					: crossOf(size, horizontal);
+			int crossOffset = crossAxisAlignment.offset(crossSize, childCross);
 			QuillRect childBounds = horizontal
-					? new QuillRect(cursor, bounds.y(), size.width(), size.height())
-					: new QuillRect(bounds.x(), cursor, size.width(), size.height());
+					? new QuillRect(
+							cursor,
+							crossStart + crossOffset,
+							size.width(),
+							childCross
+					)
+					: new QuillRect(
+							crossStart + crossOffset,
+							cursor,
+							childCross,
+							size.height()
+					);
 			items.get(index).node().arrange(childBounds);
 			cursor += mainOf(size, horizontal) + gap;
 		}
@@ -154,19 +188,35 @@ public final class QuillFlexBox extends QuillNode {
 	}
 
 	private static QuillBoxConstraints looseChild(
-			boolean horizontal, int maxMain, int maxCross
+			boolean horizontal, int maxMain, int maxCross, boolean stretch
 	) {
-		return horizontal
-				? QuillBoxConstraints.loose(maxMain, maxCross)
+		if (horizontal) {
+			return stretch
+					? new QuillBoxConstraints(0, maxCross, maxMain, maxCross)
+					: QuillBoxConstraints.loose(maxMain, maxCross);
+		}
+		return stretch
+				? new QuillBoxConstraints(maxCross, 0, maxCross, maxMain)
 				: QuillBoxConstraints.loose(maxCross, maxMain);
 	}
 
 	private static QuillBoxConstraints tightChild(
-			boolean horizontal, int main, int maxCross
+			boolean horizontal, int main, int maxCross, boolean stretch
 	) {
-		return horizontal
-				? new QuillBoxConstraints(main, 0, main, maxCross)
-				: new QuillBoxConstraints(0, main, maxCross, main);
+		if (horizontal) {
+			return new QuillBoxConstraints(
+					main,
+					stretch ? maxCross : 0,
+					main,
+					maxCross
+			);
+		}
+		return new QuillBoxConstraints(
+				stretch ? maxCross : 0,
+				main,
+				maxCross,
+				main
+		);
 	}
 
 	private static int mainOf(QuillSize size, boolean horizontal) {

@@ -1,7 +1,8 @@
 # Layout engine
 
 The engine is the foundation for responsive screens. It is intentionally separate from the current
-absolute-coordinate screens; phase 1 adds the core and tests without migrating any screen.
+absolute-coordinate screens. Phase 1 added the core and tests; phase 2 added cross-axis alignment,
+scroll measurement and the widget adapter.
 
 ## Protocol
 
@@ -45,6 +46,18 @@ measure and arrange passes.
 | `QuillFlexBox` | Row/column with content-sized and weighted flexible children. |
 | `QuillWrapBox` | Content-sized children wrapped into rows. |
 | `QuillStackBox` | Overlays children with horizontal/vertical alignment. |
+| `QuillScrollBox` | Measures unbounded content and exposes a scroll offset. |
+| `QuillWidgetBox` | Adapts an `AbstractWidget` to the layout tree. |
+
+`QuillFlexBox.crossAxisAlignment(...)` supports `START`, `CENTER`, `END` and `STRETCH`. Stretch
+measures children with a tight cross axis and arranges them to the container cross size.
+
+`QuillScrollBox` measures the child with an unbounded main axis. `scrollTo`/`scrollBy` clamp to
+`maxScroll()`. Rendering and clipping are still the widget layer's responsibility, so scroll boxes
+are not wired into `QuillScreen` yet.
+
+`QuillWidgetBox` is the first adapter: `measure` reads the widget's current size and `arrange`
+applies the final rectangle with `setX`/`setY`/`setWidth`/`setHeight`.
 
 The older `QuillFlex`, `QuillWrap` and `QuillStack` classes remain as immediate rectangle helpers for
 existing screens. The `*Box` classes are the measured tree used by the next migration phase.
@@ -62,15 +75,15 @@ row.arrange(new QuillRect(20, 20, size.width(), size.height()));
 
 ## Current limits
 
-- Flex children use `START` cross-alignment; `stretch`, `center` and `end` are next.
-- Scroll measurement is not part of phase 1.
-- The engine is not wired into `QuillScreen` or `AbstractWidget` yet.
-- Text measurement must be provided by the screen adapter in phase 2.
+- Scroll rendering and clipping are not wired into `QuillScreen` yet.
+- `QuillWidgetBox` moves widgets but does not clip them to a viewport.
+- Text measurement must be provided by the screen adapter.
 
 ## Tests
 
 `QuillBoxLayoutTest` covers constraints, padding, sizing, constraints boxes, flex rows/columns,
-wrapping, stacking and a nested tree. Run:
+cross-axis alignment, wrapping, stacking, scroll measurement and a nested tree. `QuillWidgetBoxTest`
+covers the widget adapter. Run:
 
 ```bat
 gradlew.bat test --console=plain
@@ -78,7 +91,6 @@ gradlew.bat test --console=plain
 
 ## Next phases
 
-1. Cross-axis alignment, scroll measurement, and a widget adapter.
-2. Rebuild the test harness screens with the engine.
-3. Migrate the Quill screens.
-4. Migrate LaborCraft screens.
+1. Rebuild the test harness screens with the engine and add scroll clipping.
+2. Migrate the Quill screens.
+3. Migrate LaborCraft screens.

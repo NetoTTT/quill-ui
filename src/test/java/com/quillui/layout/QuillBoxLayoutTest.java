@@ -123,6 +123,82 @@ class QuillBoxLayoutTest {
 	}
 
 	@Test
+	void flexCrossAxisAlignmentCentersChildren() {
+		Leaf first = new Leaf(50, 10);
+		Leaf second = new Leaf(50, 20);
+		QuillFlexBox row = QuillFlexBox.row(0)
+				.crossAxisAlignment(QuillCrossAxisAlignment.CENTER)
+				.add(first)
+				.add(second);
+		assertEquals(QuillSize.of(100, 20), row.measure(QuillBoxConstraints.loose(200, 100)));
+		row.arrange(new QuillRect(0, 0, 200, 100));
+		assertEquals(new QuillRect(0, 45, 50, 10), first.bounds());
+		assertEquals(new QuillRect(50, 40, 50, 20), second.bounds());
+	}
+
+	@Test
+	void flexCrossAxisAlignmentStretchesChildren() {
+		Leaf first = new Leaf(50, 10);
+		Leaf second = new Leaf(50, 20);
+		QuillFlexBox row = QuillFlexBox.row(0)
+				.crossAxisAlignment(QuillCrossAxisAlignment.STRETCH)
+				.add(first)
+				.add(second);
+		assertEquals(QuillSize.of(100, 100), row.measure(QuillBoxConstraints.loose(200, 100)));
+		row.arrange(new QuillRect(0, 0, 200, 100));
+		assertEquals(new QuillRect(0, 0, 50, 100), first.bounds());
+		assertEquals(new QuillRect(50, 0, 50, 100), second.bounds());
+	}
+
+	@Test
+	void flexCrossAxisAlignmentEndsChildren() {
+		Leaf child = new Leaf(50, 10);
+		QuillFlexBox row = QuillFlexBox.row(0)
+				.crossAxisAlignment(QuillCrossAxisAlignment.END)
+				.add(child);
+		row.measure(QuillBoxConstraints.loose(200, 100));
+		row.arrange(new QuillRect(0, 0, 200, 100));
+		assertEquals(new QuillRect(0, 90, 50, 10), child.bounds());
+	}
+
+	@Test
+	void scrollMeasuresUnboundedContentAndOffsetsChild() {
+		Leaf content = new Leaf(100, 300);
+		QuillScrollBox scroll = QuillScrollBox.vertical(content);
+		assertEquals(QuillSize.of(100, 100), scroll.measure(QuillBoxConstraints.tightFor(100, 100)));
+		assertEquals(QuillSize.of(100, 300), scroll.contentSize());
+		scroll.arrange(new QuillRect(0, 0, 100, 100));
+		assertEquals(new QuillRect(0, 0, 100, 300), content.bounds());
+		assertEquals(200, scroll.maxScroll());
+		scroll.scrollTo(50);
+		scroll.arrange(new QuillRect(0, 0, 100, 100));
+		assertEquals(new QuillRect(0, -50, 100, 300), content.bounds());
+		scroll.scrollTo(999);
+		assertEquals(200, scroll.scrollOffset());
+	}
+
+	@Test
+	void horizontalScrollOffsetsChildOnX() {
+		Leaf content = new Leaf(300, 100);
+		QuillScrollBox scroll = QuillScrollBox.horizontal(content);
+		assertEquals(QuillSize.of(100, 100), scroll.measure(QuillBoxConstraints.tightFor(100, 100)));
+		scroll.arrange(new QuillRect(0, 0, 100, 100));
+		scroll.scrollTo(40);
+		scroll.arrange(new QuillRect(0, 0, 100, 100));
+		assertEquals(new QuillRect(-40, 0, 300, 100), content.bounds());
+	}
+
+	@Test
+	void scrollKeepsContentHeightWhenItFits() {
+		Leaf content = new Leaf(100, 40);
+		QuillScrollBox scroll = QuillScrollBox.vertical(content);
+		assertEquals(QuillSize.of(100, 40), scroll.measure(QuillBoxConstraints.loose(100, 100)));
+		scroll.arrange(new QuillRect(0, 0, 100, 40));
+		assertEquals(0, scroll.maxScroll());
+		assertEquals(new QuillRect(0, 0, 100, 40), content.bounds());
+	}
+
+	@Test
 	void stackAlignsChildrenInParentBounds() {
 		Leaf center = new Leaf(40, 10);
 		Leaf end = new Leaf(20, 10);
