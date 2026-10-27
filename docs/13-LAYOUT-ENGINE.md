@@ -56,6 +56,13 @@ measures children with a tight cross axis and arranges them to the container cro
 `maxScroll()`. Rendering and clipping are still the widget layer's responsibility, so scroll boxes
 are not wired into `QuillScreen` yet.
 
+`QuillScrollBar` is a thin viewport scrollbar. The owner supplies `maxScroll`, the current offset and
+the callback that re-arranges the content; the bar paints the thumb and handles thumb dragging.
+`QuillScrollHints` draws top/bottom chevrons when content is hidden.
+
+`QuillWidgetBox.clipTo(rect)` is the first clipping guard: widgets outside the rect are hidden
+instead of drawn over the next section. Real scissor clipping is still pending.
+
 `QuillWidgetBox` is the first adapter: `measure` reads the widget's current size and `arrange`
 applies the final rectangle with `setX`/`setY`/`setWidth`/`setHeight`.
 
@@ -76,7 +83,7 @@ row.arrange(new QuillRect(20, 20, size.width(), size.height()));
 ## Current limits
 
 - Scroll rendering and clipping are not wired into `QuillScreen` yet.
-- `QuillWidgetBox` moves widgets but does not clip them to a viewport.
+- `QuillWidgetBox.clipTo` hides widgets outside the viewport, but does not scissor partially visible widgets.
 - Text measurement must be provided by the screen adapter.
 
 ## Tests
