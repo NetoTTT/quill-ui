@@ -267,6 +267,45 @@ class QuillBoxLayoutTest {
 		}
 	}
 
+	@Test
+	void marginAddsOuterSpaceAndKeepsChildInside() {
+		Leaf child = new Leaf(80, 20);
+		QuillMarginBox box = new QuillMarginBox(QuillInsets.all(10), child);
+		assertEquals(QuillSize.of(100, 40), box.measure(LOOSE_300));
+		box.arrange(new QuillRect(0, 0, 100, 40));
+		assertEquals(new QuillRect(10, 10, 80, 20), child.bounds());
+	}
+
+	@Test
+	void validatorAcceptsNormalLayouts() {
+		Leaf first = new Leaf(80, 20);
+		Leaf second = new Leaf(80, 20);
+		QuillFlexBox row = QuillFlexBox.row(8).add(first).add(second);
+		row.measure(QuillBoxConstraints.tightFor(200, 40));
+		row.arrange(new QuillRect(0, 0, 200, 40));
+		assertTrue(QuillLayoutValidator.validate(row).isEmpty());
+	}
+
+	@Test
+	void validatorAcceptsScrollOverflow() {
+		Leaf content = new Leaf(100, 300);
+		QuillScrollBox scroll = QuillScrollBox.vertical(content);
+		scroll.measure(QuillBoxConstraints.tightFor(100, 100));
+		scroll.arrange(new QuillRect(0, 0, 100, 100));
+		assertTrue(QuillLayoutValidator.validate(scroll).isEmpty());
+	}
+
+	@Test
+	void validatorReportsChildOutsideParent() {
+		Leaf child = new Leaf(40, 40);
+		QuillSizedBox root = new QuillSizedBox(100, 100, child);
+		root.measure(QuillBoxConstraints.tightFor(100, 100));
+		root.arrange(new QuillRect(0, 0, 100, 100));
+		child.arrange(new QuillRect(120, 0, 40, 40));
+
+		assertFalse(QuillLayoutValidator.validate(root).isEmpty());
+	}
+
 	private static final class Leaf extends QuillNode {
 		private final QuillSize size;
 

@@ -30,7 +30,7 @@ public final class QuillPaddingBox extends QuillNode {
 	public void arrange(QuillRect bounds) {
 		setBounds(bounds);
 		if (child != null) {
-			child.arrange(contentRect(bounds));
+			child.arrange(insets.contentRect(bounds));
 		}
 	}
 
@@ -45,13 +45,5 @@ public final class QuillPaddingBox extends QuillNode {
 
 	public QuillInsets insets() {
 		return insets;
-	}
-
-	private QuillRect contentRect(QuillRect bounds) {
-		int left = Math.min(insets.left(), bounds.width());
-		int top = Math.min(insets.top(), bounds.height());
-		int width = Math.max(0, bounds.width() - insets.horizontal());
-		int height = Math.max(0, bounds.height() - insets.vertical());
-		return new QuillRect(bounds.x() + left, bounds.y() + top, width, height);
 	}
 }

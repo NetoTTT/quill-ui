@@ -42,6 +42,7 @@ measure and arrange passes.
 | --- | --- |
 | `QuillSizedBox` | Fixed or preferred width/height around an optional child. |
 | `QuillPaddingBox` | Deflates child constraints and adds insets to the result. |
+| `QuillMarginBox` | Adds outer spacing around a child. |
 | `QuillConstrainedBox` | Applies additional min/max constraints. |
 | `QuillFlexBox` | Row/column with content-sized and weighted flexible children. |
 | `QuillWrapBox` | Content-sized children wrapped into rows. |
@@ -62,6 +63,9 @@ the callback that re-arranges the content; the bar paints the thumb and handles 
 
 `QuillWidgetBox.clipTo(rect)` is the first clipping guard: widgets outside the rect are hidden
 instead of drawn over the next section. Real scissor clipping is still pending.
+
+`QuillLayoutValidator` checks arranged trees for negative sizes and children outside their parent.
+`QuillScrollBox` children are allowed to overflow, as expected.
 
 `QuillWidgetBox` is the first adapter: `measure` reads the widget's current size and `arrange`
 applies the final rectangle with `setX`/`setY`/`setWidth`/`setHeight`.
@@ -89,7 +93,7 @@ row.arrange(new QuillRect(20, 20, size.width(), size.height()));
 ## Tests
 
 `QuillBoxLayoutTest` covers constraints, padding, sizing, constraints boxes, flex rows/columns,
-cross-axis alignment, wrapping, stacking, scroll measurement and a nested tree. `QuillWidgetBoxTest`
+cross-axis alignment, wrapping, stacking, margin, scroll measurement, a nested tree and the layout validator. `QuillWidgetBoxTest`
 covers the widget adapter. Run:
 
 ```bat
