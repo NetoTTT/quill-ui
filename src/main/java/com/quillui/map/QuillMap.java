@@ -902,6 +902,8 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 			return false;
 		}
 
+		panning = false;
+		dragging = false;
 		MouseAction action = mouseBindings.action(event.button());
 		if (action == MouseAction.PAN) {
 			panning = true;

@@ -4,11 +4,14 @@ import com.quillui.render.QuillRender;
 import com.quillui.render.QuillTooltips;
 import com.quillui.theme.QuillThemeData;
 import com.quillui.widget.QuillButton;
+import com.mojang.blaze3d.platform.InputConstants;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 
 /**
@@ -94,6 +97,35 @@ public abstract class QuillScreen extends Screen {
 		shortcuts.add(shortcut);
 	}
 
+	@Override
+	public boolean mouseDragged(MouseButtonEvent event, double deltaX, double deltaY) {
+		if (event.button() != InputConstants.MOUSE_BUTTON_LEFT) {
+			GuiEventListener target = mouseButtonTarget(event);
+			if (target != null && target.mouseDragged(event, deltaX, deltaY)) {
+				return true;
+			}
+		}
+		return super.mouseDragged(event, deltaX, deltaY);
+	}
+
+	@Override
+	public boolean mouseReleased(MouseButtonEvent event) {
+		if (event.button() != InputConstants.MOUSE_BUTTON_LEFT) {
+			GuiEventListener target = mouseButtonTarget(event);
+			if (target != null && target.mouseReleased(event)) {
+				return true;
+			}
+		}
+		return super.mouseReleased(event);
+	}
+
+	private GuiEventListener mouseButtonTarget(MouseButtonEvent event) {
+		GuiEventListener focused = getFocused();
+		if (focused != null) {
+			return focused;
+		}
+		return getChildAt(event.x(), event.y()).orElse(null);
+	}
 	@Override
 	public void extractBackground(
 			GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta
