@@ -10,7 +10,7 @@ independent from any economy, jobs or gameplay code, so other mods can use it.
 
 ## Status
 
-`0.2.0-alpha.4` — native map, full-resolution tiles and configurable entity filtering. The API is intentionally small and may evolve before a
+`0.2.0-alpha.5` — generic HUD target indicator, plus the native map foundation. The API is intentionally small and may evolve before a
 stable `1.0.0`. This build is published on the **alpha** channel, not as a stable release.
 The public API surface and compatibility policy are documented in
 [docs/API.md](docs/API.md) and [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md).
@@ -36,7 +36,7 @@ The public API surface and compatibility policy are documented in
 gradlew.bat build --console=plain --no-daemon
 ```
 
-The jar is written to `build/libs/quill-ui-0.2.0-alpha.4.jar`.
+The jar is written to `build/libs/quill-ui-0.2.0-alpha.5.jar`.
 
 ## Install
 
