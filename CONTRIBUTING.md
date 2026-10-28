@@ -26,6 +26,47 @@ baseline.
 - Additive API changes keep `QuillApi.API_LEVEL`; removed or changed signatures increment it.
 - Do not commit build output, IDE files or temporary logs.
 
+## Commit messages
+
+Use Conventional Commits for new commits:
+
+```text
+<type>(<scope>): <imperative summary>
+
+<optional body>
+
+Milestone: <version>
+```
+
+- `type`: `feat`, `fix`, `refactor`, `test`, `docs`, `build`, `ci`, `chore`, `perf`.
+- `scope` is optional but preferred when it identifies the area: `layout`, `screen`, `widget`,
+  `overlay`, `theme`, `map`, `ci`, `api`, `test`, `docs`.
+- Summary in the imperative and lower-case, without a trailing period.
+- Keep the subject short (about 72 characters). Put details in the body.
+- Use `Milestone: 0.2.0-alpha.N` when the commit belongs to a specific alpha.
+- Use a `BREAKING CHANGE:` footer when public API compatibility changes.
+- Release commits use `chore(release): 0.2.0-alpha.N`.
+
+Examples:
+
+```text
+fix(screen): keep accent bar inside collapsed header
+
+The accent bar used a fixed height while the title-only header is shorter.
+
+Milestone: 0.2.0-alpha.7
+```
+
+```text
+feat(layout): add scissor clip host
+test(layout): cover clip input mapping
+docs(layout): document scroll affordances
+chore(release): 0.2.0-alpha.8
+```
+
+The version is primarily carried by the git tag; the `Milestone` footer is optional but useful while
+several alpha changes land on `main`. Do not rewrite old history only to apply this format.
+
 ## Pull requests
 
 1. Explain the user-facing or API change.

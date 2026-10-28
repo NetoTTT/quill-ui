@@ -285,11 +285,18 @@ public abstract class QuillScreen extends Screen {
 	) {
 		QuillScreenLayout current = layout();
 		QuillRender.header(graphics, panelX, panelY, panelWidth, headerHeight(), theme);
+		int accentHeight = Math.max(
+				4,
+				Math.min(
+						20,
+						headerHeight() - current.titleInsetY() - 6
+				)
+		);
 		graphics.fill(
 				panelX + current.titleInsetX() - 10,
 				panelY + current.titleInsetY(),
 				panelX + current.titleInsetX() - 7,
-				panelY + current.titleInsetY() + 20,
+				panelY + current.titleInsetY() + accentHeight,
 				theme.color(QuillThemeData.ColorRole.ACCENT)
 		);
 		QuillRender.text(
