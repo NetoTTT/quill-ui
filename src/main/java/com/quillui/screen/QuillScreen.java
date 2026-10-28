@@ -1,5 +1,6 @@
 package com.quillui.screen;
 
+import com.quillui.layout.QuillRect;
 import com.quillui.overlay.QuillOverlay;
 import com.quillui.overlay.QuillToast;
 import com.quillui.render.QuillRender;
@@ -101,6 +102,32 @@ public abstract class QuillScreen extends Screen {
 	/** Top edge for screen content, derived from the actual header height. */
 	protected int contentTop() {
 		return panelY + headerHeight() + 18;
+	}
+
+	/** Bottom edge available to content, above the footer. */
+	protected int contentBottom() {
+		return panelY + panelHeight - footerHeight() - 12;
+	}
+
+	protected int footerHeight() {
+		return footer().getString().isBlank() ? 0 : 28;
+	}
+
+	/** Content area between the header and footer. */
+	protected QuillRect contentBounds(int horizontalInset) {
+		return contentBounds(horizontalInset, footerHeight() + 12);
+	}
+
+	/** Content area with an explicit bottom inset, for screens with fixed controls below it. */
+	protected QuillRect contentBounds(int horizontalInset, int bottomInset) {
+		int top = contentTop();
+		int bottom = panelY + panelHeight - bottomInset;
+		return new QuillRect(
+				panelX + horizontalInset,
+				top,
+				Math.max(1, panelWidth() - horizontalInset * 2),
+				Math.max(1, bottom - top)
+		);
 	}
 
 	protected boolean hasSubtitle() {
