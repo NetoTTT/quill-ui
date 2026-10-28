@@ -21,6 +21,7 @@ import net.minecraft.util.Mth;
  */
 public final class QuillClipView extends AbstractWidget {
 	private static final int SCROLL_STEP = 24;
+	private static final int SCROLLBAR_HIT_WIDTH = 6;
 
 	private final List<AbstractWidget> children = new ArrayList<>();
 	private final IntSupplier maxScroll;
@@ -79,6 +80,12 @@ public final class QuillClipView extends AbstractWidget {
 		}
 		graphics.pose().popMatrix();
 		graphics.disableScissor();
+	}
+
+	@Override
+	public boolean isMouseOver(double mouseX, double mouseY) {
+		return super.isMouseOver(mouseX, mouseY)
+				&& mouseX < getX() + getWidth() - SCROLLBAR_HIT_WIDTH;
 	}
 
 	@Override
