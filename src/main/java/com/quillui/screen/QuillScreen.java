@@ -4,6 +4,7 @@ import com.quillui.layout.QuillRect;
 import com.quillui.overlay.QuillOverlay;
 import com.quillui.overlay.QuillToast;
 import com.quillui.render.QuillRender;
+import com.quillui.theme.QuillSpacing;
 import com.quillui.render.QuillTooltips;
 import com.quillui.theme.QuillThemeData;
 import com.quillui.widget.QuillButton;
@@ -113,7 +114,17 @@ public abstract class QuillScreen extends Screen {
 		return footer().getString().isBlank() ? 0 : 28;
 	}
 
+	/** Default horizontal inset for screen content. */
+	protected int contentInset() {
+		return QuillSpacing.SPACE_6;
+	}
+
 	/** Content area between the header and footer. */
+	protected QuillRect contentBounds() {
+		return contentBounds(contentInset());
+	}
+
+	/** Content area between the header and footer with a custom inset. */
 	protected QuillRect contentBounds(int horizontalInset) {
 		return contentBounds(horizontalInset, footerHeight() + 12);
 	}
