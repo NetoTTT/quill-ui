@@ -108,23 +108,29 @@ public final class QuillClipView extends AbstractWidget {
 		graphics.enableScissor(getX(), getY(), getX() + getWidth(), getY() + getHeight());
 		graphics.pose().pushMatrix();
 		graphics.pose().translate(0.0F, (float) -scroll);
-		if (renderer != null) {
-			renderer.render(
-					graphics,
-					getX(),
-					getY(),
-					getWidth(),
-					getHeight(),
-					scroll,
-					mouseX,
-					mouseY + scroll,
-					delta
-			);
-		}
-		for (AbstractWidget child : children) {
-			if (child.visible) {
-				child.extractRenderState(graphics, mouseX, mouseY + scroll, delta);
+		QuillMouseContext.push(0, scroll);
+		try {
+			if (renderer != null) {
+				renderer.render(
+						graphics,
+						getX(),
+						getY(),
+						getWidth(),
+						getHeight(),
+						scroll,
+						mouseX,
+						mouseY + scroll,
+						delta
+				);
 			}
+			for (AbstractWidget child : children) {
+				if (child.visible) {
+					child.extractRenderState(graphics, mouseX, mouseY + scroll, delta);
+				}
+			}
+		}
+		finally {
+			QuillMouseContext.pop();
 		}
 		graphics.pose().popMatrix();
 		graphics.disableScissor();

@@ -62,6 +62,18 @@ class QuillClipViewTest {
 		assertTrue(second.isFocused());
 	}
 
+	@Test
+	void mouseContextMapsContentToScreen() {
+		QuillMouseContext.push(0, 50);
+		try {
+			assertEquals(10, QuillMouseContext.screenY(60));
+		}
+		finally {
+			QuillMouseContext.pop();
+		}
+		assertEquals(60, QuillMouseContext.screenY(60));
+	}
+
 	private static final class TestWidget extends AbstractWidget {
 		private int clickedY = -1;
 

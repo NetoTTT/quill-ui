@@ -189,8 +189,8 @@ public class QuillButton extends AbstractWidget {
 			graphics.setTooltipForNextFrame(
 					Minecraft.getInstance().font,
 					tooltip.toCharSequence(Minecraft.getInstance()),
-					mouseX,
-					mouseY
+					QuillMouseContext.screenX(mouseX),
+					QuillMouseContext.screenY(mouseY)
 			);
 		}
 	}
