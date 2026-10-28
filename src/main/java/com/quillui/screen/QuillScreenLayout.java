@@ -17,4 +17,9 @@ public record QuillScreenLayout(
 ) {
 	public static final QuillScreenLayout DEFAULT =
 			new QuillScreenLayout(48, 22, 14, 29, 10, 8, 20);
+
+	/** Header height when the screen has no subtitle line. */
+	public int titleOnlyHeaderHeight() {
+		return Math.max(titleInsetY + 16, headerHeight - 14);
+	}
 }

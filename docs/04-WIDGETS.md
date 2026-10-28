@@ -86,9 +86,10 @@ tabs.select(0);
 
 ## QuillScreen
 
-`QuillScreen` provides the panel, 48 px header, optional footer, accent title bar and close button.
-Override `buildContent()` and optionally `subtitle()`/`footer()`. Use `panelX`, `panelY`,
-`panelWidth()` and `panelHeight()` to derive content coordinates.
+`QuillScreen` provides the panel, a 48 px header (about 34 px when `subtitle()` is blank), optional
+footer, accent title bar and close button. Override `buildContent()` and optionally
+`subtitle()`/`footer()`. Use `panelX`, `panelY`, `contentTop()`, `panelWidth()` and `panelHeight()`
+to derive content coordinates.
 
 ## QuillRender
 

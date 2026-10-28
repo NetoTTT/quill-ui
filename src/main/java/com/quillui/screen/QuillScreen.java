@@ -6,7 +6,6 @@ import com.quillui.render.QuillRender;
 import com.quillui.render.QuillTooltips;
 import com.quillui.theme.QuillThemeData;
 import com.quillui.widget.QuillButton;
-import com.mojang.blaze3d.platform.InputConstants;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -21,8 +20,12 @@ import net.minecraft.network.chat.Component;
  * are absolute GUI coordinates; use {@code QuillColumn}/{@code QuillGrid} to derive child bounds.
  */
 public abstract class QuillScreen extends Screen {
-	private final int panelWidth;
-	private final int panelHeight;
+	private static final int DEFAULT_SCREEN_MARGIN = 16;
+
+	private final int requestedPanelWidth;
+	private final int requestedPanelHeight;
+	private int panelWidth;
+	private int panelHeight;
 	private final QuillThemeData theme;
 	private final QuillScreenLayout layout;
 	private final List<QuillShortcut> shortcuts = new ArrayList<>();
@@ -48,17 +51,27 @@ public abstract class QuillScreen extends Screen {
 			QuillScreenLayout layout
 	) {
 		super(title);
-		this.panelWidth = panelWidth;
-		this.panelHeight = panelHeight;
+		this.requestedPanelWidth = panelWidth;
+		this.requestedPanelHeight = panelHeight;
 		this.theme = theme;
 		this.layout = layout;
 	}
 
 	@Override
 	protected void init() {
-		this.panelX = (this.width - panelWidth) / 2;
-		this.panelY = (this.height - panelHeight) / 2;
+		int margin = Math.max(0, screenMargin());
+		int availableWidth = Math.max(1, width - margin * 2);
+		int availableHeight = Math.max(1, height - margin * 2);
+		this.panelWidth = Math.min(requestedPanelWidth, availableWidth);
+		this.panelHeight = Math.min(requestedPanelHeight, availableHeight);
+		this.panelX = (width - panelWidth) / 2;
+		this.panelY = (height - panelHeight) / 2;
 		buildContent();
+	}
+
+	/** Space kept between the panel and the screen edge on small windows. */
+	protected int screenMargin() {
+		return DEFAULT_SCREEN_MARGIN;
 	}
 
 	protected abstract void buildContent();
@@ -80,7 +93,18 @@ public abstract class QuillScreen extends Screen {
 	}
 
 	protected int headerHeight() {
-		return layout.headerHeight();
+		return hasSubtitle()
+				? layout.headerHeight()
+				: layout.titleOnlyHeaderHeight();
+	}
+
+	/** Top edge for screen content, derived from the actual header height. */
+	protected int contentTop() {
+		return panelY + headerHeight() + 18;
+	}
+
+	protected boolean hasSubtitle() {
+		return !subtitle().getString().isBlank();
 	}
 
 	/** Override to move the header, title, subtitle or close button. */
@@ -207,11 +231,9 @@ public abstract class QuillScreen extends Screen {
 				return true;
 			}
 		}
-		if (event.button() != InputConstants.MOUSE_BUTTON_LEFT) {
-			GuiEventListener target = mouseButtonTarget(event);
-			if (target != null && target.mouseDragged(event, deltaX, deltaY)) {
-				return true;
-			}
+		GuiEventListener target = mouseButtonTarget(event);
+		if (target != null && target.mouseDragged(event, deltaX, deltaY)) {
+			return true;
 		}
 		return super.mouseDragged(event, deltaX, deltaY);
 	}
@@ -231,11 +253,9 @@ public abstract class QuillScreen extends Screen {
 				return true;
 			}
 		}
-		if (event.button() != InputConstants.MOUSE_BUTTON_LEFT) {
-			GuiEventListener target = mouseButtonTarget(event);
-			if (target != null && target.mouseReleased(event)) {
-				return true;
-			}
+		GuiEventListener target = mouseButtonTarget(event);
+		if (target != null && target.mouseReleased(event)) {
+			return true;
 		}
 		return super.mouseReleased(event);
 	}
@@ -264,7 +284,7 @@ public abstract class QuillScreen extends Screen {
 			GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta
 	) {
 		QuillScreenLayout current = layout();
-		QuillRender.header(graphics, panelX, panelY, panelWidth, current.headerHeight(), theme);
+		QuillRender.header(graphics, panelX, panelY, panelWidth, headerHeight(), theme);
 		graphics.fill(
 				panelX + current.titleInsetX() - 10,
 				panelY + current.titleInsetY(),
@@ -280,14 +300,16 @@ public abstract class QuillScreen extends Screen {
 				panelY + current.titleInsetY(),
 				theme.color(QuillThemeData.ColorRole.TITLE)
 		);
-		QuillRender.text(
-				graphics,
-				font,
-				subtitle(),
-				panelX + current.titleInsetX(),
-				panelY + current.subtitleInsetY(),
-				theme.color(QuillThemeData.ColorRole.TEXT_SOFT)
-		);
+		if (hasSubtitle()) {
+			QuillRender.text(
+					graphics,
+					font,
+					subtitle(),
+					panelX + current.titleInsetX(),
+					panelY + current.subtitleInsetY(),
+					theme.color(QuillThemeData.ColorRole.TEXT_SOFT)
+			);
+		}
 
 		super.extractRenderState(graphics, mouseX, mouseY, delta);
 
