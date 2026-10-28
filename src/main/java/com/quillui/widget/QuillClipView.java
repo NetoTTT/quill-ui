@@ -2,6 +2,7 @@ package com.quillui.widget;
 
 import com.quillui.layout.QuillRect;
 import com.quillui.theme.QuillThemeData;
+import com.mojang.blaze3d.platform.InputConstants;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.IntConsumer;
@@ -199,7 +200,19 @@ public final class QuillClipView extends AbstractWidget {
 
 	@Override
 	public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-		if (!active || !visible || !isMouseOver(mouseX, mouseY) || maxScroll.getAsInt() <= 0) {
+		if (!active || !visible || !isMouseOver(mouseX, mouseY)) {
+			return false;
+		}
+		int scroll = currentOffset();
+		if (maxScroll.getAsInt() <= 0 || childWheelModifier()) {
+			for (int index = children.size() - 1; index >= 0; index--) {
+				AbstractWidget child = children.get(index);
+				if (child.visible && child.mouseScrolled(mouseX, mouseY + scroll, scrollX, scrollY)) {
+					return true;
+				}
+			}
+		}
+		if (maxScroll.getAsInt() <= 0) {
 			return false;
 		}
 		int next = (int) Math.round(currentOffset() - scrollY * SCROLL_STEP);
@@ -207,6 +220,13 @@ public final class QuillClipView extends AbstractWidget {
 			onScroll.accept(Mth.clamp(next, 0, maxScroll.getAsInt()));
 		}
 		return true;
+	}
+
+	private static boolean childWheelModifier() {
+		return InputConstants.isKeyDown(InputConstants.KEY_LCONTROL)
+				|| InputConstants.isKeyDown(InputConstants.KEY_RCONTROL)
+				|| InputConstants.isKeyDown(InputConstants.KEY_LSHIFT)
+				|| InputConstants.isKeyDown(InputConstants.KEY_RSHIFT);
 	}
 
 	@Override
