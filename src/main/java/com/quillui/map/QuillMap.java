@@ -115,6 +115,7 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 	private InteractionMode interactionMode = InteractionMode.SELECT;
 	private MouseBindings mouseBindings = MouseBindings.DEFAULT;
 	private boolean showRadiusLimit;
+	private boolean scissorEnabled = true;
 	private final Map<TileKey, MapTile> tileCache = new LinkedHashMap<>(512, 0.75F, true) {
 		@Override
 		protected boolean removeEldestEntry(Map.Entry<TileKey, MapTile> eldest) {
@@ -271,6 +272,11 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 
 	public void setReadOnly(boolean readOnly) {
 		this.readOnly = readOnly;
+	}
+
+	/** Disables the internal map scissor when an outer host already clips this map. */
+	public void setScissorEnabled(boolean enabled) {
+		this.scissorEnabled = enabled;
 	}
 
 	public void setSelection(BlockPos from, BlockPos to) {
@@ -436,7 +442,9 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 		updateLayerLabel(underground, pivot);
 		graphics.fill(getX(), getY(), getX() + width, getY() + height,
 				theme.color(QuillThemeData.ColorRole.MAP_BG));
-		graphics.enableScissor(getX(), getY(), getX() + width, getY() + height);
+		if (scissorEnabled) {
+			graphics.enableScissor(getX(), getY(), getX() + width, getY() + height);
+		}
 		graphics.blit(textureId, getX(), getY(), getX() + width, getY() + height, 0.0F, 1.0F, 0.0F, 1.0F);
 		drawGrid(graphics);
 		drawZones(graphics);
@@ -447,7 +455,9 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 		drawMarkers(graphics);
 		drawCenterMarker(graphics);
 		drawHud(graphics);
-		graphics.disableScissor();
+		if (scissorEnabled) {
+			graphics.disableScissor();
+		}
 		QuillRender.border(
 				graphics, getX(), getY(), width, height,
 				theme.color(QuillThemeData.ColorRole.SURFACE_BORDER)
