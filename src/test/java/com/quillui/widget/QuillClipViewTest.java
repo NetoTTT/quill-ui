@@ -1,6 +1,7 @@
 package com.quillui.widget;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.quillui.layout.QuillRect;
@@ -35,6 +36,30 @@ class QuillClipViewTest {
 
 		assertTrue(view.mouseScrolled(10, 60, 0, -1));
 		assertEquals(74, offset[0]);
+	}
+
+	@Test
+	void keepsOnlyOneFocusedChild() {
+		TestWidget first = new TestWidget();
+		TestWidget second = new TestWidget();
+		QuillClipView view = new QuillClipView(
+				new QuillRect(0, 0, 100, 100),
+				() -> 0,
+				() -> 0,
+				value -> {
+				},
+				QuillThemeData.DEFAULT
+		);
+		view.add(first);
+		view.add(second);
+
+		view.mouseClicked(new MouseButtonEvent(10, 10, new MouseButtonInfo(0, 0)), false);
+		assertFalse(first.isFocused());
+		assertTrue(second.isFocused());
+
+		view.mouseClicked(new MouseButtonEvent(10, 10, new MouseButtonInfo(0, 0)), false);
+		assertFalse(first.isFocused());
+		assertTrue(second.isFocused());
 	}
 
 	private static final class TestWidget extends AbstractWidget {

@@ -97,12 +97,33 @@ public final class QuillClipView extends AbstractWidget {
 		for (int index = children.size() - 1; index >= 0; index--) {
 			AbstractWidget child = children.get(index);
 			if (child.visible && child.mouseClicked(mapped, doubleClick)) {
-				focusedChild = child;
+				focusChild(child);
 				return true;
 			}
 		}
-		focusedChild = null;
+		focusChild(null);
 		return true;
+	}
+
+	private void focusChild(AbstractWidget child) {
+		if (focusedChild == child) {
+			return;
+		}
+		if (focusedChild != null) {
+			focusedChild.setFocused(false);
+		}
+		focusedChild = child;
+		if (focusedChild != null) {
+			focusedChild.setFocused(true);
+		}
+	}
+
+	@Override
+	public void setFocused(boolean focused) {
+		super.setFocused(focused);
+		if (!focused) {
+			focusChild(null);
+		}
 	}
 
 	@Override
