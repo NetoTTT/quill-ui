@@ -20,6 +20,20 @@ import net.minecraft.util.Mth;
  * input, so partially visible widgets are clipped instead of disappearing entirely.
  */
 public final class QuillClipView extends AbstractWidget {
+	public interface ContentRenderer {
+		void render(
+				GuiGraphicsExtractor graphics,
+				int viewportX,
+				int viewportY,
+				int viewportWidth,
+				int viewportHeight,
+				int scrollOffset,
+				int mouseX,
+				int mouseY,
+				float delta
+		);
+	}
+
 	private static final int SCROLL_STEP = 24;
 	private static final int SCROLLBAR_HIT_WIDTH = 6;
 
@@ -28,6 +42,7 @@ public final class QuillClipView extends AbstractWidget {
 	private final IntSupplier offset;
 	private final IntConsumer onScroll;
 	private final QuillThemeData theme;
+	private final ContentRenderer renderer;
 	private AbstractWidget focusedChild;
 
 	public QuillClipView(
@@ -37,11 +52,23 @@ public final class QuillClipView extends AbstractWidget {
 			IntConsumer onScroll,
 			QuillThemeData theme
 	) {
+		this(viewport, maxScroll, offset, onScroll, theme, null);
+	}
+
+	public QuillClipView(
+			QuillRect viewport,
+			IntSupplier maxScroll,
+			IntSupplier offset,
+			IntConsumer onScroll,
+			QuillThemeData theme,
+			ContentRenderer renderer
+	) {
 		super(viewport.x(), viewport.y(), viewport.width(), viewport.height(), Component.empty());
 		this.maxScroll = maxScroll == null ? () -> 0 : maxScroll;
 		this.offset = offset == null ? () -> 0 : offset;
 		this.onScroll = onScroll;
 		this.theme = theme == null ? QuillThemeData.DEFAULT : theme;
+		this.renderer = renderer;
 	}
 
 	public <T extends AbstractWidget> T add(T widget) {
@@ -51,6 +78,14 @@ public final class QuillClipView extends AbstractWidget {
 
 	public List<AbstractWidget> children() {
 		return List.copyOf(children);
+	}
+
+	public int maxScroll() {
+		return maxScroll.getAsInt();
+	}
+
+	public int scrollOffset() {
+		return currentOffset();
 	}
 
 	private int currentOffset() {
@@ -73,6 +108,19 @@ public final class QuillClipView extends AbstractWidget {
 		graphics.enableScissor(getX(), getY(), getX() + getWidth(), getY() + getHeight());
 		graphics.pose().pushMatrix();
 		graphics.pose().translate(0.0F, (float) -scroll);
+		if (renderer != null) {
+			renderer.render(
+					graphics,
+					getX(),
+					getY(),
+					getWidth(),
+					getHeight(),
+					scroll,
+					mouseX,
+					mouseY + scroll,
+					delta
+			);
+		}
 		for (AbstractWidget child : children) {
 			if (child.visible) {
 				child.extractRenderState(graphics, mouseX, mouseY + scroll, delta);
