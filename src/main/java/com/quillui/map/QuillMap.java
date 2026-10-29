@@ -173,7 +173,11 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 		);
 
 		int span = this.maxRadius * 2 + 1;
-		this.pixelsPerBlock = Mth.clamp(Math.min(width / span, height / span), 1, 4);
+		this.pixelsPerBlock = Mth.clamp(
+				(int) Math.ceil((double) Math.max(width, height) / span),
+				1,
+				4
+		);
 		this.lastUnderground = undergroundActive();
 		this.layerLabel = buildLayerLabel(this.lastUnderground, effectivePivotY());
 	}
@@ -204,7 +208,11 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 		this.width = Math.max(1, width);
 		this.height = Math.max(1, height);
 		int span = maxRadius * 2 + 1;
-		this.pixelsPerBlock = Mth.clamp(Math.min(this.width / span, this.height / span), 1, 4);
+		this.pixelsPerBlock = Mth.clamp(
+				(int) Math.ceil((double) Math.max(this.width, this.height) / span),
+				1,
+				4
+		);
 		dirty = true;
 	}
 
