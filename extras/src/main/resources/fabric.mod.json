@@ -13,6 +13,7 @@
 		"issues": "https://github.com/NetoTTT/quill-ui/issues"
 	},
 	"license": "LGPL-3.0-or-later",
+	"icon": "assets/quillui_extras/icon.png",
 	"environment": "client",
 	"depends": {
 		"fabricloader": ">=0.19.5",
