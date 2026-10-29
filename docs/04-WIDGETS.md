@@ -144,6 +144,31 @@ setContent(root);
 `flexible(node)` and `flexible(node, weight)` are unwrapped by `QuillFlexBox.add(...)`, so weighted
 children fit in the same list as fixed ones. `fixedWidth`/`fixedHeight` keep one axis content-sized.
 
+## QuillListView<T>
+
+A node-based list: each row is a measured layout tree, so row actions are real widgets with their own
+clicks, tooltips and focus.
+
+```java
+QuillListView<Worker> list = new QuillListView<>(
+        0, 0, 208, 190, 36,
+        (worker, index) -> row(6,
+                flexible(column(2,
+                        text(Component.literal(worker.name())),
+                        text(Component.literal(worker.rank() + " - " + worker.job()))
+                )),
+                widget(QuillButton.secondary("Pay", () -> pay(worker)), 46, 16)
+        ),
+        (worker, index) -> select(worker)
+);
+list.replaceItems(workers);
+list.setSelected(selected);
+```
+
+The list paints the row surface (including hover and selection), clips and scrolls, and routes mouse
+and keyboard input to the widgets inside the visible rows. Selection is by item value, and
+`scrollOffset()`/`setScrollOffset(int)` survive a content rebuild.
+
 ## QuillTabBar
 
 `QuillTabBar` creates equal-width tab buttons and keeps the selected visual:
