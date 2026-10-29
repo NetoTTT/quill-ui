@@ -6,6 +6,8 @@ import com.quillui.layout.QuillSize;
 import com.quillui.text.QuillTextMeasurer;
 import com.quillui.text.QuillTextNode;
 import com.quillui.text.QuillTextStyle;
+import com.quillui.theme.QuillThemeData;
+import com.quillui.theme.QuillThemeScope;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -18,7 +20,7 @@ import net.minecraft.network.chat.Component;
  * can size a row from its label instead of hardcoding a height.
  */
 public final class QuillLabel extends AbstractWidget implements QuillMeasuredWidget {
-	private final QuillTextStyle style;
+	private QuillTextStyle style;
 
 	public QuillLabel(int x, int y, int width, int height, Component text, QuillTextStyle style) {
 		super(x, y, width, height, text == null ? Component.empty() : text);
@@ -45,6 +47,28 @@ public final class QuillLabel extends AbstractWidget implements QuillMeasuredWid
 
 	public QuillTextStyle style() {
 		return style;
+	}
+
+	public QuillLabel style(QuillTextStyle style) {
+		this.style = style == null ? QuillTextStyle.DEFAULT : style;
+		return this;
+	}
+
+	public QuillLabel color(QuillThemeData.ColorRole role) {
+		style = QuillTextStyle.of(QuillThemeScope.current(), role);
+		return this;
+	}
+
+	public QuillLabel muted() {
+		return color(QuillThemeData.ColorRole.MUTED);
+	}
+
+	public QuillLabel title() {
+		return color(QuillThemeData.ColorRole.TITLE);
+	}
+
+	public QuillLabel accent() {
+		return color(QuillThemeData.ColorRole.ACCENT);
 	}
 
 	@Override

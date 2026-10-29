@@ -7,6 +7,8 @@ import com.quillui.layout.QuillFlexBox;
 import com.quillui.layout.QuillRect;
 import com.quillui.layout.QuillSize;
 import com.quillui.layout.QuillSizedBox;
+import java.util.List;
+import net.minecraft.network.chat.Component;
 import org.junit.jupiter.api.Test;
 
 class QuillNodesTest {
@@ -37,5 +39,21 @@ class QuillNodesTest {
 		);
 
 		assertEquals(QuillSize.of(20, 24), column.measure(QuillBoxConstraints.loose(100, 50)));
+	}
+
+	@Test
+	void tabsAreEqualWidthNodes() {
+		QuillFlexBox tabs = QuillNodes.tabs(
+				6,
+				List.of(Component.literal("Work"), Component.literal("Config")),
+				0,
+				index -> {
+				}
+		);
+
+		assertEquals(QuillSize.of(200, 20), tabs.measure(QuillBoxConstraints.loose(200, 50)));
+		assertEquals(2, tabs.count());
+		assertEquals(97, tabs.childSizes().get(0).width());
+		assertEquals(97, tabs.childSizes().get(1).width());
 	}
 }

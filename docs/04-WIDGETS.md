@@ -38,6 +38,9 @@ QuillLabel label = QuillLabel.of(Component.literal("Status"), QuillTextStyle.DEF
 QuillSize size = label.measure(font, columnWidth);
 ```
 
+Styles chain fluently from the ambient theme: `label(c).muted()`, `.title()`, `.accent()` or
+`.color(role)`. Wrap with `control(...)` to place the label in a measured tree.
+
 For pure layout trees, `QuillTextNode` offers the same measurement without a widget.
 
 ## Form controls
@@ -143,6 +146,20 @@ setContent(root);
 
 `flexible(node)` and `flexible(node, weight)` are unwrapped by `QuillFlexBox.add(...)`, so weighted
 children fit in the same list as fixed ones. `fixedWidth`/`fixedHeight` keep one axis content-sized.
+
+Tabs are a node too:
+
+```java
+root.add(QuillNodes.tabs(
+        theme(),
+        6,
+        List.of(literal("Work"), literal("Config"), literal("Storage")),
+        tab.ordinal(),
+        index -> switchTab(Tab.values()[index])
+));
+```
+
+`tabs(...)` builds equal-width primary/ghost buttons, so the screen does not calculate tab widths.
 
 ## QuillListView<T>
 

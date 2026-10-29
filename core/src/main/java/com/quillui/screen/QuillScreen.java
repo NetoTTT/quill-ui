@@ -309,6 +309,11 @@ public abstract class QuillScreen extends Screen {
 		return text(text, QuillTextStyle.of(theme, role));
 	}
 
+	/** Fluent label for {@code control(label(c).muted())} style trees. */
+	protected QuillLabel label(Component text) {
+		return QuillLabel.of(text, QuillTextStyle.of(theme, QuillThemeData.ColorRole.TEXT));
+	}
+
 	protected QuillWidgetBox text(Component text) {
 		return text(text, (QuillTextStyle) null);
 	}
