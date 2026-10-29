@@ -49,6 +49,7 @@ measure and arrange passes.
 | `QuillStackBox` | Overlays children with horizontal/vertical alignment. |
 | `QuillScrollBox` | Measures unbounded content and exposes a scroll offset. |
 | `QuillWidgetBox` | Adapts an `AbstractWidget` to the layout tree. |
+| `QuillTextNode` | Measures and draws a text leaf with `QuillTextMeasurer`. |
 
 `QuillFlexBox.crossAxisAlignment(...)` supports `START`, `CENTER`, `END` and `STRETCH`. Stretch
 measures children with a tight cross axis and arranges them to the container cross size.
@@ -74,6 +75,18 @@ widgets are clipped instead of hidden entirely.
 `QuillWidgetBox` is the first adapter: `measure` reads the widget's current size and `arrange`
 applies the final rectangle with `setX`/`setY`/`setWidth`/`setHeight`.
 
+`QuillTextNode` is the text leaf. It wraps at the tightest of `QuillTextStyle.maxWidth()` and the
+incoming constraints, respects `maxLines`, and reports one line of height for empty text.
+
+```java
+QuillTextNode label = new QuillTextNode(
+        Component.literal("A longer description"),
+        QuillTextStyle.DEFAULT,
+        QuillTextMeasurer.of(font)
+);
+QuillSize size = label.measure(QuillBoxConstraints.loose(120, 200));
+```
+
 The older `QuillFlex`, `QuillWrap` and `QuillStack` classes remain as immediate rectangle helpers for
 existing screens. The `*Box` classes are the measured tree used by the next migration phase.
 
@@ -92,13 +105,14 @@ row.arrange(new QuillRect(20, 20, size.width(), size.height()));
 
 - Scroll rendering and clipping are not wired into `QuillScreen` yet.
 - `QuillWidgetBox.clipTo` hides widgets outside the viewport, but does not scissor partially visible widgets.
-- Text measurement must be provided by the screen adapter.
+- `QuillTextNode` measures wrapped lines but does not yet draw ellipsized multi-line text.
 
 ## Tests
 
 `QuillBoxLayoutTest` covers constraints, padding, sizing, constraints boxes, flex rows/columns,
 cross-axis alignment, wrapping, stacking, margin, scroll measurement, a nested tree and the layout validator. `QuillWidgetBoxTest`
-covers the widget adapter. Run:
+covers the widget adapter and `QuillTextNodeTest` covers text measurement with a deterministic
+measurer. Run:
 
 ```bat
 gradlew.bat test --console=plain

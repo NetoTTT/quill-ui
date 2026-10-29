@@ -24,6 +24,18 @@ add(QuillButton.ghost("Cancel", this::cancel), column.next(24));
 Widgets created during `buildContent()` inherit the screen theme through `QuillThemeScope`; the
 explicit `theme` constructor remains available when a component needs a different theme.
 
+## QuillLabel
+
+`QuillLabel` is a non-interactive text widget. It never receives focus, and `measure(font, maxWidth)`
+returns the preferred size so rows can be sized from their content:
+
+```java
+QuillLabel label = QuillLabel.of(Component.literal("Status"), QuillTextStyle.DEFAULT);
+QuillSize size = label.measure(font, columnWidth);
+```
+
+For pure layout trees, `QuillTextNode` offers the same measurement without a widget.
+
 ## QuillScrollList<T>
 
 A fixed-row scroll list with a thin scrollbar and keyboard/scroll support:
