@@ -304,8 +304,19 @@ public abstract class QuillScreen extends Screen {
 		return new QuillWidgetBox(QuillLabel.of(text, resolved));
 	}
 
+	/** A measured text leaf using a theme colour role. */
+	protected QuillWidgetBox text(Component text, QuillThemeData.ColorRole role) {
+		return text(text, QuillTextStyle.of(theme, role));
+	}
+
 	protected QuillWidgetBox text(Component text) {
-		return text(text, null);
+		return text(text, (QuillTextStyle) null);
+	}
+
+	/** Resolved colour for a role on this screen's theme. */
+	protected int color(QuillThemeData.ColorRole role) {
+		QuillThemeData resolved = theme == null ? QuillThemeData.DEFAULT : theme;
+		return resolved.color(role);
 	}
 
 	private void registerWidgets(QuillLayoutNode node, QuillClipView host) {

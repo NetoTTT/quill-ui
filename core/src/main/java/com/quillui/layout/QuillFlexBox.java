@@ -37,7 +37,12 @@ public final class QuillFlexBox extends QuillNode {
 	}
 
 	public QuillFlexBox add(QuillLayoutNode node) {
-		items.add(new Item(node, 0));
+		if (node instanceof QuillFlexible flexible) {
+			items.add(new Item(flexible.node(), flexible.weight()));
+		}
+		else {
+			items.add(new Item(node, 0));
+		}
 		return this;
 	}
 

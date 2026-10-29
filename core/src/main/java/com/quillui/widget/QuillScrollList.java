@@ -5,6 +5,7 @@ import com.quillui.theme.QuillThemeData;
 import com.quillui.theme.QuillThemeScope;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -44,6 +45,7 @@ public class QuillScrollList<T> extends AbstractWidget {
 	private double scroll;
 	private boolean draggingScrollbar;
 	private double scrollbarDragOffset;
+	private T selectedItem;
 
 	public QuillScrollList(
 			int x,
@@ -78,6 +80,31 @@ public class QuillScrollList<T> extends AbstractWidget {
 		items.clear();
 		items.addAll(newItems);
 		scroll = 0.0D;
+		if (selectedItem != null && !items.contains(selectedItem)) {
+			selectedItem = null;
+		}
+	}
+
+	public void setSelected(T item) {
+		selectedItem = item;
+	}
+
+	public T selectedItem() {
+		return selectedItem;
+	}
+
+	public boolean isSelected(T item) {
+		return Objects.equals(selectedItem, item);
+	}
+
+	/** Current row scroll offset in pixels. */
+	public int scrollOffset() {
+		return Mth.floor(scroll);
+	}
+
+	/** Restores a row scroll offset, clamped to the current content. */
+	public void setScrollOffset(int offset) {
+		scroll = Mth.clamp(offset, 0, maxScroll());
 	}
 
 	public int size() {
@@ -245,6 +272,7 @@ public class QuillScrollList<T> extends AbstractWidget {
 		}
 
 		playDownSound(Minecraft.getInstance().getSoundManager());
+		selectedItem = items.get(index);
 		clickHandler.onClick(items.get(index), index);
 	}
 

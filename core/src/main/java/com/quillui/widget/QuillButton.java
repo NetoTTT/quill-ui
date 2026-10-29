@@ -84,6 +84,12 @@ public class QuillButton extends AbstractWidget {
 		return this;
 	}
 
+	/** Fluent replacement for setting the public {@code active} field. */
+	public QuillButton enabled(boolean enabled) {
+		this.active = enabled;
+		return this;
+	}
+
 	public static QuillButton primary(String text, Runnable action) {
 		return factory(text, Variant.PRIMARY, action);
 	}

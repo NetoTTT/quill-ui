@@ -49,6 +49,7 @@ into a negative size.
 | `QuillWrapBox` | Content-sized children wrapped into rows. |
 | `QuillStackBox` | Overlays children with horizontal/vertical alignment. |
 | `QuillScrollBox` | Measures unbounded content and exposes a scroll offset. |
+| `QuillFlexible` | Marks a child as weighted inside `QuillFlexBox`. |
 | `QuillWidgetBox` | Adapts an `AbstractWidget` to the layout tree. |
 | `QuillTextNode` | Measures and draws a text leaf with `QuillTextMeasurer`. |
 | `QuillCardBox` | Card surface with an optional heading and a padded child tree. |

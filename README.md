@@ -24,9 +24,9 @@ The public API surface and compatibility policy are documented in
 | Theme | `com.quillui.theme` | `QuillThemeData`, `QuillThemeMetrics`, `QuillThemeScope`, `QuillSpacing`, `QuillTypography`, `QuillRadii`, `QuillElevation` |
 | Colours | `com.quillui.theme` | `QuillColors` |
 | Layout | `com.quillui.layout` | `QuillRect`, `QuillInsets`, `QuillConstraints`, `QuillAlign`, `QuillStack`, `QuillFlex`, `QuillWrap`, `QuillBreakpoints`, `QuillColumn`, `QuillRow`, `QuillGrid` |
-| Layout engine | `com.quillui.layout` | `QuillBoxConstraints`, `QuillLayoutNode`, `QuillNode`, `QuillSizedBox`, `QuillPaddingBox`, `QuillMarginBox`, `QuillConstrainedBox`, `QuillFlexBox`, `QuillWrapBox`, `QuillStackBox`, `QuillScrollBox`, `QuillLayoutValidator` |
+| Layout engine | `com.quillui.layout` | `QuillBoxConstraints`, `QuillLayoutNode`, `QuillNode`, `QuillSizedBox`, `QuillPaddingBox`, `QuillMarginBox`, `QuillConstrainedBox`, `QuillFlexBox`, `QuillFlexible`, `QuillWrapBox`, `QuillStackBox`, `QuillScrollBox`, `QuillLayoutValidator` |
 | Drawing | `com.quillui.render` | `QuillRender`, `QuillTooltips` |
-| Widgets | `com.quillui.widget` | `QuillButton`, `QuillCard`, `QuillPanel`, `QuillScrollList`, `QuillScrollView`, `QuillScrollBar`, `QuillClipView`, `QuillWidgetBox`, `QuillMeasuredWidget`, `QuillLabel`, `QuillButtonStyle`, `QuillCardBox`, `QuillTabBar`, `QuillToggle`, `QuillTextField`, `QuillSlider`, `QuillCheckbox`, `QuillRadio`, `QuillRadioGroup`, `QuillDropdown` |
+| Widgets | `com.quillui.widget` | `QuillButton`, `QuillCard`, `QuillPanel`, `QuillScrollList`, `QuillScrollView`, `QuillScrollBar`, `QuillClipView`, `QuillWidgetBox`, `QuillMeasuredWidget`, `QuillNodes`, `QuillLabel`, `QuillButtonStyle`, `QuillCardBox`, `QuillTabBar`, `QuillToggle`, `QuillTextField`, `QuillSlider`, `QuillCheckbox`, `QuillRadio`, `QuillRadioGroup`, `QuillDropdown` |
 | Screen | `com.quillui.screen` | `QuillScreen` |
 | Backend boundary | `com.quillui.action` | `QuillActionSink`, `QuillCommandSink` |
 | Map (extras) | `com.quillui.map` | `QuillMap`, `QuillMapZone`, `QuillMapMarker` |

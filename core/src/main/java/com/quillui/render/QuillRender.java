@@ -128,6 +128,47 @@ public class QuillRender {
 		graphics.fill(x + width - 1, y, x + width, y + height, color);
 	}
 
+	/** Fills a themed box and draws its border. */
+	public static void box(
+			GuiGraphicsExtractor graphics,
+			int x,
+			int y,
+			int width,
+			int height,
+			QuillThemeData theme,
+			QuillThemeData.ColorRole background,
+			QuillThemeData.ColorRole border
+	) {
+		QuillThemeData resolved = theme == null ? QuillThemeData.DEFAULT : theme;
+		box(
+				graphics,
+				x,
+				y,
+				width,
+				height,
+				resolved.color(background),
+				resolved.color(border)
+		);
+	}
+
+	/** Fills a box and draws its border, skipping fully transparent colours. */
+	public static void box(
+			GuiGraphicsExtractor graphics,
+			int x,
+			int y,
+			int width,
+			int height,
+			int background,
+			int border
+	) {
+		if (background != 0) {
+			graphics.fill(x, y, x + width, y + height, background);
+		}
+		if (border != 0) {
+			border(graphics, x, y, width, height, border);
+		}
+	}
+
 	public static void divider(GuiGraphicsExtractor graphics, int x, int y, int width) {
 		divider(graphics, x, y, width, QuillThemeData.DEFAULT);
 	}

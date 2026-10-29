@@ -10,7 +10,7 @@
 - `GHOST`: navigation/utility.
 
 `selected(boolean)` adds a persistent accent bar. `tip(Tooltip)` uses `QuillTooltips.of(title, body,
-command)`.
+command)`. `enabled(boolean)` is the fluent replacement for the public `active` field.
 
 For screens, use the concise factories and `QuillScreen.add(widget, rect)` together with
 `contentColumn(...)`:
@@ -76,6 +76,9 @@ addRenderableWidget(list);
 ```
 
 Draw rows using the coordinates passed to the row renderer; do not assume absolute positions.
+`setSelected(item)`/`selectedItem()`/`isSelected(item)` keep selection by item value, so replacing
+the list or filtering it does not leave a stale index. `scrollOffset()`/`setScrollOffset(int)` let a
+screen preserve the row scroll across a content rebuild.
 
 ## QuillCard
 
@@ -121,6 +124,25 @@ addRenderableWidget(new QuillToggle(
         value -> QuillCommandSink.get().execute("example set enabled " + value)
 ));
 ```
+
+## Measured tree helpers
+
+`QuillNodes` builds measured trees without repeated constructor noise:
+
+```java
+QuillFlexBox root = QuillNodes.column(QuillSpacing.SPACE_2,
+        QuillNodes.row(6, tabWork, tabConfig),
+        QuillNodes.flexible(body, 1),
+        QuillNodes.row(QuillSpacing.SPACE_2,
+                QuillNodes.sized(170, 24, control(save)),
+                QuillNodes.flexible(QuillNodes.spacer()),
+                QuillNodes.sized(96, 24, control(close)))
+);
+setContent(root);
+```
+
+`flexible(node)` and `flexible(node, weight)` are unwrapped by `QuillFlexBox.add(...)`, so weighted
+children fit in the same list as fixed ones. `fixedWidth`/`fixedHeight` keep one axis content-sized.
 
 ## QuillTabBar
 
