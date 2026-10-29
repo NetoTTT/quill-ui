@@ -13,8 +13,9 @@ independent from any economy, jobs or gameplay code, so other mods can use it.
 `0.3.0-alpha.1` - the ergonomics line: measured content trees (`setContent`, `control`, `text`,
 `refreshContent`), node-based `QuillListView` and `QuillNodes` tabs, measured text, `QuillButtonStyle`,
 theme sizing metrics and the core/extras split. `API_LEVEL` is `3`; the static `QuillTheme` facade was
-removed and map/HUD moved to `quill-ui-extras`. The API is intentionally small and may evolve before a
-stable `1.0.0`. This build is published on the **alpha** channel, not as a stable release.
+removed and map/HUD moved to the optional `quill-ui-extras` add-on module. The API is intentionally
+small and may evolve before a stable `1.0.0`. This build is published on the **alpha** channel, not as
+a stable release.
 The public API surface and compatibility policy are documented in
 [docs/API.md](docs/API.md) and [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md).
 
@@ -32,6 +33,9 @@ The public API surface and compatibility policy are documented in
 | Backend boundary | `com.quillui.action` | `QuillActionSink`, `QuillCommandSink` |
 | Map (extras) | `com.quillui.map` | `QuillMap`, `QuillMapZone`, `QuillMapMarker` |
 | HUD (extras) | `com.quillui.hud` | `QuillTargetIndicator`, `QuillTargetIndicatorHud` |
+
+`quill-ui-extras` is the optional add-on jar for features that do not belong in the core. Its current
+contents are the map and HUD packages; future optional modules can join it.
 | Motion | `com.quillui.motion` | `QuillTicker`, `QuillAnimation`, `QuillCurves`, `QuillTransition`, `QuillMotion` |
 | Text | `com.quillui.text` | `QuillText`, `QuillTextStyle`, `QuillTextMeasurer`, `QuillTextNode` |
 | Input styles | `com.quillui.input` | `QuillSelectionStyle`, `QuillSelectionStyles` |
@@ -45,8 +49,8 @@ The public API surface and compatibility policy are documented in
 gradlew.bat build --console=plain --no-daemon
 ```
 
-The core jar is written to `core/build/libs/quill-ui-0.3.0-alpha.1.jar`. The optional map/HUD module
-is written to `extras/build/libs/quill-ui-extras-0.3.0-alpha.1.jar`.
+The core jar is written to `core/build/libs/quill-ui-0.3.0-alpha.1.jar`. The optional add-on jar
+(currently map/HUD) is written to `extras/build/libs/quill-ui-extras-0.3.0-alpha.1.jar`.
 
 ## Install
 

@@ -25,8 +25,9 @@ in [COMPATIBILITY.md](COMPATIBILITY.md).
 Classes outside these packages are implementation details. There are no such packages in
 `0.2.0-alpha.7`; this boundary exists so future internals can change without becoming API.
 
-`com.quillui.map` and `com.quillui.hud` live in the optional `quill-ui-extras` jar. The core jar
-does not reference them, so consumers that do not use a map or HUD indicator only install core.
+`com.quillui.map` and `com.quillui.hud` live in the optional `quill-ui-extras` add-on jar. The core
+jar does not reference them. Its current contents are map/HUD; future optional features can join the
+same jar.
 
 `QuillScrollView` is deprecated since `0.2.0-alpha.7`; use `QuillClipView` with a `ContentRenderer`
 and `QuillScrollBar` for new screens.

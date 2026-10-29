@@ -48,8 +48,8 @@ Notes:
 
 The consumer compiles against Quill UI but does not bundle it. Players install
 `quill-ui-0.3.0-alpha.1.jar` on the client. Add `quill-ui-extras-0.3.0-alpha.1.jar` when the mod uses
-`QuillMap` or the HUD indicator. This is appropriate when the consumer is client-only or
-when a modpack already ships Quill UI.
+the current extras packages (`QuillMap` or the HUD indicator). This is appropriate when the consumer
+is client-only or when a modpack already ships Quill UI.
 
 ```gradle
 dependencies {

@@ -8,7 +8,8 @@
 - Java 25
 
 Quill UI is a **separate client mod**. Put `quill-ui-0.3.0-alpha.1.jar` in `mods/` next to Fabric API.
-The optional `quill-ui-extras-0.3.0-alpha.1.jar` adds `QuillMap` and the HUD indicator.
+The optional `quill-ui-extras-0.3.0-alpha.1.jar` is the add-on module; its current contents are
+`QuillMap` and the HUD indicator.
 
 ## Add as a dependency
 

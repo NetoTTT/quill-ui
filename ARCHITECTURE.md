@@ -21,7 +21,8 @@ core can later be reused by a NeoForge client port.
 The repository builds two modules:
 
 - `:core` produces `quill-ui-<version>.jar`; it has no reference to map or HUD classes.
-- `:extras` produces `quill-ui-extras-<version>.jar`; it depends on core and ships map/HUD only.
+- `:extras` produces `quill-ui-extras-<version>.jar`; it depends on core and hosts optional add-ons.
+  Its current contents are the map and HUD packages.
 
 The root package should contain no public classes once the layout migration is complete. It may keep
 only module-level documentation.

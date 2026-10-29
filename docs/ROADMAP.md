@@ -30,7 +30,8 @@ This is the agreed order. Stop after each item so the build and visuals can be t
   `QuillTheme` facade (`API_LEVEL = 3`).
 - `QuillNodes` builders, node-based `QuillListView`/tabs, theme sizing metrics and `QuillCardBox`
   also shipped in `0.3.0-alpha.1`.
-- The map and HUD moved to the optional `:extras` module (`quill-ui-extras`).
+- The map and HUD moved to the optional add-on module (`quill-ui-extras`); they are its current
+  contents, not a fixed scope.
 
 ## UI foundation backlog
 

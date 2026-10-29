@@ -3,7 +3,7 @@
 	"id": "quillui_extras",
 	"version": "${version}",
 	"name": "Quill UI Extras",
-	"description": "Optional map and HUD widgets for Quill UI.",
+	"description": "Optional add-on module for Quill UI. Current contents: map and HUD widgets.",
 	"authors": [
 		"NetoTTT"
 	],
