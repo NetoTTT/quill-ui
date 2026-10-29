@@ -81,7 +81,9 @@ incoming width instead of a hardcoded rectangle.
 `QuillScreen.setContent(root)` measures and arranges a tree inside `contentBounds()`, then registers
 every `QuillWidgetBox` in it. When the natural height exceeds the viewport, the tree is hosted in a
 `QuillClipView` with a `QuillScrollBar`, so scrolled content keeps content coordinates and focus
-handling. `control(widget, height)` and `text(component)` are the small constructors used by screens:
+handling. Use `setContent(root, contentBounds(24, 64))` when the screen reserves space for fixed
+footer controls, and `contentScrollOffset()`/`contentMaxScroll()` to draw scroll hints.
+`control(widget, height)` and `text(component)` are the small constructors used by screens:
 
 ```java
 @Override

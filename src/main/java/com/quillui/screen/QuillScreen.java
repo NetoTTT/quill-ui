@@ -50,6 +50,8 @@ public abstract class QuillScreen extends Screen {
 	private final QuillScreenLayout layout;
 	private final List<QuillShortcut> shortcuts = new ArrayList<>();
 	private final QuillOverlayStack overlays = new QuillOverlayStack();
+	private int contentOffset;
+	private int contentMaxScroll;
 	protected int panelX;
 	protected int panelY;
 
@@ -190,10 +192,19 @@ public abstract class QuillScreen extends Screen {
 	 * a clipping scroll view with a scrollbar. Call from {@link #buildContent()}.
 	 */
 	protected void setContent(QuillLayoutNode root) {
+		setContent(root, contentBounds());
+	}
+
+	/** Like {@link #setContent(QuillLayoutNode)}, using an explicit content area. */
+	protected void setContent(QuillLayoutNode root, QuillRect content) {
 		if (root == null) {
 			throw new IllegalArgumentException("root must not be null");
 		}
-		QuillRect content = contentBounds();
+		if (content == null) {
+			throw new IllegalArgumentException("content must not be null");
+		}
+		contentOffset = 0;
+		contentMaxScroll = 0;
 		QuillSize natural = root.measure(
 				QuillBoxConstraints.loose(content.width(), QuillBoxConstraints.UNBOUNDED)
 		);
@@ -208,29 +219,39 @@ public abstract class QuillScreen extends Screen {
 			return;
 		}
 
+		contentMaxScroll = maxScroll;
 		root.arrange(new QuillRect(
 				content.x(),
 				content.y(),
 				content.width(),
 				natural.height()
 		));
-		int[] scroll = {0};
 		QuillClipView host = new QuillClipView(
 				content,
-				() -> maxScroll,
-				() -> scroll[0],
-				value -> scroll[0] = value,
+				() -> contentMaxScroll,
+				() -> contentOffset,
+				value -> contentOffset = value,
 				theme
 		);
 		registerWidgets(root, host);
 		addRenderableWidget(host);
 		addRenderableWidget(new QuillScrollBar(
 				content,
-				() -> maxScroll,
-				() -> scroll[0],
-				value -> scroll[0] = value,
+				() -> contentMaxScroll,
+				() -> contentOffset,
+				value -> contentOffset = value,
 				theme
 		).visibleWhenNeeded());
+	}
+
+	/** Current scroll offset of the measured content tree. */
+	protected int contentScrollOffset() {
+		return contentOffset;
+	}
+
+	/** Maximum scroll offset of the measured content tree, or {@code 0} when it fits. */
+	protected int contentMaxScroll() {
+		return contentMaxScroll;
 	}
 
 	/** Wraps a widget for the measured tree, using its current height. */

@@ -120,7 +120,8 @@ footer, accent title bar and close button. Override `buildContent()` and optiona
 to derive content coordinates. `contentBounds()` returns the flexible area between header and footer using `contentInset()`; `contentBounds(24, 64)` is useful when a fixed control sits below the content.
 
 For a measured content tree, call `setContent(root)` with `text(...)` and `control(...)` leaves. The
-tree gets a scrollbar automatically when it is taller than the content area:
+tree gets a scrollbar automatically when it is taller than the content area; pass an explicit
+content rectangle when a fixed footer sits below it.
 
 ```java
 @Override
