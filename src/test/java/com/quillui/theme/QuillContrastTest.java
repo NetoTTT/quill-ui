@@ -9,18 +9,24 @@ import org.junit.jupiter.api.Test;
 class QuillContrastTest {
 	@Test
 	void blackOnWhiteIsMaximumContrast() {
-		assertEquals(21.0D, QuillContrast.ratio(0xFF000000, 0xFFFFFFFF), 0.01D);
+		assertEquals(21.0D, QuillContrast.ratio(
+				QuillColors.rgb(0, 0, 0),
+				QuillColors.rgb(255, 255, 255)
+		), 0.01D);
 	}
 
 	@Test
 	void sameColourHasNoContrast() {
-		assertEquals(1.0D, QuillContrast.ratio(0xFF336699, 0xFF336699), 0.001D);
+		int colour = QuillColors.rgb(51, 102, 153);
+		assertEquals(1.0D, QuillContrast.ratio(colour, colour), 0.001D);
 	}
 
 	@Test
 	void classifiesTextAndUiThresholds() {
-		assertTrue(QuillContrast.meetsText(0xFF000000, 0xFFFFFFFF));
-		assertFalse(QuillContrast.meetsText(0xFFAAAAAA, 0xFFFFFFFF));
-		assertTrue(QuillContrast.meetsUi(0xFF767676, 0xFFFFFFFF));
+		int black = QuillColors.rgb(0, 0, 0);
+		int white = QuillColors.rgb(255, 255, 255);
+		assertTrue(QuillContrast.meetsText(black, white));
+		assertFalse(QuillContrast.meetsText(QuillColors.rgb(170, 170, 170), white));
+		assertTrue(QuillContrast.meetsUi(QuillColors.rgb(118, 118, 118), white));
 	}
 }

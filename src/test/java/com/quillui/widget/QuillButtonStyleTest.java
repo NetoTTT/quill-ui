@@ -2,6 +2,7 @@ package com.quillui.widget;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.quillui.theme.QuillColors;
 import com.quillui.theme.QuillThemeData;
 import com.quillui.theme.QuillThemeData.ColorRole;
 import org.junit.jupiter.api.Test;
@@ -53,16 +54,16 @@ class QuillButtonStyleTest {
 	@Test
 	void customStylesAreAcceptedDirectly() {
 		QuillButtonStyle custom = new QuillButtonStyle(
-				0xFF101010,
-				0xFF202020,
-				0xFF303030,
-				0xFF404040,
-				0xFFAABBCC,
-				0xFFDDEEFF,
-				0xFFFFFFFF
+				QuillColors.rgb(16, 16, 16),
+				QuillColors.rgb(32, 32, 32),
+				QuillColors.rgb(48, 48, 48),
+				QuillColors.rgb(64, 64, 64),
+				QuillColors.rgb(170, 187, 204),
+				QuillColors.rgb(221, 238, 255),
+				QuillColors.rgb(255, 255, 255)
 		);
 
-		assertEquals(0xFF101010, custom.background());
-		assertEquals(0xFFDDEEFF, custom.textAt(1.0F));
+		assertEquals(QuillColors.rgb(16, 16, 16), custom.background());
+		assertEquals(QuillColors.rgb(221, 238, 255), custom.textAt(1.0F));
 	}
 }

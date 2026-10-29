@@ -10,14 +10,17 @@ Minecraft UI colours are packed **ARGB** integers:
 
 `FF` means fully opaque. For example, Quill's amber accent is `0xFFE0A93B`.
 
-You can keep using literals, but `QuillColors` avoids repeated bit arithmetic and makes intent clear:
+Prefer `QuillColors` over raw bit literals; it makes intent explicit and keeps alpha handling in one
+place:
 
 ```java
-int accent = QuillColors.hex("#E0A93B");          // 0xFFE0A93B
-int translucent = QuillColors.hex("#80E0A93B");   // 50% alpha
-int same = QuillColors.rgb(224, 169, 59);         // opaque
-int alpha = QuillColors.argb(128, 224, 169, 59);  // 50% alpha
+int accent = QuillColors.rgb(224, 169, 59);         // opaque
+int translucent = QuillColors.argb(128, 224, 169, 59); // 50% alpha
+int parsed = QuillColors.fromHex("#E0A93B");        // external/config input
 ```
+
+Raw hex literals are reserved for the built-in palette in `QuillThemeData` and for parsing values
+that arrive as text. Widget and screen code should use `rgb`/`argb` or theme roles.
 
 ## Helpers
 

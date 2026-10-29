@@ -10,7 +10,7 @@ class QuillThemeScopeTest {
 	void scopesThemeDuringABuildAndRestoresThePreviousValue() {
 		QuillThemeData custom = QuillThemeData.DEFAULT.with(
 				ColorRole.ACCENT,
-				0xFF123456
+				QuillColors.argb(255, 18, 52, 86)
 		);
 
 		QuillThemeScope.run(custom, () ->

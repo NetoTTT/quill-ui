@@ -6,7 +6,7 @@ inside `buildContent()` inherit it.
 
 ```java
 QuillThemeData theme = QuillThemeData.DEFAULT
-        .with(QuillThemeData.ColorRole.ACCENT, 0xFF66CCFF);
+        .with(QuillThemeData.ColorRole.ACCENT, QuillColors.rgb(102, 204, 255));
 ```
 
 Do not copy hex values into screens.
