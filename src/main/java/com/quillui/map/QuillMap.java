@@ -3,7 +3,6 @@ package com.quillui.map;
 import com.quillui.theme.QuillColors;
 import com.quillui.theme.QuillThemeData;
 import com.quillui.render.QuillRender;
-import com.quillui.render.QuillRenderContext;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.NativeImage;
 import java.util.ArrayList;
@@ -452,12 +451,7 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 		graphics.fill(getX(), getY(), getX() + width, getY() + height,
 				theme.color(QuillThemeData.ColorRole.MAP_BG));
 		if (scissorEnabled) {
-			graphics.enableScissor(
-					QuillRenderContext.screenX(getX()),
-					QuillRenderContext.screenY(getY()),
-					QuillRenderContext.screenX(getX() + width),
-					QuillRenderContext.screenY(getY() + height)
-			);
+			graphics.enableScissor(getX(), getY(), getX() + width, getY() + height);
 		}
 		graphics.blit(textureId, getX(), getY(), getX() + width, getY() + height, 0.0F, 1.0F, 0.0F, 1.0F);
 		drawGrid(graphics);
