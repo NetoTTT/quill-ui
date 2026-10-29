@@ -21,15 +21,17 @@ This is the agreed order. Stop after each item so the build and visuals can be t
 - Item 2: implemented in `0.2.0-alpha.1`.
 - Item 3: implemented in `0.2.0-alpha.2`; waiting for build/visual validation.
 - Form controls and screen overlays shipped in `0.2.0-alpha.6`.
-- Items 4-6: pending. Next milestone: layout and responsive helpers.
+- Responsive layout primitives and `QuillScrollView` shipped in `0.2.0-alpha.7`.
+- Layout engine phase 1 (`QuillBoxConstraints`, measure/arrange nodes, headless tests) implemented; not wired to screens yet.
+- Items 4-6: pending. Next milestone: focus traversal, widget/golden tests and the public demo mod.
 
 ## UI foundation backlog
 
 - Form controls: done in `0.2.0-alpha.5` (text field, slider) and `0.2.0-alpha.6` (dropdown, radio group).
 - Overlays and `QuillToast`: done in `0.2.0-alpha.6`.
-- Responsive helpers and a reusable scroll container: next.
+- Responsive helpers and a reusable scroll container: done in `0.2.0-alpha.7`.
 - Migrate LaborCraft's Employee, Station, Profile, Hiring and Config screens to the framework.
-- Focus traversal, widget/golden tests and a public demo mod.
+- Focus traversal, widget/golden tests and a public demo mod: next.
 
 ## Future — NeoForge client port
 

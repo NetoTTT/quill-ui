@@ -10,9 +10,9 @@ independent from any economy, jobs or gameplay code, so other mods can use it.
 
 ## Status
 
-`0.2.0-alpha.6` — form controls, screen overlays (popup, modal, toast) and the input/overlay test
-screens, on top of the motion, text, HUD and map foundation. The API is intentionally small and may
-evolve before a
+`0.2.0-alpha.7` - measured layout engine, clipping content host, scroll affordance, responsive
+screens and the completed test-harness migration, on top of the motion, text, HUD and map
+foundation. The API is intentionally small and may evolve before a
 stable `1.0.0`. This build is published on the **alpha** channel, not as a stable release.
 The public API surface and compatibility policy are documented in
 [docs/API.md](docs/API.md) and [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md).
@@ -23,9 +23,10 @@ The public API surface and compatibility policy are documented in
 | --- | --- | --- |
 | Theme | `com.quillui.theme` | `QuillThemeData`, `QuillTheme`, `QuillSpacing`, `QuillTypography`, `QuillRadii`, `QuillElevation` |
 | Colours | `com.quillui.theme` | `QuillColors` |
-| Layout | `com.quillui.layout` | `QuillRect`, `QuillInsets`, `QuillColumn`, `QuillRow`, `QuillGrid` |
+| Layout | `com.quillui.layout` | `QuillRect`, `QuillInsets`, `QuillConstraints`, `QuillAlign`, `QuillStack`, `QuillFlex`, `QuillWrap`, `QuillBreakpoints`, `QuillColumn`, `QuillRow`, `QuillGrid` |
+| Layout engine | `com.quillui.layout` | `QuillBoxConstraints`, `QuillLayoutNode`, `QuillNode`, `QuillSizedBox`, `QuillPaddingBox`, `QuillMarginBox`, `QuillConstrainedBox`, `QuillFlexBox`, `QuillWrapBox`, `QuillStackBox`, `QuillScrollBox`, `QuillLayoutValidator` |
 | Drawing | `com.quillui.render` | `QuillRender`, `QuillTooltips` |
-| Widgets | `com.quillui.widget` | `QuillButton`, `QuillCard`, `QuillPanel`, `QuillScrollList`, `QuillTabBar`, `QuillToggle`, `QuillTextField`, `QuillSlider`, `QuillCheckbox`, `QuillRadio`, `QuillRadioGroup`, `QuillDropdown` |
+| Widgets | `com.quillui.widget` | `QuillButton`, `QuillCard`, `QuillPanel`, `QuillScrollList`, `QuillScrollView`, `QuillScrollBar`, `QuillClipView`, `QuillWidgetBox`, `QuillTabBar`, `QuillToggle`, `QuillTextField`, `QuillSlider`, `QuillCheckbox`, `QuillRadio`, `QuillRadioGroup`, `QuillDropdown` |
 | Screen | `com.quillui.screen` | `QuillScreen` |
 | Backend boundary | `com.quillui.action` | `QuillActionSink`, `QuillCommandSink` |
 | Map | `com.quillui.map` | `QuillMap`, `QuillMapZone`, `QuillMapMarker` |
@@ -43,7 +44,7 @@ The public API surface and compatibility policy are documented in
 gradlew.bat build --console=plain --no-daemon
 ```
 
-The jar is written to `build/libs/quill-ui-0.2.0-alpha.6.jar`.
+The jar is written to `build/libs/quill-ui-0.2.0-alpha.7.jar`.
 
 ## Install
 
@@ -114,6 +115,7 @@ GNU Lesser General Public License v3.0 or later. See [LICENSE](LICENSE).
 - [Input styles](docs/10-INPUT-STYLES.md)
 - [Internationalization](docs/11-I18N.md)
 - [Overlays](docs/12-OVERLAYS.md)
+- [Layout engine](docs/13-LAYOUT-ENGINE.md)
 - [Integration modes](docs/07-INTEGRATION.md)
 - [Public API](docs/API.md)
 - [Compatibility policy](docs/COMPATIBILITY.md)

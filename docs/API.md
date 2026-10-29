@@ -8,11 +8,11 @@ in [COMPATIBILITY.md](COMPATIBILITY.md).
 | Package | Contents |
 | --- | --- |
 | `com.quillui.theme` | `QuillThemeData`, `QuillTheme`, `QuillSpacing`, `QuillTypography`, `QuillRadii`, `QuillElevation`, `QuillColors` |
-| `com.quillui.render` | `QuillRender`, `QuillTooltips` |
+| `com.quillui.render` | `QuillRender`, `QuillTooltips`, `QuillScrollHints` |
 | `com.quillui.action` | `QuillActionSink`, `QuillCommandSink` |
-| `com.quillui.layout` | `QuillRect`, `QuillInsets`, `QuillColumn`, `QuillRow`, `QuillGrid` |
+| `com.quillui.layout` | `QuillRect`, `QuillSize`, `QuillInsets`, `QuillConstraints`, `QuillBoxConstraints`, `QuillAlign`, `QuillLayoutNode`, `QuillNode`, `QuillStack`, `QuillFlex`, `QuillWrap`, `QuillBreakpoints`, `QuillColumn`, `QuillRow`, `QuillGrid`, `QuillSizedBox`, `QuillPaddingBox`, `QuillMarginBox`, `QuillConstrainedBox`, `QuillFlexBox`, `QuillWrapBox`, `QuillStackBox`, `QuillScrollBox`, `QuillLayoutValidator` |
 | `com.quillui.screen` | `QuillScreen` |
-| `com.quillui.widget` | `QuillButton`, `QuillScrollList`, `QuillTabBar`, `QuillCard`, `QuillPanel`, `QuillToggle`, `QuillTextField`, `QuillSlider`, `QuillCheckbox`, `QuillRadio`, `QuillRadioGroup`, `QuillDropdown` |
+| `com.quillui.widget` | `QuillButton`, `QuillScrollList`, `QuillScrollView`, `QuillScrollBar`, `QuillClipView`, `QuillWidgetBox`, `QuillTabBar`, `QuillCard`, `QuillPanel`, `QuillToggle`, `QuillTextField`, `QuillSlider`, `QuillCheckbox`, `QuillRadio`, `QuillRadioGroup`, `QuillDropdown` |
 | `com.quillui.map` | `QuillMap`, `QuillMapZone`, `QuillMapMarker` |
 | `com.quillui.hud` | `QuillTargetIndicator`, `QuillTargetIndicatorHud` |
 | `com.quillui.motion` | `QuillTicker`, `QuillAnimation`, `QuillCurves`, `QuillCurve`, `QuillTransition`, `QuillMotion` |
@@ -23,9 +23,12 @@ in [COMPATIBILITY.md](COMPATIBILITY.md).
 | `com.quillui.api` | `QuillApi` constants and compatibility helpers |
 
 Classes outside these packages are implementation details. There are no such packages in
-`0.2.0-alpha.6`; this boundary exists so future internals can change without becoming API.
+`0.2.0-alpha.7`; this boundary exists so future internals can change without becoming API.
 
-`API_LEVEL` is `2` after the package move and the introduction of `QuillThemeData`. The old root
+`QuillScrollView` is deprecated since `0.2.0-alpha.7`; use `QuillClipView` with a `ContentRenderer` and `QuillScrollBar` for new screens.
+`API_LEVEL` is `2` after the package move and the introduction of `QuillThemeData`. `QuillScrollView`
+is deprecated since `0.2.0-alpha.7`; use `QuillClipView` with a `ContentRenderer` and
+`QuillScrollBar` for new screens. The old root
 classes are gone; existing static `QuillTheme` fields now resolve to the default theme for migration.
 
 ## Target indicator
