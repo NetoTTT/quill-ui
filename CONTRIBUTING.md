@@ -19,7 +19,7 @@ baseline.
 
 - Public API lives only in the packages listed in `ARCHITECTURE.md`.
 - New public classes and methods need Javadoc.
-- Use `QuillTheme` / token classes; do not scatter literal colours or spacing in widgets.
+- Use `QuillThemeData` roles and token classes; do not scatter literal colours or spacing in widgets.
 - Keep widgets presentational. Actions go through `QuillActionSink` or a host-owned payload.
 - Do not add a hard client-only dependency to a universal host mod; use the JiJ guidance in
   `docs/07-INTEGRATION.md`.

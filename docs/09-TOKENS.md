@@ -17,7 +17,7 @@ int gap = QuillSpacing.SPACE_2;
 QuillColumn column = new QuillColumn(x, y, width, gap);
 ```
 
-The existing `QuillTheme.SPACE_1` … `SPACE_6` fields are aliases, so old code keeps compiling.
+The static `QuillTheme` spacing aliases were removed in `0.3.0-alpha.1`; use `QuillSpacing`.
 
 ## Typography
 
@@ -41,5 +41,5 @@ The panel renderer already uses `QuillElevation.PANEL_OFFSET`. Rounded primitive
 
 ## Compatibility
 
-Token classes are public API. `QuillTheme` remains the static default-theme compatibility surface;
-new widgets accept a `QuillThemeData` instance and fall back to `QuillThemeData.DEFAULT`.
+Token classes are public API. New widgets accept a `QuillThemeData` instance and fall back to
+`QuillThemeData.DEFAULT`; the static `QuillTheme` facade was removed in `0.3.0-alpha.1`.

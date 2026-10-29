@@ -3,8 +3,7 @@ package com.quillui.theme;
 /**
  * Four-pixel spacing scale used by Quill UI.
  *
- * <p>{@link QuillTheme#SPACE_1} and the other {@code SPACE_*} aliases remain for source
- * compatibility.</p>
+ * <p>The static {@code QuillTheme} aliases were removed in {@code 0.3.0-alpha.1}.</p>
  */
 public final class QuillSpacing {
 	public static final int NONE = 0;

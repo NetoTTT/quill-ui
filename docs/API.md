@@ -7,7 +7,7 @@ in [COMPATIBILITY.md](COMPATIBILITY.md).
 
 | Package | Contents |
 | --- | --- |
-| `com.quillui.theme` | `QuillThemeData`, `QuillTheme`, `QuillThemeScope`, `QuillSpacing`, `QuillTypography`, `QuillRadii`, `QuillElevation`, `QuillColors` |
+| `com.quillui.theme` | `QuillThemeData`, `QuillThemeScope`, `QuillSpacing`, `QuillTypography`, `QuillRadii`, `QuillElevation`, `QuillColors` |
 | `com.quillui.render` | `QuillRender`, `QuillTooltips`, `QuillScrollHints` |
 | `com.quillui.action` | `QuillActionSink`, `QuillCommandSink` |
 | `com.quillui.layout` | `QuillRect`, `QuillSize`, `QuillInsets`, `QuillConstraints`, `QuillBoxConstraints`, `QuillAlign`, `QuillLayoutNode`, `QuillNode`, `QuillStack`, `QuillFlex`, `QuillWrap`, `QuillBreakpoints`, `QuillColumn`, `QuillRow`, `QuillGrid`, `QuillSizedBox`, `QuillPaddingBox`, `QuillMarginBox`, `QuillConstrainedBox`, `QuillFlexBox`, `QuillWrapBox`, `QuillStackBox`, `QuillScrollBox`, `QuillLayoutValidator` |
@@ -25,11 +25,12 @@ in [COMPATIBILITY.md](COMPATIBILITY.md).
 Classes outside these packages are implementation details. There are no such packages in
 `0.2.0-alpha.7`; this boundary exists so future internals can change without becoming API.
 
-`QuillScrollView` is deprecated since `0.2.0-alpha.7`; use `QuillClipView` with a `ContentRenderer` and `QuillScrollBar` for new screens.
-`API_LEVEL` is `2` after the package move and the introduction of `QuillThemeData`. `QuillScrollView`
-is deprecated since `0.2.0-alpha.7`; use `QuillClipView` with a `ContentRenderer` and
-`QuillScrollBar` for new screens. The old root
-classes are gone; existing static `QuillTheme` fields now resolve to the default theme for migration.
+`QuillScrollView` is deprecated since `0.2.0-alpha.7`; use `QuillClipView` with a `ContentRenderer`
+and `QuillScrollBar` for new screens.
+
+`API_LEVEL` is `3` since `0.3.0-alpha.1`. The static `QuillTheme` facade was removed; use
+`QuillThemeData` instances (`QuillThemeData.DEFAULT` for the default palette) and `QuillThemeScope`
+for screen-inherited themes.
 
 ## Target indicator
 

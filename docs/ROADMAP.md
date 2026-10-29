@@ -4,8 +4,8 @@
 
 This is the agreed order. Stop after each item so the build and visuals can be tested.
 
-1. **Separate token groups** — `QuillColors` (done), `QuillSpacing`, `QuillTypography`,
-   `QuillRadii`, `QuillElevation`. Keep `QuillTheme` compatibility aliases.
+1. **Separate token groups** - `QuillColors` (done), `QuillSpacing`, `QuillTypography`,
+   `QuillRadii`, `QuillElevation`. The static `QuillTheme` aliases were removed in `0.3.0-alpha.1`.
 2. **Theme instance + package layout** — move tokens to `com.quillui.theme` and rendering helpers
    to `com.quillui.render`, then add `QuillThemeData` plus a default theme, replacing static-only
    theme access. Shipped in `0.2.0-alpha.1`; must be validated before the next step.

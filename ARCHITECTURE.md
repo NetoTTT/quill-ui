@@ -21,7 +21,7 @@ only module-level documentation.
 
 Current classes that move in the breaking layout release:
 
-- `QuillTheme`, `QuillColors`, `QuillSpacing`, `QuillTypography`, `QuillRadii`, `QuillElevation`
+- `QuillColors`, `QuillSpacing`, `QuillTypography`, `QuillRadii`, `QuillElevation`
   → `com.quillui.theme`.
 - `QuillRender`, `QuillTooltips` → `com.quillui.render`.
 
@@ -56,11 +56,12 @@ flags, or optional modules. See [docs/SUPPORTED-VERSIONS.md](docs/SUPPORTED-VERS
 
 ## Breaking-change policy
 
-The package move and `QuillThemeData` shipped together in `0.2.0-alpha.1`:
+The package move and `QuillThemeData` shipped together in `0.2.0-alpha.1`. The `0.3.0-alpha.1` line
+removes the remaining compatibility facade:
 
-- `QuillApi.API_LEVEL` is `2`.
+- `QuillApi.API_LEVEL` is `3`.
 - Migration notes list old → new imports.
-- Existing static `QuillTheme` values remain available as the default theme during the transition.
+- The static `QuillTheme` facade was removed; use `QuillThemeData` instances.
 - The compatibility workflow compares against the last pre-break baseline.
 
 ## Why not one giant root package?

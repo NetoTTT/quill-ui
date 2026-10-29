@@ -4,7 +4,7 @@ Quill UI is extracted from LaborCraft's internal UI. The first migration can be 
 
 | LaborCraft | Quill UI |
 | --- | --- |
-| `com.foque.laborcraft.client.ui.LcTheme` | `com.quillui.theme.QuillTheme` / `QuillThemeData` |
+| `com.foque.laborcraft.client.ui.LcTheme` | `com.quillui.theme.QuillThemeData` |
 | `com.foque.laborcraft.client.ui.LcRender` | `com.quillui.render.QuillRender` |
 | `com.foque.laborcraft.client.ui.LcTooltips` | `com.quillui.render.QuillTooltips` |
 | `...ui.widget.LcButton` | `com.quillui.widget.QuillButton` |
@@ -29,3 +29,16 @@ Quill UI is extracted from LaborCraft's internal UI. The first migration can be 
 - all gameplay state.
 
 Quill UI only owns client-side presentation and layout.
+
+## Quill 0.2 to 0.3
+
+`0.3.0-alpha.1` raises `API_LEVEL` to `3` and removes the static compatibility facade:
+
+| Removed | Replacement |
+| --- | --- |
+| `QuillTheme` colour fields | `theme.color(QuillThemeData.ColorRole.X)` or `QuillThemeData.DEFAULT.color(...)` |
+| `QuillTheme.SPACE_*` | `QuillSpacing.SPACE_*` |
+| `QuillButton` variant-only colours | `QuillButtonStyle`, plus `QuillButton.style(...)` |
+
+New in the same line: `QuillThemeScope` for screen-inherited themes, `QuillTextNode`/`QuillLabel`
+for measured text and `QuillScreen.add(widget, rect)` with `contentColumn()`/`contentRow()`.

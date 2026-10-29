@@ -36,4 +36,5 @@ jobs:
             --new "$NEW_JAR" \
             --only-incompatible \
             --ignore-missing-classes \
+            --exclude com.quillui.theme.QuillTheme \
             --error-on-binary-incompatibility

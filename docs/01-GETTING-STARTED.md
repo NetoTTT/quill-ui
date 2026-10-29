@@ -66,4 +66,4 @@ public final class ExampleScreen extends QuillScreen {
 1. The screen only renders server state.
 2. Actions go through an `QuillActionSink` or a project-specific C2S payload.
 3. Use layout primitives; do not repeat hardcoded row positions.
-4. Use `QuillTheme` tokens for all colours, spacing and surfaces.
+4. Use `QuillThemeData` roles and token classes for all colours, spacing and surfaces.

@@ -7,14 +7,10 @@ import org.junit.jupiter.api.Test;
 
 class QuillThemeDataTest {
 	@Test
-	void defaultThemeMatchesLegacyFacade() {
+	void defaultThemeExposesTheDefaultAccent() {
 		assertEquals(
-				QuillThemeData.DEFAULT.color(QuillThemeData.ColorRole.ACCENT),
-				QuillTheme.ACCENT
-		);
-		assertEquals(
-				QuillThemeData.DEFAULT.color(QuillThemeData.ColorRole.TEXT),
-				QuillTheme.TEXT
+				0xFFE0A93B,
+				QuillThemeData.DEFAULT.color(QuillThemeData.ColorRole.ACCENT)
 		);
 	}
 

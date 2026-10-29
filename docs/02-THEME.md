@@ -1,8 +1,8 @@
 # Theme tokens
 
 The theme is a `QuillThemeData` instance. Widgets and screens accept one and fall back to
-`QuillThemeData.DEFAULT`; `QuillTheme` keeps static aliases for the default theme so existing code
-continues to work.
+`QuillThemeData.DEFAULT`. Screens may scope a theme through `QuillThemeScope`, so widgets built
+inside `buildContent()` inherit it.
 
 ```java
 QuillThemeData theme = QuillThemeData.DEFAULT

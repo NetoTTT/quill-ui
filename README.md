@@ -21,7 +21,7 @@ The public API surface and compatibility policy are documented in
 
 | Area | Package | Entry points |
 | --- | --- | --- |
-| Theme | `com.quillui.theme` | `QuillThemeData`, `QuillTheme`, `QuillThemeScope`, `QuillSpacing`, `QuillTypography`, `QuillRadii`, `QuillElevation` |
+| Theme | `com.quillui.theme` | `QuillThemeData`, `QuillThemeScope`, `QuillSpacing`, `QuillTypography`, `QuillRadii`, `QuillElevation` |
 | Colours | `com.quillui.theme` | `QuillColors` |
 | Layout | `com.quillui.layout` | `QuillRect`, `QuillInsets`, `QuillConstraints`, `QuillAlign`, `QuillStack`, `QuillFlex`, `QuillWrap`, `QuillBreakpoints`, `QuillColumn`, `QuillRow`, `QuillGrid` |
 | Layout engine | `com.quillui.layout` | `QuillBoxConstraints`, `QuillLayoutNode`, `QuillNode`, `QuillSizedBox`, `QuillPaddingBox`, `QuillMarginBox`, `QuillConstrainedBox`, `QuillFlexBox`, `QuillWrapBox`, `QuillStackBox`, `QuillScrollBox`, `QuillLayoutValidator` |

@@ -2,7 +2,7 @@ package com.quillui.theme;
 
 /**
  * Shadow/elevation offsets. The panel shadow uses {@link #PANEL_OFFSET} and the panel shadow colour
- * remains in {@link QuillTheme#PANEL_SHADOW}.
+ * is {@code QuillThemeData.ColorRole.PANEL_SHADOW}.
  */
 public final class QuillElevation {
 	public static final int NONE = 0;

@@ -37,6 +37,6 @@ Hex parsing accepts `#RRGGBB`, `RRGGBB`, `#AARRGGBB`, `AARRGGBB`, `#RGB`, and op
 
 ## In the theme
 
-`QuillTheme` keeps default-theme aliases for existing consumers. New code should use `QuillColors`
-for raw colour construction and a `QuillThemeData` instance for semantic colours; do not add raw
-bit expressions to screens.
+Use `QuillColors` for raw colour construction and a `QuillThemeData` instance for semantic
+colours; do not add raw bit expressions to screens. The static `QuillTheme` aliases were removed in
+`0.3.0-alpha.1`.
