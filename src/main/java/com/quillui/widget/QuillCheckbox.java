@@ -4,6 +4,7 @@ import com.quillui.input.QuillSelectionStyle;
 import com.quillui.input.QuillSelectionStyles;
 import com.quillui.render.QuillRender;
 import com.quillui.theme.QuillThemeData;
+import com.quillui.theme.QuillThemeScope;
 import com.mojang.blaze3d.platform.InputConstants;
 import java.util.function.Consumer;
 import net.minecraft.client.Minecraft;
@@ -19,11 +20,28 @@ import net.minecraft.network.chat.Component;
  */
 public final class QuillCheckbox extends AbstractWidget {
 	private static final int BOX_SIZE = 12;
+	private static final int DEFAULT_WIDTH = 220;
+	private static final int DEFAULT_HEIGHT = 20;
 
 	private final QuillThemeData theme;
 	private final Consumer<Boolean> onChange;
 	private QuillSelectionStyle style;
 	private boolean checked;
+
+	public static QuillCheckbox of(
+			Component message, boolean checked, Consumer<Boolean> onChange
+	) {
+		return new QuillCheckbox(
+				0,
+				0,
+				DEFAULT_WIDTH,
+				DEFAULT_HEIGHT,
+				message,
+				checked,
+				onChange,
+				QuillThemeScope.current()
+		);
+	}
 
 	public QuillCheckbox(
 			int x,

@@ -5,6 +5,7 @@ import com.quillui.render.QuillRender;
 import com.quillui.render.QuillRenderContext;
 import com.quillui.screen.QuillScreen;
 import com.quillui.theme.QuillThemeData;
+import com.quillui.theme.QuillThemeScope;
 import java.util.List;
 import java.util.function.IntConsumer;
 import net.minecraft.client.Minecraft;
@@ -19,11 +20,33 @@ import net.minecraft.network.chat.Component;
  * dismiss itself on an outside click.
  */
 public final class QuillDropdown extends AbstractWidget {
+	private static final int DEFAULT_WIDTH = 220;
+	private static final int DEFAULT_HEIGHT = 20;
+
 	private final List<Component> options;
 	private final IntConsumer onChange;
 	private final QuillThemeData theme;
 	private final Component label;
 	private int selected;
+
+	public static QuillDropdown of(
+			Component label,
+			List<Component> options,
+			int selected,
+			IntConsumer onChange
+	) {
+		return new QuillDropdown(
+				0,
+				0,
+				DEFAULT_WIDTH,
+				DEFAULT_HEIGHT,
+				label,
+				options,
+				selected,
+				onChange,
+				QuillThemeScope.current()
+		);
+	}
 
 	public QuillDropdown(
 			int x,

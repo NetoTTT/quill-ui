@@ -5,6 +5,7 @@ import com.quillui.motion.QuillCurves;
 import com.quillui.motion.QuillTicker;
 import com.quillui.render.QuillRender;
 import com.quillui.theme.QuillThemeData;
+import com.quillui.theme.QuillThemeScope;
 import com.quillui.theme.QuillTypography;
 import com.mojang.blaze3d.platform.InputConstants;
 import java.util.function.Consumer;
@@ -27,6 +28,8 @@ public class QuillToggle extends AbstractWidget {
 	private static final int TRACK_HEIGHT = 12;
 	private static final int KNOB_SIZE = 8;
 	private static final int KNOB_INSET = 2;
+	private static final int DEFAULT_WIDTH = 220;
+	private static final int DEFAULT_HEIGHT = 20;
 
 	private final Consumer<Boolean> onChange;
 	private final QuillThemeData theme;
@@ -35,6 +38,21 @@ public class QuillToggle extends AbstractWidget {
 	private final QuillTicker ticker = new QuillTicker();
 	private final QuillAnimation knobAnimation = new QuillAnimation(0.14F).setCurve(QuillCurves.EASE_OUT);
 	private boolean knobValueLast;
+
+	public static QuillToggle of(
+			Component message, boolean value, Consumer<Boolean> onChange
+	) {
+		return new QuillToggle(
+				0,
+				0,
+				DEFAULT_WIDTH,
+				DEFAULT_HEIGHT,
+				message,
+				value,
+				onChange,
+				QuillThemeScope.current()
+		);
+	}
 
 	public QuillToggle(
 			int x,

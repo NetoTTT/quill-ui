@@ -2,6 +2,7 @@ package com.quillui.widget;
 
 import com.quillui.render.QuillRender;
 import com.quillui.theme.QuillThemeData;
+import com.quillui.theme.QuillThemeScope;
 import com.mojang.blaze3d.platform.InputConstants;
 import java.util.function.Consumer;
 import net.minecraft.client.Minecraft;
@@ -17,11 +18,29 @@ import net.minecraft.network.chat.Component;
  * whether the value is a percentage, volume, radius or any other domain value.
  */
 public final class QuillSlider extends AbstractWidget {
+	private static final int DEFAULT_WIDTH = 320;
+	private static final int DEFAULT_HEIGHT = 20;
+
 	private final QuillThemeData theme;
 	private final Consumer<Float> onChange;
 	private float value;
 	private float step;
 	private boolean dragging;
+
+	public static QuillSlider of(
+			Component message, float value, Consumer<Float> onChange
+	) {
+		return new QuillSlider(
+				0,
+				0,
+				DEFAULT_WIDTH,
+				DEFAULT_HEIGHT,
+				message,
+				value,
+				onChange,
+				QuillThemeScope.current()
+		);
+	}
 
 	public QuillSlider(
 			int x,

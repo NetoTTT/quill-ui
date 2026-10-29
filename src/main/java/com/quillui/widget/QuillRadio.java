@@ -4,6 +4,7 @@ import com.quillui.input.QuillSelectionStyle;
 import com.quillui.input.QuillSelectionStyles;
 import com.quillui.render.QuillRender;
 import com.quillui.theme.QuillThemeData;
+import com.quillui.theme.QuillThemeScope;
 import com.mojang.blaze3d.platform.InputConstants;
 import java.util.function.Consumer;
 import net.minecraft.client.Minecraft;
@@ -20,12 +21,29 @@ import net.minecraft.network.chat.Component;
  */
 public final class QuillRadio extends AbstractWidget {
 	private static final int RADIUS = 6;
+	private static final int DEFAULT_WIDTH = 220;
+	private static final int DEFAULT_HEIGHT = 20;
 
 	private final QuillThemeData theme;
 	private Consumer<Boolean> onChange;
 	private QuillSelectionStyle style;
 	private boolean selected;
 	private boolean deselectable;
+
+	public static QuillRadio of(
+			Component message, boolean selected, Consumer<Boolean> onChange
+	) {
+		return new QuillRadio(
+				0,
+				0,
+				DEFAULT_WIDTH,
+				DEFAULT_HEIGHT,
+				message,
+				selected,
+				onChange,
+				QuillThemeScope.current()
+		);
+	}
 
 	public QuillRadio(
 			int x,

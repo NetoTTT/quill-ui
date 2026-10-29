@@ -40,6 +40,26 @@ QuillSize size = label.measure(font, columnWidth);
 
 For pure layout trees, `QuillTextNode` offers the same measurement without a widget.
 
+## Form controls
+
+The input widgets have concise factories with standard control sizes and theme inheritance:
+
+```java
+QuillCheckbox checkbox = QuillCheckbox.of(text, false, value -> { });
+QuillRadio radio = QuillRadio.of(text, true, value -> { });
+QuillSlider slider = QuillSlider.of(label, 0.35F, value -> { });
+QuillDropdown dropdown = QuillDropdown.of(placeholder, options, 0, index -> { });
+QuillToggle toggle = QuillToggle.of(text, true, value -> { });
+QuillTextField field = QuillTextField.of(font, hint);
+
+column.add(control(checkbox));
+column.add(control(slider));
+setContent(column);
+```
+
+Defaults are `220x20`, except `QuillSlider` (`320x20`). The `x`/`y`/`width`/`height` constructors
+remain available for absolute layouts.
+
 ## QuillScrollList<T>
 
 A fixed-row scroll list with a thin scrollbar and keyboard/scroll support:

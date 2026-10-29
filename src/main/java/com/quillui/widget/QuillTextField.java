@@ -2,6 +2,7 @@ package com.quillui.widget;
 
 import com.quillui.render.QuillRender;
 import com.quillui.theme.QuillThemeData;
+import com.quillui.theme.QuillThemeScope;
 import com.mojang.blaze3d.platform.InputConstants;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -16,12 +17,27 @@ import net.minecraft.network.chat.Component;
  * selection and IME behaviour, while Quill owns the surface, focus ring and validation border.
  */
 public final class QuillTextField extends EditBox {
+	private static final int DEFAULT_WIDTH = 220;
+	private static final int DEFAULT_HEIGHT = 20;
+
 	private final QuillThemeData theme;
 	private Predicate<String> validator = value -> true;
 	private Consumer<String> externalResponder;
 	private boolean invalid;
 	private Component hint = Component.empty();
 	private Runnable onSubmit;
+
+	public static QuillTextField of(Font font, Component hint) {
+		return new QuillTextField(
+				font,
+				0,
+				0,
+				DEFAULT_WIDTH,
+				DEFAULT_HEIGHT,
+				hint,
+				QuillThemeScope.current()
+		);
+	}
 
 	public QuillTextField(
 			Font font,
