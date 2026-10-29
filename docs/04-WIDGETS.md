@@ -119,6 +119,19 @@ footer, accent title bar and close button. Override `buildContent()` and optiona
 `subtitle()`/`footer()`. Use `panelX`, `panelY`, `contentTop()`, `panelWidth()` and `panelHeight()`
 to derive content coordinates. `contentBounds()` returns the flexible area between header and footer using `contentInset()`; `contentBounds(24, 64)` is useful when a fixed control sits below the content.
 
+For a measured content tree, call `setContent(root)` with `text(...)` and `control(...)` leaves:
+
+```java
+@Override
+protected void buildContent() {
+    QuillFlexBox column = QuillFlexBox.column(QuillSpacing.SPACE_2)
+            .crossAxisAlignment(QuillCrossAxisAlignment.STRETCH);
+    column.add(text(Component.literal("Status")));
+    column.add(control(QuillButton.primary("Save", this::save), 20));
+    setContent(column);
+}
+```
+
 ## QuillRender
 
 - `panel`: outer shadow/panel/border.

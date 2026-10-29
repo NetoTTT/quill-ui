@@ -27,9 +27,15 @@ public final class QuillWidgetBox extends QuillNode {
 
 	@Override
 	public QuillSize measure(QuillBoxConstraints constraints) {
-		QuillSize preferred = QuillSize.of(widget.getWidth(), widget.getHeight());
-		if (preferred.width() == 0 && preferred.height() == 0) {
-			preferred = QuillSize.of(constraints.minWidth(), constraints.minHeight());
+		QuillSize preferred;
+		if (widget instanceof QuillMeasuredWidget measured) {
+			preferred = measured.measure(constraints);
+		}
+		else {
+			preferred = QuillSize.of(widget.getWidth(), widget.getHeight());
+			if (preferred.width() == 0 && preferred.height() == 0) {
+				preferred = QuillSize.of(constraints.minWidth(), constraints.minHeight());
+			}
 		}
 		return constraints.constrain(preferred);
 	}

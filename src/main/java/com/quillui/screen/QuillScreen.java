@@ -1,8 +1,11 @@
 package com.quillui.screen;
 
+import com.quillui.layout.QuillBoxConstraints;
 import com.quillui.layout.QuillColumn;
+import com.quillui.layout.QuillLayoutNode;
 import com.quillui.layout.QuillRect;
 import com.quillui.layout.QuillRow;
+import com.quillui.layout.QuillSize;
 import com.quillui.overlay.QuillOverlay;
 import com.quillui.overlay.QuillOverlayStack;
 import com.quillui.overlay.QuillToast;
@@ -11,7 +14,10 @@ import com.quillui.theme.QuillSpacing;
 import com.quillui.render.QuillTooltips;
 import com.quillui.theme.QuillThemeData;
 import com.quillui.theme.QuillThemeScope;
+import com.quillui.text.QuillTextStyle;
 import com.quillui.widget.QuillButton;
+import com.quillui.widget.QuillLabel;
+import com.quillui.widget.QuillWidgetBox;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -174,6 +180,54 @@ public abstract class QuillScreen extends Screen {
 		widget.setWidth(bounds.width());
 		widget.setHeight(bounds.height());
 		return addRenderableWidget(widget);
+	}
+
+	/**
+	 * Measures and arranges a layout tree inside {@link #contentBounds()}, then registers every
+	 * {@link QuillWidgetBox} it contains. Call from {@link #buildContent()}.
+	 */
+	protected void setContent(QuillLayoutNode root) {
+		if (root == null) {
+			throw new IllegalArgumentException("root must not be null");
+		}
+		QuillRect content = contentBounds();
+		QuillSize size = root.measure(
+				QuillBoxConstraints.loose(content.width(), content.height())
+		);
+		root.arrange(new QuillRect(content.x(), content.y(), size.width(), size.height()));
+		registerWidgets(root);
+	}
+
+	/** Wraps a widget for the measured tree, using its current height. */
+	protected QuillWidgetBox control(AbstractWidget widget) {
+		return new QuillWidgetBox(widget);
+	}
+
+	/** Wraps a widget for the measured tree and fixes its height. */
+	protected QuillWidgetBox control(AbstractWidget widget, int height) {
+		widget.setHeight(height);
+		return new QuillWidgetBox(widget);
+	}
+
+	/** A measured text leaf for the content tree. */
+	protected QuillWidgetBox text(Component text, QuillTextStyle style) {
+		QuillTextStyle resolved = style == null
+				? QuillTextStyle.of(theme, QuillThemeData.ColorRole.TEXT)
+				: style;
+		return new QuillWidgetBox(QuillLabel.of(text, resolved));
+	}
+
+	protected QuillWidgetBox text(Component text) {
+		return text(text, null);
+	}
+
+	private void registerWidgets(QuillLayoutNode node) {
+		if (node instanceof QuillWidgetBox box) {
+			addRenderableWidget(box.widget());
+		}
+		for (QuillLayoutNode child : node.children()) {
+			registerWidgets(child);
+		}
 	}
 
 	protected boolean hasSubtitle() {

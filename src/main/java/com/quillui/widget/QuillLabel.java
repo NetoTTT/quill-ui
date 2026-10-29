@@ -17,7 +17,7 @@ import net.minecraft.network.chat.Component;
  * Non-interactive text widget. {@link #measure(Font, int)} returns the preferred size so screens
  * can size a row from its label instead of hardcoding a height.
  */
-public final class QuillLabel extends AbstractWidget {
+public final class QuillLabel extends AbstractWidget implements QuillMeasuredWidget {
 	private final QuillTextStyle style;
 
 	public QuillLabel(int x, int y, int width, int height, Component text, QuillTextStyle style) {
@@ -35,6 +35,12 @@ public final class QuillLabel extends AbstractWidget {
 		return node(font).measure(
 				QuillBoxConstraints.loose(maxWidth, QuillBoxConstraints.UNBOUNDED)
 		);
+	}
+
+	/** Preferred size from the current font, honouring the incoming constraints. */
+	@Override
+	public QuillSize measure(QuillBoxConstraints constraints) {
+		return node(Minecraft.getInstance().font).measure(constraints);
 	}
 
 	public QuillTextStyle style() {

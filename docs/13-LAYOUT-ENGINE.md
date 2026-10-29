@@ -74,7 +74,27 @@ widgets are clipped instead of hidden entirely.
 `QuillScrollBox` children are allowed to overflow, as expected.
 
 `QuillWidgetBox` is the first adapter: `measure` reads the widget's current size and `arrange`
-applies the final rectangle with `setX`/`setY`/`setWidth`/`setHeight`.
+applies the final rectangle with `setX`/`setY`/`setWidth`/`setHeight`. Widgets implementing
+`QuillMeasuredWidget` (such as `QuillLabel`) report their own preferred size, so text wraps at the
+incoming width instead of a hardcoded rectangle.
+
+`QuillScreen.setContent(root)` measures and arranges a tree inside `contentBounds()`, then registers
+every `QuillWidgetBox` in it. `control(widget, height)` and `text(component)` are the small
+constructors used by screens:
+
+```java
+@Override
+protected void buildContent() {
+    QuillFlexBox column = QuillFlexBox.column(QuillSpacing.SPACE_2)
+            .crossAxisAlignment(QuillCrossAxisAlignment.STRETCH);
+
+    column.add(text(Component.literal("Configuration")));
+    column.add(control(QuillButton.primary("Save", this::save), 20));
+    column.add(control(QuillButton.ghost("Cancel", this::onClose), 20));
+
+    setContent(new QuillPaddingBox(QuillInsets.all(QuillSpacing.SPACE_3), column));
+}
+```
 
 `QuillTextNode` is the text leaf. It wraps at the tightest of `QuillTextStyle.maxWidth()` and the
 incoming constraints, respects `maxLines`, and reports one line of height for empty text.
@@ -104,7 +124,8 @@ row.arrange(new QuillRect(20, 20, size.width(), size.height()));
 
 ## Current limits
 
-- Scroll rendering and clipping are not wired into `QuillScreen` yet.
+- `QuillScreen` consumes a measured content tree through `setContent`, but scroll hosts still use
+  `QuillClipView` instead of `QuillScrollBox`.
 - `QuillWidgetBox.clipTo` hides widgets outside the viewport, but does not scissor partially visible widgets.
 - `QuillTextNode` measures wrapped lines but does not yet draw ellipsized multi-line text.
 

@@ -42,9 +42,40 @@ class QuillWidgetBoxTest {
 		assertFalse(widget.visible);
 	}
 
+	@Test
+	void measuredWidgetProvidesItsPreferredSize() {
+		MeasuredWidget widget = new MeasuredWidget();
+		QuillWidgetBox box = new QuillWidgetBox(widget);
+
+		assertEquals(QuillSize.of(64, 16), box.measure(QuillBoxConstraints.loose(200, 100)));
+		assertEquals(QuillSize.of(40, 16), box.measure(QuillBoxConstraints.loose(40, 100)));
+	}
+
 	private static final class TestWidget extends AbstractWidget {
 		private TestWidget(int width, int height) {
 			super(0, 0, width, height, Component.literal("test"));
+		}
+
+		@Override
+		protected void extractWidgetRenderState(
+				GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta
+		) {
+		}
+
+		@Override
+		protected void updateWidgetNarration(NarrationElementOutput output) {
+		}
+	}
+
+	private static final class MeasuredWidget extends AbstractWidget
+			implements QuillMeasuredWidget {
+		private MeasuredWidget() {
+			super(0, 0, 0, 0, Component.literal("measured"));
+		}
+
+		@Override
+		public QuillSize measure(QuillBoxConstraints constraints) {
+			return constraints.constrain(QuillSize.of(64, 16));
 		}
 
 		@Override
