@@ -6,6 +6,7 @@ import com.quillui.motion.QuillTicker;
 import com.quillui.render.QuillRender;
 import com.quillui.theme.QuillColors;
 import com.quillui.theme.QuillThemeData;
+import com.quillui.theme.QuillThemeScope;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -43,7 +44,7 @@ public class QuillButton extends AbstractWidget {
 	public QuillButton(
 			int x, int y, int width, int height, Component message, Variant variant, Runnable action
 	) {
-		this(x, y, width, height, message, variant, action, QuillThemeData.DEFAULT);
+		this(x, y, width, height, message, variant, action, QuillThemeScope.current());
 	}
 
 	public QuillButton(
