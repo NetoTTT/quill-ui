@@ -4,6 +4,7 @@ import com.quillui.layout.QuillColumn;
 import com.quillui.layout.QuillRect;
 import com.quillui.theme.QuillSpacing;
 import com.quillui.theme.QuillThemeData;
+import com.quillui.theme.QuillThemeScope;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -28,7 +29,7 @@ public final class QuillPanel {
 	private final int gap;
 
 	public QuillPanel(int x, int y, int width, int height, Component title) {
-		this(x, y, width, height, title, QuillThemeData.DEFAULT);
+		this(x, y, width, height, title, QuillThemeScope.current());
 	}
 
 	public QuillPanel(

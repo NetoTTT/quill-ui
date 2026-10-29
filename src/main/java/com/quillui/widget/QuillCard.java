@@ -3,6 +3,7 @@ package com.quillui.widget;
 import com.quillui.render.QuillRender;
 import com.quillui.theme.QuillSpacing;
 import com.quillui.theme.QuillThemeData;
+import com.quillui.theme.QuillThemeScope;
 import com.quillui.layout.QuillInsets;
 import com.quillui.layout.QuillRect;
 import net.minecraft.client.gui.Font;
@@ -22,7 +23,7 @@ public final class QuillCard {
 	private final QuillThemeData theme;
 
 	public QuillCard(int x, int y, int width, int height, Component title) {
-		this(x, y, width, height, title, QuillThemeData.DEFAULT);
+		this(x, y, width, height, title, QuillThemeScope.current());
 	}
 
 	public QuillCard(int x, int y, int width, int height, Component title, QuillThemeData theme) {

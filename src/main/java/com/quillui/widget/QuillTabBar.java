@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
 import com.quillui.theme.QuillThemeData;
+import com.quillui.theme.QuillThemeScope;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 
@@ -27,7 +28,7 @@ public final class QuillTabBar {
 			List<Component> labels,
 			IntConsumer onChange
 	) {
-		this(x, y, width, height, gap, labels, onChange, QuillThemeData.DEFAULT);
+		this(x, y, width, height, gap, labels, onChange, QuillThemeScope.current());
 	}
 
 	public QuillTabBar(

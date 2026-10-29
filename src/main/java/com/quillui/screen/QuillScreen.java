@@ -88,7 +88,7 @@ public abstract class QuillScreen extends Screen {
 		this.panelHeight = Math.min(requestedPanelHeight, availableHeight);
 		this.panelX = (width - panelWidth) / 2;
 		this.panelY = (height - panelHeight) / 2;
-		buildContent();
+		QuillThemeScope.run(theme, this::buildContent);
 	}
 
 	/** Space kept between the panel and the screen edge on small windows. */

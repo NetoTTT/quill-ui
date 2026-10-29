@@ -2,6 +2,7 @@ package com.quillui.widget;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.quillui.theme.QuillThemeData;
+import com.quillui.theme.QuillThemeScope;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.Minecraft;
@@ -53,7 +54,7 @@ public class QuillScrollList<T> extends AbstractWidget {
 			RowRenderer<T> rowRenderer,
 			ClickHandler<T> clickHandler
 	) {
-		this(x, y, width, height, rowHeight, rowRenderer, clickHandler, QuillThemeData.DEFAULT);
+		this(x, y, width, height, rowHeight, rowRenderer, clickHandler, QuillThemeScope.current());
 	}
 
 	public QuillScrollList(

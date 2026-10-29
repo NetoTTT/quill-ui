@@ -63,7 +63,7 @@ public class QuillToggle extends AbstractWidget {
 			boolean value,
 			Consumer<Boolean> onChange
 	) {
-		this(x, y, width, height, message, value, onChange, QuillThemeData.DEFAULT);
+		this(x, y, width, height, message, value, onChange, QuillThemeScope.current());
 	}
 
 	public QuillToggle(
