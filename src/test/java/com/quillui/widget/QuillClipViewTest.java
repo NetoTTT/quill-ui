@@ -98,7 +98,6 @@ class QuillClipViewTest {
 		);
 		view.add(first);
 		view.add(second);
-		view.setFocused(true);
 
 		assertTrue(view.keyPressed(new KeyEvent(InputConstants.KEY_TAB, 0, 0)));
 		assertTrue(first.isFocused());
@@ -125,7 +124,6 @@ class QuillClipViewTest {
 		);
 		view.add(first);
 		view.add(second);
-		view.setFocused(true);
 
 		view.keyPressed(new KeyEvent(InputConstants.KEY_TAB, 0, 0));
 		view.keyPressed(new KeyEvent(InputConstants.KEY_TAB, 0, 0));

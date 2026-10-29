@@ -186,6 +186,9 @@ public final class QuillClipView extends AbstractWidget {
 		if (!focused) {
 			focusChild(null);
 		}
+		else if (focusedChild == null) {
+			moveFocus(1);
+		}
 	}
 
 	@Override
