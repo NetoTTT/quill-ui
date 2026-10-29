@@ -256,10 +256,32 @@ public final class QuillClipView extends AbstractWidget {
 			AbstractWidget child = children.get(index);
 			if (child.visible && child.active) {
 				focusChild(child);
+				ensureVisible(child);
 				return true;
 			}
 		}
 		return false;
+	}
+
+	private void ensureVisible(AbstractWidget child) {
+		if (onScroll == null) {
+			return;
+		}
+		int scroll = currentOffset();
+		int viewTop = getY();
+		int viewBottom = getY() + getHeight();
+		int childTop = child.getY();
+		int childBottom = child.getY() + child.getHeight();
+		int next = scroll;
+		if (childTop < viewTop + scroll) {
+			next = childTop - viewTop;
+		}
+		else if (childBottom > viewBottom + scroll) {
+			next = childBottom - viewBottom;
+		}
+		if (next != scroll) {
+			onScroll.accept(Mth.clamp(next, 0, maxScroll.getAsInt()));
+		}
 	}
 
 	@Override

@@ -110,6 +110,30 @@ class QuillClipViewTest {
 	}
 
 	@Test
+	void tabScrollsFocusedChildIntoView() {
+		int[] offset = {0};
+		TestWidget first = new TestWidget();
+		TestWidget second = new TestWidget();
+		first.setY(80);
+		second.setY(120);
+		QuillClipView view = new QuillClipView(
+				new QuillRect(0, 0, 100, 100),
+				() -> 200,
+				() -> offset[0],
+				value -> offset[0] = value,
+				QuillThemeData.DEFAULT
+		);
+		view.add(first);
+		view.add(second);
+		view.setFocused(true);
+
+		view.keyPressed(new KeyEvent(InputConstants.KEY_TAB, 0, 0));
+		view.keyPressed(new KeyEvent(InputConstants.KEY_TAB, 0, 0));
+		assertTrue(second.isFocused());
+		assertEquals(40, offset[0]);
+	}
+
+	@Test
 	void mouseContextMapsContentToScreen() {
 		QuillMouseContext.push(0, 50);
 		try {
