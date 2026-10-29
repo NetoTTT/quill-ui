@@ -11,7 +11,6 @@ import com.quillui.overlay.QuillOverlayStack;
 import com.quillui.overlay.QuillToast;
 import com.quillui.render.QuillPaintable;
 import com.quillui.render.QuillRender;
-import com.quillui.theme.QuillSpacing;
 import com.quillui.render.QuillTooltips;
 import com.quillui.theme.QuillThemeData;
 import com.quillui.theme.QuillThemeScope;
@@ -139,7 +138,8 @@ public abstract class QuillScreen extends Screen {
 
 	/** Default horizontal inset for screen content. */
 	protected int contentInset() {
-		return QuillSpacing.SPACE_6;
+		QuillThemeData resolved = theme == null ? QuillThemeData.DEFAULT : theme;
+		return resolved.metrics().contentInset();
 	}
 
 	/** Content area between the header and footer. */

@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Immutable colour theme. Use {@link #DEFAULT}, derive a variant with {@link #with(ColorRole, int)}
- * or build a custom palette with {@link #builder()}.
+ * Immutable theme: colour roles plus {@link QuillThemeMetrics}. Use {@link #DEFAULT}, derive a
+ * variant with {@link #with(ColorRole, int)} or build a custom palette with {@link #builder()}.
  */
 public final class QuillThemeData {
 	public enum ColorRole {
@@ -55,12 +55,19 @@ public final class QuillThemeData {
 		MAP_UNKNOWN
 	}
 
-	public static final QuillThemeData DEFAULT = new QuillThemeData(defaultColors());
+	public static final QuillThemeData DEFAULT =
+			new QuillThemeData(defaultColors(), QuillThemeMetrics.DEFAULT);
 
 	private final Map<ColorRole, Integer> colors;
+	private final QuillThemeMetrics metrics;
 
 	private QuillThemeData(Map<ColorRole, Integer> colors) {
+		this(colors, QuillThemeMetrics.DEFAULT);
+	}
+
+	private QuillThemeData(Map<ColorRole, Integer> colors, QuillThemeMetrics metrics) {
 		this.colors = Map.copyOf(colors);
+		this.metrics = metrics == null ? QuillThemeMetrics.DEFAULT : metrics;
 	}
 
 	public int color(ColorRole role) {
@@ -71,7 +78,15 @@ public final class QuillThemeData {
 		EnumMap<ColorRole, Integer> copy = new EnumMap<>(ColorRole.class);
 		copy.putAll(colors);
 		copy.put(role, color);
-		return new QuillThemeData(copy);
+		return new QuillThemeData(copy, metrics);
+	}
+
+	public QuillThemeData withMetrics(QuillThemeMetrics metrics) {
+		return new QuillThemeData(colors, metrics);
+	}
+
+	public QuillThemeMetrics metrics() {
+		return metrics;
 	}
 
 	public List<String> contrastWarnings() {
@@ -90,6 +105,7 @@ public final class QuillThemeData {
 
 	public static final class Builder {
 		private final EnumMap<ColorRole, Integer> colors = new EnumMap<>(ColorRole.class);
+		private QuillThemeMetrics metrics = QuillThemeMetrics.DEFAULT;
 
 		private Builder() {
 			colors.putAll(defaultColors());
@@ -100,8 +116,13 @@ public final class QuillThemeData {
 			return this;
 		}
 
+		public Builder metrics(QuillThemeMetrics metrics) {
+			this.metrics = metrics == null ? QuillThemeMetrics.DEFAULT : metrics;
+			return this;
+		}
+
 		public QuillThemeData build() {
-			return new QuillThemeData(colors);
+			return new QuillThemeData(colors, metrics);
 		}
 	}
 

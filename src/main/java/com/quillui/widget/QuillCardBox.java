@@ -8,7 +8,6 @@ import com.quillui.layout.QuillRect;
 import com.quillui.layout.QuillSize;
 import com.quillui.render.QuillPaintable;
 import com.quillui.render.QuillRender;
-import com.quillui.theme.QuillSpacing;
 import com.quillui.theme.QuillThemeData;
 import com.quillui.theme.QuillThemeScope;
 import java.util.List;
@@ -30,11 +29,15 @@ public final class QuillCardBox extends QuillNode implements QuillPaintable {
 	private QuillSize childSize = QuillSize.ZERO;
 	private QuillRect contentBounds = new QuillRect(0, 0, 0, 0);
 
+	public static QuillCardBox card(String title, QuillLayoutNode child) {
+		return new QuillCardBox(Component.literal(title), child);
+	}
+
 	public QuillCardBox(Component title, QuillLayoutNode child) {
 		this(
 				title,
 				QuillThemeScope.current(),
-				QuillInsets.all(QuillSpacing.SPACE_2),
+				QuillInsets.all(QuillThemeScope.current().metrics().cardPadding()),
 				child
 		);
 	}

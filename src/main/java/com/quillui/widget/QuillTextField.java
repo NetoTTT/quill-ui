@@ -17,9 +17,6 @@ import net.minecraft.network.chat.Component;
  * selection and IME behaviour, while Quill owns the surface, focus ring and validation border.
  */
 public final class QuillTextField extends EditBox {
-	private static final int DEFAULT_WIDTH = 220;
-	private static final int DEFAULT_HEIGHT = 20;
-
 	private final QuillThemeData theme;
 	private Predicate<String> validator = value -> true;
 	private Consumer<String> externalResponder;
@@ -28,14 +25,15 @@ public final class QuillTextField extends EditBox {
 	private Runnable onSubmit;
 
 	public static QuillTextField of(Font font, Component hint) {
+		QuillThemeData theme = QuillThemeScope.current();
 		return new QuillTextField(
 				font,
 				0,
 				0,
-				DEFAULT_WIDTH,
-				DEFAULT_HEIGHT,
+				theme.metrics().fieldWidth(),
+				theme.metrics().controlHeight(),
 				hint,
-				QuillThemeScope.current()
+				theme
 		);
 	}
 

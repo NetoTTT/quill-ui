@@ -20,8 +20,6 @@ import net.minecraft.network.chat.Component;
  */
 public final class QuillCheckbox extends AbstractWidget {
 	private static final int BOX_SIZE = 12;
-	private static final int DEFAULT_WIDTH = 220;
-	private static final int DEFAULT_HEIGHT = 20;
 
 	private final QuillThemeData theme;
 	private final Consumer<Boolean> onChange;
@@ -31,15 +29,16 @@ public final class QuillCheckbox extends AbstractWidget {
 	public static QuillCheckbox of(
 			Component message, boolean checked, Consumer<Boolean> onChange
 	) {
+		QuillThemeData theme = QuillThemeScope.current();
 		return new QuillCheckbox(
 				0,
 				0,
-				DEFAULT_WIDTH,
-				DEFAULT_HEIGHT,
+				theme.metrics().fieldWidth(),
+				theme.metrics().controlHeight(),
 				message,
 				checked,
 				onChange,
-				QuillThemeScope.current()
+				theme
 		);
 	}
 

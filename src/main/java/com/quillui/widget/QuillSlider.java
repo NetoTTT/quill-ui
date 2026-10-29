@@ -18,8 +18,6 @@ import net.minecraft.network.chat.Component;
  * whether the value is a percentage, volume, radius or any other domain value.
  */
 public final class QuillSlider extends AbstractWidget {
-	private static final int DEFAULT_WIDTH = 320;
-	private static final int DEFAULT_HEIGHT = 20;
 
 	private final QuillThemeData theme;
 	private final Consumer<Float> onChange;
@@ -30,15 +28,16 @@ public final class QuillSlider extends AbstractWidget {
 	public static QuillSlider of(
 			Component message, float value, Consumer<Float> onChange
 	) {
+		QuillThemeData theme = QuillThemeScope.current();
 		return new QuillSlider(
 				0,
 				0,
-				DEFAULT_WIDTH,
-				DEFAULT_HEIGHT,
+				theme.metrics().sliderWidth(),
+				theme.metrics().controlHeight(),
 				message,
 				value,
 				onChange,
-				QuillThemeScope.current()
+				theme
 		);
 	}
 

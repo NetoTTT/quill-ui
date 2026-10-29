@@ -2,7 +2,6 @@ package com.quillui.widget;
 
 import com.quillui.layout.QuillColumn;
 import com.quillui.layout.QuillRect;
-import com.quillui.theme.QuillSpacing;
 import com.quillui.theme.QuillThemeData;
 import com.quillui.theme.QuillThemeScope;
 import java.util.ArrayList;
@@ -35,7 +34,7 @@ public final class QuillPanel {
 	public QuillPanel(
 			int x, int y, int width, int height, Component title, QuillThemeData theme
 	) {
-		this(x, y, width, height, title, theme, QuillSpacing.SPACE_2);
+		this(x, y, width, height, title, theme, QuillThemeScope.current().metrics().rowGap());
 	}
 
 	public QuillPanel(

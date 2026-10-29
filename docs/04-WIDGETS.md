@@ -57,8 +57,9 @@ column.add(control(slider));
 setContent(column);
 ```
 
-Defaults are `220x20`, except `QuillSlider` (`320x20`). The `x`/`y`/`width`/`height` constructors
-remain available for absolute layouts.
+Defaults are `220x20`, except `QuillSlider` (`320x20`). They follow `QuillThemeMetrics`, so a theme
+can change control sizes globally. The `x`/`y`/`width`/`height` constructors remain available for
+absolute layouts.
 
 ## QuillScrollList<T>
 

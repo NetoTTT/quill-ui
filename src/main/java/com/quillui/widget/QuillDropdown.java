@@ -20,8 +20,6 @@ import net.minecraft.network.chat.Component;
  * dismiss itself on an outside click.
  */
 public final class QuillDropdown extends AbstractWidget {
-	private static final int DEFAULT_WIDTH = 220;
-	private static final int DEFAULT_HEIGHT = 20;
 
 	private final List<Component> options;
 	private final IntConsumer onChange;
@@ -35,16 +33,17 @@ public final class QuillDropdown extends AbstractWidget {
 			int selected,
 			IntConsumer onChange
 	) {
+		QuillThemeData theme = QuillThemeScope.current();
 		return new QuillDropdown(
 				0,
 				0,
-				DEFAULT_WIDTH,
-				DEFAULT_HEIGHT,
+				theme.metrics().fieldWidth(),
+				theme.metrics().controlHeight(),
 				label,
 				options,
 				selected,
 				onChange,
-				QuillThemeScope.current()
+				theme
 		);
 	}
 

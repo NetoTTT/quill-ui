@@ -28,8 +28,6 @@ public class QuillToggle extends AbstractWidget {
 	private static final int TRACK_HEIGHT = 12;
 	private static final int KNOB_SIZE = 8;
 	private static final int KNOB_INSET = 2;
-	private static final int DEFAULT_WIDTH = 220;
-	private static final int DEFAULT_HEIGHT = 20;
 
 	private final Consumer<Boolean> onChange;
 	private final QuillThemeData theme;
@@ -42,15 +40,16 @@ public class QuillToggle extends AbstractWidget {
 	public static QuillToggle of(
 			Component message, boolean value, Consumer<Boolean> onChange
 	) {
+		QuillThemeData theme = QuillThemeScope.current();
 		return new QuillToggle(
 				0,
 				0,
-				DEFAULT_WIDTH,
-				DEFAULT_HEIGHT,
+				theme.metrics().fieldWidth(),
+				theme.metrics().controlHeight(),
 				message,
 				value,
 				onChange,
-				QuillThemeScope.current()
+				theme
 		);
 	}
 

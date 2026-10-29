@@ -1,7 +1,6 @@
 package com.quillui.widget;
 
 import com.quillui.render.QuillRender;
-import com.quillui.theme.QuillSpacing;
 import com.quillui.theme.QuillThemeData;
 import com.quillui.theme.QuillThemeScope;
 import com.quillui.layout.QuillInsets;
@@ -16,11 +15,11 @@ import net.minecraft.network.chat.Component;
  */
 public final class QuillCard {
 	private static final int HEADER_HEIGHT = 18;
-	private static final int PADDING = QuillSpacing.SPACE_2;
 
 	private final QuillRect bounds;
 	private final Component title;
 	private final QuillThemeData theme;
+	private final int padding;
 
 	public QuillCard(int x, int y, int width, int height, Component title) {
 		this(x, y, width, height, title, QuillThemeScope.current());
@@ -30,6 +29,9 @@ public final class QuillCard {
 		this.bounds = new QuillRect(x, y, width, height);
 		this.title = title == null || title.getString().isBlank() ? null : title;
 		this.theme = theme;
+		this.padding = (theme == null ? QuillThemeData.DEFAULT : theme)
+				.metrics()
+				.cardPadding();
 	}
 
 	public QuillRect bounds() {
@@ -47,7 +49,7 @@ public final class QuillCard {
 					graphics,
 					font,
 					title,
-					bounds.x() + PADDING,
+					bounds.x() + padding,
 					bounds.y() + 5,
 					theme.color(QuillThemeData.ColorRole.TEXT_SOFT)
 			);
@@ -58,7 +60,7 @@ public final class QuillCard {
 	 * Interior rectangle below the heading, with the standard 8 px padding.
 	 */
 	public QuillRect content() {
-		return content(QuillInsets.all(PADDING));
+		return content(QuillInsets.all(padding));
 	}
 
 	/**

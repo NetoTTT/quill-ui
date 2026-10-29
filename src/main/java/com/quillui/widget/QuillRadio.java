@@ -21,8 +21,6 @@ import net.minecraft.network.chat.Component;
  */
 public final class QuillRadio extends AbstractWidget {
 	private static final int RADIUS = 6;
-	private static final int DEFAULT_WIDTH = 220;
-	private static final int DEFAULT_HEIGHT = 20;
 
 	private final QuillThemeData theme;
 	private Consumer<Boolean> onChange;
@@ -33,15 +31,16 @@ public final class QuillRadio extends AbstractWidget {
 	public static QuillRadio of(
 			Component message, boolean selected, Consumer<Boolean> onChange
 	) {
+		QuillThemeData theme = QuillThemeScope.current();
 		return new QuillRadio(
 				0,
 				0,
-				DEFAULT_WIDTH,
-				DEFAULT_HEIGHT,
+				theme.metrics().fieldWidth(),
+				theme.metrics().controlHeight(),
 				message,
 				selected,
 				onChange,
-				QuillThemeScope.current()
+				theme
 		);
 	}
 

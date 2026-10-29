@@ -23,9 +23,6 @@ import net.minecraft.sounds.SoundEvent;
  * This intentionally does not use the vanilla button texture, so UIs keep one consistent look.
  */
 public class QuillButton extends AbstractWidget {
-	private static final int DEFAULT_WIDTH = 120;
-	private static final int DEFAULT_HEIGHT = 20;
-
 	public enum Variant {
 		PRIMARY,
 		SECONDARY,
@@ -108,15 +105,16 @@ public class QuillButton extends AbstractWidget {
 	}
 
 	private static QuillButton factory(String text, Variant variant, Runnable action) {
+		QuillThemeData theme = QuillThemeScope.current();
 		return new QuillButton(
 				0,
 				0,
-				DEFAULT_WIDTH,
-				DEFAULT_HEIGHT,
+				theme.metrics().buttonWidth(),
+				theme.metrics().controlHeight(),
 				Component.literal(text),
 				variant,
 				action,
-				QuillThemeScope.current()
+				theme
 		);
 	}
 

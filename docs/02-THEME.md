@@ -11,6 +11,21 @@ QuillThemeData theme = QuillThemeData.DEFAULT
 
 Do not copy hex values into screens.
 
+## Metrics
+
+`QuillThemeData` also carries `QuillThemeMetrics`, read by the concise factories and content helpers:
+
+```java
+QuillThemeMetrics compact = new QuillThemeMetrics(
+        18, 180, 260, 100, 6, 16, 6
+);
+QuillThemeData theme = QuillThemeData.DEFAULT.withMetrics(compact);
+```
+
+Fields in order: `controlHeight`, `fieldWidth`, `sliderWidth`, `buttonWidth`, `rowGap`,
+`contentInset`, `cardPadding`. Button and input factories, `QuillScreen.contentInset()`, and the
+padding of `QuillCard`/`QuillCardBox` follow these values.
+
 ## Spacing
 
 | Token | Pixels |
