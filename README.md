@@ -10,10 +10,11 @@ independent from any economy, jobs or gameplay code, so other mods can use it.
 
 ## Status
 
-`0.3.0-alpha.1` - focus traversal, scroll-following focus and map clipping/zoom fixes, building on
-the measured layout engine, clipping content host and responsive screen shell. The API is
-intentionally small and may evolve before a stable `1.0.0`. This build is published on the
-**alpha** channel, not as a stable release.
+`0.3.0-alpha.1` - the ergonomics line: measured content trees (`setContent`, `control`, `text`,
+`refreshContent`), node-based `QuillListView` and `QuillNodes` tabs, measured text, `QuillButtonStyle`,
+theme sizing metrics and the core/extras split. `API_LEVEL` is `3`; the static `QuillTheme` facade was
+removed and map/HUD moved to `quill-ui-extras`. The API is intentionally small and may evolve before a
+stable `1.0.0`. This build is published on the **alpha** channel, not as a stable release.
 The public API surface and compatibility policy are documented in
 [docs/API.md](docs/API.md) and [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md).
 
