@@ -208,6 +208,15 @@ public abstract class QuillScreen extends Screen {
 		overlays.removeIf(overlay -> !overlay.isOpen());
 	}
 
+	private boolean hasBlockingOverlay() {
+		for (QuillOverlay overlay : overlays) {
+			if (overlay.isOpen() && overlay.blocksInput()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	@Override
 	public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
 		for (int index = overlays.size() - 1; index >= 0; index--) {
@@ -356,7 +365,13 @@ public abstract class QuillScreen extends Screen {
 			);
 		}
 
-		super.extractRenderState(graphics, mouseX, mouseY, delta);
+		boolean inputBlocked = hasBlockingOverlay();
+		super.extractRenderState(
+				graphics,
+				inputBlocked ? -1 : mouseX,
+				inputBlocked ? -1 : mouseY,
+				delta
+		);
 
 		Component footer = footer();
 		if (!footer.getString().isBlank()) {
