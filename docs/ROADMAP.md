@@ -23,7 +23,7 @@ This is the agreed order. Stop after each item so the build and visuals can be t
 - Form controls and screen overlays shipped in `0.2.0-alpha.6`.
 - Responsive layout primitives and `QuillScrollView` shipped in `0.2.0-alpha.7`.
 - Layout engine phase 1 (`QuillBoxConstraints`, measure/arrange nodes, headless tests) implemented; not wired to screens yet.
-- Items 4-6: pending. Next milestone: focus traversal, widget/golden tests and the public demo mod.
+- Items 4-6: pending. `0.2.0-alpha.8` starts with focus traversal, then widget/golden tests and the public demo mod.
 
 ## UI foundation backlog
 
