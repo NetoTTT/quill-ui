@@ -1,6 +1,7 @@
 package com.quillui.widget;
 
 import com.quillui.layout.QuillBoxConstraints;
+import com.quillui.layout.QuillInsets;
 import com.quillui.layout.QuillLayoutNode;
 import com.quillui.layout.QuillRect;
 import com.quillui.render.QuillPaintable;
@@ -50,6 +51,7 @@ public final class QuillListView<T> extends AbstractWidget {
 	private final ClickHandler<T> clickHandler;
 	private final QuillThemeData theme;
 	private final int rowHeight;
+	private QuillInsets padding = QuillInsets.symmetric(0, 10);
 	private double scroll;
 	private boolean dirty = true;
 	private int builtWidth = -1;
@@ -126,6 +128,13 @@ public final class QuillListView<T> extends AbstractWidget {
 		return rowHeight;
 	}
 
+	/** Horizontal/vertical inset between the row surface and its content. */
+	public QuillListView<T> padding(QuillInsets padding) {
+		this.padding = padding == null ? QuillInsets.all(0) : padding;
+		this.dirty = true;
+		return this;
+	}
+
 	public int scrollOffset() {
 		return Mth.floor(scroll);
 	}
@@ -135,7 +144,7 @@ public final class QuillListView<T> extends AbstractWidget {
 	}
 
 	public int rowWidth() {
-		return listWidth();
+		return Math.max(1, listWidth() - padding.horizontal());
 	}
 
 	public int rowTop(int index) {
@@ -199,7 +208,7 @@ public final class QuillListView<T> extends AbstractWidget {
 	}
 
 	private void ensureRows() {
-		int width = listWidth();
+		int width = rowWidth();
 		if (!dirty && width == builtWidth) {
 			return;
 		}
@@ -207,14 +216,19 @@ public final class QuillListView<T> extends AbstractWidget {
 		scroll = Mth.clamp(scroll, 0, maxScroll());
 		rows.clear();
 		focusChild(null);
+		int contentHeight = Math.max(1, rowHeight - padding.vertical());
 		for (int index = 0; index < items.size(); index++) {
-			QuillLayoutNode root = rowBuilder.build(items.get(index), index);
-			root.measure(QuillBoxConstraints.tightFor(width, rowHeight));
+			int rowIndex = index;
+			QuillLayoutNode root = QuillThemeScope.supply(
+					theme,
+					() -> rowBuilder.build(items.get(rowIndex), rowIndex)
+			);
+			root.measure(QuillBoxConstraints.tightFor(width, contentHeight));
 			root.arrange(new QuillRect(
-					getX(),
-					getY() + index * rowHeight,
+					getX() + padding.left(),
+					getY() + index * rowHeight + padding.top(),
 					width,
-					rowHeight
+					contentHeight
 			));
 			List<AbstractWidget> widgets = new ArrayList<>();
 			List<QuillPaintable> paintables = new ArrayList<>();
@@ -358,7 +372,13 @@ public final class QuillListView<T> extends AbstractWidget {
 				continue;
 			}
 			if (widget.isMouseOver(mouseX, contentY) && widget.mouseClicked(mapped, doubleClick)) {
-				focusChild(widget);
+				if (widget.capturesInput()) {
+					focusChild(widget);
+				}
+				else {
+					widget.setFocused(false);
+					focusChild(null);
+				}
 				return;
 			}
 		}

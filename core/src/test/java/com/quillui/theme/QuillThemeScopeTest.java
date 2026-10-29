@@ -21,4 +21,18 @@ class QuillThemeScopeTest {
 		assertEquals(QuillThemeData.DEFAULT.color(ColorRole.ACCENT),
 				QuillThemeScope.current().color(ColorRole.ACCENT));
 	}
+
+	@Test
+	void supplyReturnsTheValueAndRestoresTheTheme() {
+		QuillThemeData custom = QuillThemeData.DEFAULT.with(
+				ColorRole.ACCENT,
+				QuillColors.argb(255, 18, 52, 86)
+		);
+
+		QuillThemeData seen = QuillThemeScope.supply(custom, QuillThemeScope::current);
+
+		assertEquals(custom.color(ColorRole.ACCENT), seen.color(ColorRole.ACCENT));
+		assertEquals(QuillThemeData.DEFAULT.color(ColorRole.ACCENT),
+				QuillThemeScope.current().color(ColorRole.ACCENT));
+	}
 }

@@ -169,6 +169,10 @@ The list paints the row surface (including hover and selection), clips and scrol
 and keyboard input to the widgets inside the visible rows. Selection is by item value, and
 `scrollOffset()`/`setScrollOffset(int)` survive a content rebuild.
 
+Row builders run inside the list's theme scope, so `QuillButton.primary(...)` and the other factories
+create widgets with the correct light/dark palette. `padding(insets)` reserves space between the row
+surface and its content; the default is 10 px horizontally.
+
 ## QuillTabBar
 
 `QuillTabBar` creates equal-width tab buttons and keeps the selected visual:
