@@ -238,7 +238,28 @@ public final class QuillClipView extends AbstractWidget {
 
 	@Override
 	public boolean keyPressed(KeyEvent event) {
+		if (event.key() == InputConstants.KEY_TAB) {
+			boolean shift = InputConstants.isKeyDown(InputConstants.KEY_LSHIFT)
+					|| InputConstants.isKeyDown(InputConstants.KEY_RSHIFT);
+			return moveFocus(shift ? -1 : 1);
+		}
 		return focusedChild != null && focusedChild.keyPressed(event);
+	}
+
+	private boolean moveFocus(int direction) {
+		if (children.isEmpty()) {
+			return false;
+		}
+		int current = focusedChild == null ? -1 : children.indexOf(focusedChild);
+		for (int step = 1; step <= children.size(); step++) {
+			int index = Math.floorMod(current + direction * step, children.size());
+			AbstractWidget child = children.get(index);
+			if (child.visible && child.active) {
+				focusChild(child);
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
