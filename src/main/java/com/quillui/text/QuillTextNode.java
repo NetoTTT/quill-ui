@@ -56,7 +56,14 @@ public final class QuillTextNode extends QuillNode {
 	/** Draws the text at the arranged rectangle using the given font. */
 	public void render(GuiGraphicsExtractor graphics, Font font) {
 		QuillRect bounds = bounds();
-		QuillText.draw(graphics, font, text, bounds.x(), bounds.y(), style);
+		QuillTextStyle effective = style;
+		if (bounds.width() > 0) {
+			int wrapWidth = style.maxWidth() > 0
+					? Math.min(style.maxWidth(), bounds.width())
+					: bounds.width();
+			effective = style.withMaxWidth(wrapWidth);
+		}
+		QuillText.draw(graphics, font, text, bounds.x(), bounds.y(), effective);
 	}
 
 	/** Wrapped line count from the last measurement. */
