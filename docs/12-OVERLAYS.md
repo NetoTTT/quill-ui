@@ -11,6 +11,8 @@ screen.closeOverlays();
 
 `QuillOverlay` can implement rendering, mouse/key input, outside-click dismissal and input blocking.
 The screen renders open overlays after the screen footer and prunes closed overlays automatically.
+The stack itself is reusable: `QuillOverlayStack.dispatch(...)` walks open overlays from top to
+bottom and `render(...)` draws them in insertion order.
 
 ## Popup menu
 

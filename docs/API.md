@@ -19,7 +19,7 @@ in [COMPATIBILITY.md](COMPATIBILITY.md).
 | `com.quillui.text` | `QuillText`, `QuillTextStyle`, `QuillTextMeasurer`, `QuillTextNode` |
 | `com.quillui.input` | `QuillSelectionStyle`, `QuillSelectionStyles` |
 | `com.quillui.i18n` | `QuillLanguage` |
-| `com.quillui.overlay` | `QuillOverlay`, `QuillPopupMenu`, `QuillModal`, `QuillToast` |
+| `com.quillui.overlay` | `QuillOverlay`, `QuillOverlayStack`, `QuillPopupMenu`, `QuillModal`, `QuillToast` |
 | `com.quillui.api` | `QuillApi` constants and compatibility helpers |
 
 Classes outside these packages are implementation details. There are no such packages in

@@ -35,7 +35,7 @@ The public API surface and compatibility policy are documented in
 | Text | `com.quillui.text` | `QuillText`, `QuillTextStyle`, `QuillTextMeasurer`, `QuillTextNode` |
 | Input styles | `com.quillui.input` | `QuillSelectionStyle`, `QuillSelectionStyles` |
 | i18n | `com.quillui.i18n` | `QuillLanguage` |
-| Overlays | `com.quillui.overlay` | `QuillOverlay`, `QuillPopupMenu`, `QuillModal`, `QuillToast` |
+| Overlays | `com.quillui.overlay` | `QuillOverlay`, `QuillOverlayStack`, `QuillPopupMenu`, `QuillModal`, `QuillToast` |
 | Compatibility | `com.quillui.api` | `QuillApi` |
 
 ## Build

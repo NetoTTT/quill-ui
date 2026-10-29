@@ -4,6 +4,7 @@ import com.quillui.layout.QuillColumn;
 import com.quillui.layout.QuillRect;
 import com.quillui.layout.QuillRow;
 import com.quillui.overlay.QuillOverlay;
+import com.quillui.overlay.QuillOverlayStack;
 import com.quillui.overlay.QuillToast;
 import com.quillui.render.QuillRender;
 import com.quillui.theme.QuillSpacing;
@@ -27,6 +28,11 @@ import net.minecraft.network.chat.Component;
  */
 public abstract class QuillScreen extends Screen {
 	private static final int DEFAULT_SCREEN_MARGIN = 16;
+	private static final int HEADER_CONTENT_GAP = 18;
+	private static final int FOOTER_CONTENT_GAP = 12;
+	private static final int FOOTER_HEIGHT = 28;
+	private static final int FOOTER_SIDE_INSET = 20;
+	private static final int FOOTER_TEXT_OFFSET = 16;
 
 	private final int requestedPanelWidth;
 	private final int requestedPanelHeight;
@@ -35,7 +41,7 @@ public abstract class QuillScreen extends Screen {
 	private final QuillThemeData theme;
 	private final QuillScreenLayout layout;
 	private final List<QuillShortcut> shortcuts = new ArrayList<>();
-	private final List<QuillOverlay> overlays = new ArrayList<>();
+	private final QuillOverlayStack overlays = new QuillOverlayStack();
 	protected int panelX;
 	protected int panelY;
 
@@ -106,16 +112,16 @@ public abstract class QuillScreen extends Screen {
 
 	/** Top edge for screen content, derived from the actual header height. */
 	protected int contentTop() {
-		return panelY + headerHeight() + 18;
+		return panelY + headerHeight() + HEADER_CONTENT_GAP;
 	}
 
 	/** Bottom edge available to content, above the footer. */
 	protected int contentBottom() {
-		return panelY + panelHeight - footerHeight() - 12;
+		return panelY + panelHeight - footerHeight() - FOOTER_CONTENT_GAP;
 	}
 
 	protected int footerHeight() {
-		return footer().getString().isBlank() ? 0 : 28;
+		return footer().getString().isBlank() ? 0 : FOOTER_HEIGHT;
 	}
 
 	/** Default horizontal inset for screen content. */
@@ -130,7 +136,7 @@ public abstract class QuillScreen extends Screen {
 
 	/** Content area between the header and footer with a custom inset. */
 	protected QuillRect contentBounds(int horizontalInset) {
-		return contentBounds(horizontalInset, footerHeight() + 12);
+		return contentBounds(horizontalInset, footerHeight() + FOOTER_CONTENT_GAP);
 	}
 
 	/** Content area with an explicit bottom inset, for screens with fixed controls below it. */
@@ -200,17 +206,11 @@ public abstract class QuillScreen extends Screen {
 	}
 
 	public void closeOverlay(QuillOverlay overlay) {
-		if (overlay != null) {
-			overlay.close();
-			overlays.remove(overlay);
-		}
+		overlays.close(overlay);
 	}
 
 	public void closeOverlays() {
-		for (QuillOverlay overlay : overlays) {
-			overlay.close();
-		}
-		overlays.clear();
+		overlays.closeAll();
 	}
 
 	public QuillToast showToast(Component message) {
@@ -224,47 +224,27 @@ public abstract class QuillScreen extends Screen {
 	}
 
 	protected QuillOverlay topOverlay() {
-		for (int index = overlays.size() - 1; index >= 0; index--) {
-			QuillOverlay overlay = overlays.get(index);
-			if (overlay.isOpen()) {
-				return overlay;
-			}
-		}
-		return null;
-	}
-
-	private void pruneOverlays() {
-		overlays.removeIf(overlay -> !overlay.isOpen());
+		return overlays.top();
 	}
 
 	private boolean hasBlockingOverlay() {
-		for (QuillOverlay overlay : overlays) {
-			if (overlay.isOpen() && overlay.blocksInput()) {
-				return true;
-			}
-		}
-		return false;
+		return overlays.hasBlocking();
 	}
 
 	@Override
 	public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
-		for (int index = overlays.size() - 1; index >= 0; index--) {
-			QuillOverlay overlay = overlays.get(index);
-			if (!overlay.isOpen()) {
-				continue;
-			}
+		boolean consumed = overlays.dispatch(overlay -> {
 			if (overlay.mouseClicked(event, doubleClick)) {
-				pruneOverlays();
 				return true;
 			}
 			if (overlay.dismissOnOutsideClick()) {
 				overlay.close();
-				pruneOverlays();
 				return true;
 			}
-			if (overlay.blocksInput()) {
-				return true;
-			}
+			return false;
+		});
+		if (consumed) {
+			return true;
 		}
 
 		boolean handled = super.mouseClicked(event, doubleClick);
@@ -276,36 +256,16 @@ public abstract class QuillScreen extends Screen {
 
 	@Override
 	public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-		for (int index = overlays.size() - 1; index >= 0; index--) {
-			QuillOverlay overlay = overlays.get(index);
-			if (!overlay.isOpen()) {
-				continue;
-			}
-			if (overlay.mouseScrolled(mouseX, mouseY, scrollX, scrollY)) {
-				pruneOverlays();
-				return true;
-			}
-			if (overlay.blocksInput()) {
-				return true;
-			}
+		if (overlays.dispatch(overlay -> overlay.mouseScrolled(mouseX, mouseY, scrollX, scrollY))) {
+			return true;
 		}
 		return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
 	}
 
 	@Override
 	public boolean mouseDragged(MouseButtonEvent event, double deltaX, double deltaY) {
-		for (int index = overlays.size() - 1; index >= 0; index--) {
-			QuillOverlay overlay = overlays.get(index);
-			if (!overlay.isOpen()) {
-				continue;
-			}
-			if (overlay.mouseDragged(event, deltaX, deltaY)) {
-				pruneOverlays();
-				return true;
-			}
-			if (overlay.blocksInput()) {
-				return true;
-			}
+		if (overlays.dispatch(overlay -> overlay.mouseDragged(event, deltaX, deltaY))) {
+			return true;
 		}
 		GuiEventListener target = mouseButtonTarget(event);
 		if (target != null && target.mouseDragged(event, deltaX, deltaY)) {
@@ -316,18 +276,8 @@ public abstract class QuillScreen extends Screen {
 
 	@Override
 	public boolean mouseReleased(MouseButtonEvent event) {
-		for (int index = overlays.size() - 1; index >= 0; index--) {
-			QuillOverlay overlay = overlays.get(index);
-			if (!overlay.isOpen()) {
-				continue;
-			}
-			if (overlay.mouseReleased(event)) {
-				pruneOverlays();
-				return true;
-			}
-			if (overlay.blocksInput()) {
-				return true;
-			}
+		if (overlays.dispatch(overlay -> overlay.mouseReleased(event))) {
+			return true;
 		}
 		GuiEventListener target = mouseButtonTarget(event);
 		if (target != null && target.mouseReleased(event)) {
@@ -404,39 +354,30 @@ public abstract class QuillScreen extends Screen {
 
 		Component footer = footer();
 		if (!footer.getString().isBlank()) {
-			QuillRender.divider(graphics, panelX + 20, panelY + panelHeight - 28, panelWidth - 40, theme);
+			QuillRender.divider(
+					graphics,
+					panelX + FOOTER_SIDE_INSET,
+					panelY + panelHeight - FOOTER_HEIGHT,
+					panelWidth - FOOTER_SIDE_INSET * 2,
+					theme
+			);
 			QuillRender.centeredText(
 					graphics,
 					font,
 					footer,
 					panelX + panelWidth / 2,
-					panelY + panelHeight - 16,
+					panelY + panelHeight - FOOTER_TEXT_OFFSET,
 					theme.color(QuillThemeData.ColorRole.MUTED_DARK)
 			);
 		}
 
-		for (QuillOverlay overlay : overlays) {
-			if (overlay.isOpen()) {
-				overlay.render(graphics, mouseX, mouseY, delta);
-			}
-		}
-		pruneOverlays();
+		overlays.render(graphics, mouseX, mouseY, delta);
 	}
 
 	@Override
 	public boolean keyPressed(KeyEvent event) {
-		for (int index = overlays.size() - 1; index >= 0; index--) {
-			QuillOverlay overlay = overlays.get(index);
-			if (!overlay.isOpen()) {
-				continue;
-			}
-			if (overlay.keyPressed(event)) {
-				pruneOverlays();
-				return true;
-			}
-			if (overlay.blocksInput()) {
-				return true;
-			}
+		if (overlays.dispatch(overlay -> overlay.keyPressed(event))) {
+			return true;
 		}
 		GuiEventListener focused = getFocused();
 		boolean textInputFocused = focused != null && focused.capturesInput();
