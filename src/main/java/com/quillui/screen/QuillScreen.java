@@ -1,20 +1,16 @@
 package com.quillui.screen;
 
-import com.quillui.layout.QuillColumn;
 import com.quillui.layout.QuillRect;
-import com.quillui.layout.QuillRow;
 import com.quillui.overlay.QuillOverlay;
 import com.quillui.overlay.QuillToast;
 import com.quillui.render.QuillRender;
 import com.quillui.theme.QuillSpacing;
 import com.quillui.render.QuillTooltips;
 import com.quillui.theme.QuillThemeData;
-import com.quillui.theme.QuillThemeScope;
 import com.quillui.widget.QuillButton;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
@@ -143,31 +139,6 @@ public abstract class QuillScreen extends Screen {
 				Math.max(1, panelWidth() - horizontalInset * 2),
 				Math.max(1, bottom - top)
 		);
-	}
-
-	protected QuillThemeData theme() {
-		return theme;
-	}
-
-	/** Vertical content column starting at the current content bounds. */
-	protected QuillColumn contentColumn(int gap) {
-		QuillRect content = contentBounds();
-		return new QuillColumn(content.x(), content.y(), content.width(), gap);
-	}
-
-	/** Horizontal content row starting at the current content bounds. */
-	protected QuillRow contentRow(int gap) {
-		QuillRect content = contentBounds();
-		return new QuillRow(content.x(), content.y(), content.height(), gap);
-	}
-
-	/** Registers a widget and applies a measured rectangle in one call. */
-	protected <T extends AbstractWidget> T add(T widget, QuillRect bounds) {
-		widget.setX(bounds.x());
-		widget.setY(bounds.y());
-		widget.setWidth(bounds.width());
-		widget.setHeight(bounds.height());
-		return addRenderableWidget(widget);
 	}
 
 	protected boolean hasSubtitle() {

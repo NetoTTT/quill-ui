@@ -12,18 +12,6 @@
 `selected(boolean)` adds a persistent accent bar. `tip(Tooltip)` uses `QuillTooltips.of(title, body,
 command)`.
 
-For screens, use the concise factories and `QuillScreen.add(widget, rect)` together with
-`contentColumn(...)`:
-
-```java
-QuillColumn column = contentColumn(QuillSpacing.SPACE_2);
-add(QuillButton.primary("Run action", this::run), column.next(24));
-add(QuillButton.ghost("Cancel", this::cancel), column.next(24));
-```
-
-Widgets created during `buildContent()` inherit the screen theme through `QuillThemeScope`; the
-explicit `theme` constructor remains available when a component needs a different theme.
-
 ## QuillScrollList<T>
 
 A fixed-row scroll list with a thin scrollbar and keyboard/scroll support:

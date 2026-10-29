@@ -7,7 +7,7 @@ in [COMPATIBILITY.md](COMPATIBILITY.md).
 
 | Package | Contents |
 | --- | --- |
-| `com.quillui.theme` | `QuillThemeData`, `QuillTheme`, `QuillThemeScope`, `QuillSpacing`, `QuillTypography`, `QuillRadii`, `QuillElevation`, `QuillColors` |
+| `com.quillui.theme` | `QuillThemeData`, `QuillTheme`, `QuillSpacing`, `QuillTypography`, `QuillRadii`, `QuillElevation`, `QuillColors` |
 | `com.quillui.render` | `QuillRender`, `QuillTooltips`, `QuillScrollHints` |
 | `com.quillui.action` | `QuillActionSink`, `QuillCommandSink` |
 | `com.quillui.layout` | `QuillRect`, `QuillSize`, `QuillInsets`, `QuillConstraints`, `QuillBoxConstraints`, `QuillAlign`, `QuillLayoutNode`, `QuillNode`, `QuillStack`, `QuillFlex`, `QuillWrap`, `QuillBreakpoints`, `QuillColumn`, `QuillRow`, `QuillGrid`, `QuillSizedBox`, `QuillPaddingBox`, `QuillMarginBox`, `QuillConstrainedBox`, `QuillFlexBox`, `QuillWrapBox`, `QuillStackBox`, `QuillScrollBox`, `QuillLayoutValidator` |
