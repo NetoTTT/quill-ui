@@ -1,5 +1,6 @@
 package com.quillui.widget;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.quillui.theme.QuillThemeData;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +41,8 @@ public class QuillScrollList<T> extends AbstractWidget {
 	private final ClickHandler<T> clickHandler;
 	private final QuillThemeData theme;
 	private double scroll;
+	private boolean draggingScrollbar;
+	private double scrollbarDragOffset;
 
 	public QuillScrollList(
 			int x,
@@ -148,6 +151,16 @@ public class QuillScrollList<T> extends AbstractWidget {
 		return getY() + (int) ((float) travel * (float) scroll / maxScroll());
 	}
 
+	private void scrollToThumbY(double thumbTop) {
+		int thumbHeight = scrollbarThumbHeight();
+		int travel = height - thumbHeight;
+		if (travel <= 0) {
+			return;
+		}
+		double ratio = Mth.clamp((thumbTop - getY()) / travel, 0.0D, 1.0D);
+		scroll = ratio * maxScroll();
+	}
+
 	@Override
 	protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
 		graphics.enableScissor(getX(), getY(), getX() + listWidth(), getY() + height);
@@ -209,15 +222,19 @@ public class QuillScrollList<T> extends AbstractWidget {
 			return;
 		}
 
+		draggingScrollbar = false;
 		double mouseX = event.x();
 		double mouseY = event.y();
 		if (maxScroll() > 0 && mouseX >= scrollbarX() - 2.0D) {
 			int thumbHeight = scrollbarThumbHeight();
-			int travel = height - thumbHeight;
-			if (travel > 0) {
-				double ratio = Mth.clamp((mouseY - getY() - thumbHeight / 2.0D) / travel, 0.0D, 1.0D);
-				scroll = ratio * maxScroll();
+			int thumbY = scrollbarThumbY();
+			if (mouseY >= thumbY && mouseY < thumbY + thumbHeight) {
+				scrollbarDragOffset = mouseY - thumbY;
+			} else {
+				scrollbarDragOffset = thumbHeight / 2.0D;
+				scrollToThumbY(mouseY - scrollbarDragOffset);
 			}
+			draggingScrollbar = true;
 			return;
 		}
 
@@ -228,6 +245,27 @@ public class QuillScrollList<T> extends AbstractWidget {
 
 		playDownSound(Minecraft.getInstance().getSoundManager());
 		clickHandler.onClick(items.get(index), index);
+	}
+
+	@Override
+	public boolean mouseDragged(MouseButtonEvent event, double deltaX, double deltaY) {
+		if (!active || !visible || !draggingScrollbar) {
+			return false;
+		}
+		if (event.button() != InputConstants.MOUSE_BUTTON_LEFT) {
+			return false;
+		}
+		scrollToThumbY(event.y() - scrollbarDragOffset);
+		return true;
+	}
+
+	@Override
+	public boolean mouseReleased(MouseButtonEvent event) {
+		if (!draggingScrollbar) {
+			return false;
+		}
+		draggingScrollbar = false;
+		return true;
 	}
 
 	@Override
