@@ -53,6 +53,7 @@ public abstract class QuillScreen extends Screen {
 	private int contentOffset;
 	private int contentMaxScroll;
 	private boolean contentScrolls;
+	private boolean contentDirty;
 	private final List<QuillPaintable> contentPaintables = new ArrayList<>();
 	protected int panelX;
 	protected int panelY;
@@ -90,7 +91,30 @@ public abstract class QuillScreen extends Screen {
 		this.panelHeight = Math.min(requestedPanelHeight, availableHeight);
 		this.panelX = (width - panelWidth) / 2;
 		this.panelY = (height - panelHeight) / 2;
+		contentDirty = false;
 		QuillThemeScope.run(theme, this::buildContent);
+	}
+
+	/**
+	 * Requests a content rebuild after local state changes. The rebuild runs on the next tick so
+	 * widget lists are never mutated while input is being dispatched, and the scroll offset is kept.
+	 */
+	protected void refreshContent() {
+		contentDirty = true;
+	}
+
+	@Override
+	public void tick() {
+		super.tick();
+		if (!contentDirty) {
+			return;
+		}
+		contentDirty = false;
+		int previousOffset = contentOffset;
+		clearWidgets();
+		setFocused((GuiEventListener) null);
+		QuillThemeScope.run(theme, this::buildContent);
+		contentOffset = Math.min(previousOffset, contentMaxScroll);
 	}
 
 	/** Space kept between the panel and the screen edge on small windows. */

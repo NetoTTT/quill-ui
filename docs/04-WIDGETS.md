@@ -147,6 +147,10 @@ For a measured content tree, call `setContent(root)` with `text(...)` and `contr
 tree gets a scrollbar automatically when it is taller than the content area; pass an explicit
 content rectangle when a fixed footer sits below it.
 
+When local state changes, mutate the field and call `refreshContent()`. The rebuild runs on the next
+tick, so the widget list is never changed during input dispatch, and the content scroll offset is
+kept.
+
 ```java
 @Override
 protected void buildContent() {

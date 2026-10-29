@@ -84,6 +84,7 @@ every `QuillWidgetBox` in it. When the natural height exceeds the viewport, the 
 `QuillClipView` with a `QuillScrollBar`, so scrolled content keeps content coordinates and focus
 handling. Use `setContent(root, contentBounds(24, 64))` when the screen reserves space for fixed
 footer controls, and `contentScrollOffset()`/`contentMaxScroll()` to draw scroll hints.
+`refreshContent()` marks the tree for a next-tick rebuild after local state changes.
 `control(widget, height)` and `text(component)` are the small constructors used by screens:
 
 ```java
