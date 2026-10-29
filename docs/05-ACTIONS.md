@@ -16,14 +16,19 @@ the command surface.
 
 ## Typed backend actions
 
-For forms and frequent toggles, implement `QuillActionSink` with a project-specific C2S payload:
+For forms and frequent toggles, implement `QuillActionSink<A>` with a project-specific payload type:
 
 ```java
-public final class PacketSink implements QuillActionSink {
+public enum ConfigAction {
+    NEXT_PAGE,
+    PREVIOUS_PAGE
+}
+
+public final class PacketSink implements QuillActionSink<ConfigAction> {
     @Override
-    public void execute(String action) {
-        // parse an action id, or use a dedicated payload type
-        // send it to the server; the client never writes authoritative state
+    public void execute(ConfigAction action) {
+        // encode the typed action and send it to the server;
+        // the client never writes authoritative state
     }
 }
 ```

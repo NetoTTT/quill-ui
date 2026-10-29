@@ -24,6 +24,9 @@ This is the agreed order. Stop after each item so the build and visuals can be t
 - Responsive layout primitives and `QuillScrollView` shipped in `0.2.0-alpha.7`.
 - Layout engine phase 1 (`QuillBoxConstraints`, measure/arrange nodes, headless tests) implemented; not wired to screens yet.
 - Items 4-6: pending. `0.2.0-alpha.8` starts with focus traversal, then widget/golden tests and the public demo mod.
+- `0.3.0-alpha.1` starts the ergonomics line: measured text (`QuillTextNode`/`QuillLabel`),
+  `QuillButtonStyle`, saturating layout sums, the overlay stack, and removal of the static
+  `QuillTheme` facade (`API_LEVEL = 3`).
 
 ## UI foundation backlog
 

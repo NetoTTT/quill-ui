@@ -37,4 +37,5 @@ jobs:
             --only-incompatible \
             --ignore-missing-classes \
             --exclude com.quillui.theme.QuillTheme \
+            --exclude com.quillui.action.QuillActionSink \
             --error-on-binary-incompatibility

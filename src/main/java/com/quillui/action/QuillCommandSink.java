@@ -3,7 +3,7 @@ package com.quillui.action;
 import net.minecraft.client.Minecraft;
 
 /** Sends a slash command through the vanilla client command path. */
-public final class QuillCommandSink implements QuillActionSink {
+public final class QuillCommandSink implements QuillActionSink<String> {
 	private static final QuillCommandSink INSTANCE = new QuillCommandSink();
 
 	private QuillCommandSink() {
