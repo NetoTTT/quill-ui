@@ -81,6 +81,9 @@ Draw rows using the coordinates passed to the row renderer; do not assume absolu
 `QuillCard` is a non-interactive render/layout helper: a bordered surface with an optional compact
 heading and a `content()` rectangle for child controls.
 
+For measured trees, use `QuillCardBox` instead; it measures the heading, padding and child and can
+be passed directly to `QuillScreen.setContent(...)`. Paintable nodes render behind the controls.
+
 ```java
 QuillCard card = new QuillCard(x, y, width, 96, Component.literal("Status"));
 card.render(graphics, font);

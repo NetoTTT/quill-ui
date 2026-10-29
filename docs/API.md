@@ -8,11 +8,11 @@ in [COMPATIBILITY.md](COMPATIBILITY.md).
 | Package | Contents |
 | --- | --- |
 | `com.quillui.theme` | `QuillThemeData`, `QuillThemeScope`, `QuillSpacing`, `QuillTypography`, `QuillRadii`, `QuillElevation`, `QuillColors` |
-| `com.quillui.render` | `QuillRender`, `QuillTooltips`, `QuillScrollHints` |
+| `com.quillui.render` | `QuillRender`, `QuillTooltips`, `QuillScrollHints`, `QuillPaintable` |
 | `com.quillui.action` | `QuillActionSink`, `QuillCommandSink` |
 | `com.quillui.layout` | `QuillRect`, `QuillSize`, `QuillInsets`, `QuillConstraints`, `QuillBoxConstraints`, `QuillAlign`, `QuillLayoutNode`, `QuillNode`, `QuillStack`, `QuillFlex`, `QuillWrap`, `QuillBreakpoints`, `QuillColumn`, `QuillRow`, `QuillGrid`, `QuillSizedBox`, `QuillPaddingBox`, `QuillMarginBox`, `QuillConstrainedBox`, `QuillFlexBox`, `QuillWrapBox`, `QuillStackBox`, `QuillScrollBox`, `QuillLayoutValidator` |
 | `com.quillui.screen` | `QuillScreen` |
-| `com.quillui.widget` | `QuillButton`, `QuillScrollList`, `QuillScrollView`, `QuillScrollBar`, `QuillClipView`, `QuillWidgetBox`, `QuillMeasuredWidget`, `QuillLabel`, `QuillButtonStyle`, `QuillTabBar`, `QuillCard`, `QuillPanel`, `QuillToggle`, `QuillTextField`, `QuillSlider`, `QuillCheckbox`, `QuillRadio`, `QuillRadioGroup`, `QuillDropdown` |
+| `com.quillui.widget` | `QuillButton`, `QuillScrollList`, `QuillScrollView`, `QuillScrollBar`, `QuillClipView`, `QuillWidgetBox`, `QuillMeasuredWidget`, `QuillLabel`, `QuillButtonStyle`, `QuillCardBox`, `QuillTabBar`, `QuillCard`, `QuillPanel`, `QuillToggle`, `QuillTextField`, `QuillSlider`, `QuillCheckbox`, `QuillRadio`, `QuillRadioGroup`, `QuillDropdown` |
 | `com.quillui.map` | `QuillMap`, `QuillMapZone`, `QuillMapMarker` |
 | `com.quillui.hud` | `QuillTargetIndicator`, `QuillTargetIndicatorHud` |
 | `com.quillui.motion` | `QuillTicker`, `QuillAnimation`, `QuillCurves`, `QuillCurve`, `QuillTransition`, `QuillMotion` |

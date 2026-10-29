@@ -51,6 +51,7 @@ into a negative size.
 | `QuillScrollBox` | Measures unbounded content and exposes a scroll offset. |
 | `QuillWidgetBox` | Adapts an `AbstractWidget` to the layout tree. |
 | `QuillTextNode` | Measures and draws a text leaf with `QuillTextMeasurer`. |
+| `QuillCardBox` | Card surface with an optional heading and a padded child tree. |
 
 `QuillFlexBox.crossAxisAlignment(...)` supports `START`, `CENTER`, `END` and `STRETCH`. Stretch
 measures children with a tight cross axis and arranges them to the container cross size.
@@ -101,6 +102,18 @@ protected void buildContent() {
 
 `QuillTextNode` is the text leaf. It wraps at the tightest of `QuillTextStyle.maxWidth()` and the
 incoming constraints, respects `maxLines`, and reports one line of height for empty text.
+
+`QuillCardBox` groups a measured subtree inside a card. It reserves the heading and padding, then
+arranges the child inside `content()`:
+
+```java
+QuillFlexBox form = QuillFlexBox.column(QuillSpacing.SPACE_2);
+form.add(control(QuillTextField.of(font, Component.literal("Name"))));
+setContent(new QuillCardBox(Component.literal("Employee"), form));
+```
+
+Nodes implementing `QuillPaintable` are painted before the widget layer, and inside the scroll host
+when the content overflows, so cards stay behind their controls.
 
 ```java
 QuillTextNode label = new QuillTextNode(

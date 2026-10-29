@@ -9,6 +9,7 @@ import com.quillui.layout.QuillSize;
 import com.quillui.overlay.QuillOverlay;
 import com.quillui.overlay.QuillOverlayStack;
 import com.quillui.overlay.QuillToast;
+import com.quillui.render.QuillPaintable;
 import com.quillui.render.QuillRender;
 import com.quillui.theme.QuillSpacing;
 import com.quillui.render.QuillTooltips;
@@ -52,6 +53,8 @@ public abstract class QuillScreen extends Screen {
 	private final QuillOverlayStack overlays = new QuillOverlayStack();
 	private int contentOffset;
 	private int contentMaxScroll;
+	private boolean contentScrolls;
+	private final List<QuillPaintable> contentPaintables = new ArrayList<>();
 	protected int panelX;
 	protected int panelY;
 
@@ -205,6 +208,8 @@ public abstract class QuillScreen extends Screen {
 		}
 		contentOffset = 0;
 		contentMaxScroll = 0;
+		contentScrolls = false;
+		contentPaintables.clear();
 		QuillSize natural = root.measure(
 				QuillBoxConstraints.loose(content.width(), QuillBoxConstraints.UNBOUNDED)
 		);
@@ -220,6 +225,7 @@ public abstract class QuillScreen extends Screen {
 		}
 
 		contentMaxScroll = maxScroll;
+		contentScrolls = true;
 		root.arrange(new QuillRect(
 				content.x(),
 				content.y(),
@@ -231,7 +237,8 @@ public abstract class QuillScreen extends Screen {
 				() -> contentMaxScroll,
 				() -> contentOffset,
 				value -> contentOffset = value,
-				theme
+				theme,
+				(graphics, vx, vy, vw, vh, offset, mx, my, delta) -> paintContent(graphics)
 		);
 		registerWidgets(root, host);
 		addRenderableWidget(host);
@@ -286,8 +293,17 @@ public abstract class QuillScreen extends Screen {
 				host.add(box.widget());
 			}
 		}
+		if (node instanceof QuillPaintable paintable) {
+			contentPaintables.add(paintable);
+		}
 		for (QuillLayoutNode child : node.children()) {
 			registerWidgets(child, host);
+		}
+	}
+
+	private void paintContent(GuiGraphicsExtractor graphics) {
+		for (QuillPaintable paintable : contentPaintables) {
+			paintable.paint(graphics, font);
 		}
 	}
 
@@ -457,6 +473,10 @@ public abstract class QuillScreen extends Screen {
 					panelY + current.subtitleInsetY(),
 					theme.color(QuillThemeData.ColorRole.TEXT_SOFT)
 			);
+		}
+
+		if (!contentScrolls) {
+			paintContent(graphics);
 		}
 
 		boolean inputBlocked = hasBlockingOverlay();
