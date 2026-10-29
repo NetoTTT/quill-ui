@@ -4,7 +4,6 @@ import com.quillui.motion.QuillAnimation;
 import com.quillui.motion.QuillCurves;
 import com.quillui.motion.QuillTicker;
 import com.quillui.render.QuillRender;
-import com.quillui.theme.QuillColors;
 import com.quillui.theme.QuillThemeData;
 import com.quillui.theme.QuillThemeScope;
 import com.mojang.blaze3d.platform.InputConstants;
@@ -34,6 +33,7 @@ public class QuillButton extends AbstractWidget {
 	private final Variant variant;
 	private final QuillThemeData theme;
 	private final Runnable action;
+	private QuillButtonStyle style;
 	private boolean selected;
 	private Tooltip tooltip;
 	private SoundEvent clickSound;
@@ -78,6 +78,12 @@ public class QuillButton extends AbstractWidget {
 		return this;
 	}
 
+	/** Overrides the variant colours with a custom component style. */
+	public QuillButton style(QuillButtonStyle style) {
+		this.style = style;
+		return this;
+	}
+
 	@Override
 	protected void extractWidgetRenderState(
 			GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta
@@ -94,71 +100,12 @@ public class QuillButton extends AbstractWidget {
 		hoverAnimation.update(frameDelta);
 		float hover = active ? hoverAnimation.value() : 0.0F;
 
-		int backgroundNormal;
-		int backgroundHover;
-		int borderNormal;
-		int borderHover;
-		int textNormal;
-		int textHover;
-
-		if (!active) {
-			backgroundNormal = theme.color(QuillThemeData.ColorRole.BUTTON_DISABLED);
-			backgroundHover = backgroundNormal;
-			borderNormal = theme.color(QuillThemeData.ColorRole.BUTTON_DISABLED_BORDER);
-			borderHover = borderNormal;
-			textNormal = theme.color(QuillThemeData.ColorRole.BUTTON_DISABLED_TEXT);
-			textHover = textNormal;
-		} else {
-			switch (variant) {
-				case PRIMARY -> {
-					backgroundNormal = theme.color(QuillThemeData.ColorRole.PRIMARY_BG);
-					backgroundHover = theme.color(QuillThemeData.ColorRole.PRIMARY_BG_HOVER);
-					borderNormal = theme.color(QuillThemeData.ColorRole.ACCENT);
-					borderHover = theme.color(QuillThemeData.ColorRole.ACCENT_HOVER);
-					textNormal = theme.color(QuillThemeData.ColorRole.ON_ACCENT);
-					textHover = textNormal;
-				}
-				case DANGER -> {
-					backgroundNormal = theme.color(QuillThemeData.ColorRole.BUTTON_BG);
-					backgroundHover = theme.color(QuillThemeData.ColorRole.DANGER_BG);
-					borderNormal = theme.color(QuillThemeData.ColorRole.DANGER);
-					borderHover = borderNormal;
-					textNormal = theme.color(QuillThemeData.ColorRole.ON_DANGER);
-					textHover = textNormal;
-				}
-				case GHOST -> {
-					backgroundNormal = theme.color(QuillThemeData.ColorRole.GHOST_BG);
-					backgroundHover = theme.color(QuillThemeData.ColorRole.BUTTON_HOVER);
-					borderNormal = theme.color(QuillThemeData.ColorRole.GHOST_BORDER);
-					borderHover = borderNormal;
-					textNormal = theme.color(QuillThemeData.ColorRole.GHOST_TEXT);
-					textHover = theme.color(QuillThemeData.ColorRole.TITLE);
-				}
-				default -> {
-					backgroundNormal = theme.color(QuillThemeData.ColorRole.BUTTON_BG);
-					backgroundHover = theme.color(QuillThemeData.ColorRole.BUTTON_HOVER);
-					borderNormal = theme.color(QuillThemeData.ColorRole.BUTTON_BORDER);
-					borderHover = borderNormal;
-					textNormal = theme.color(QuillThemeData.ColorRole.TEXT);
-					textHover = textNormal;
-				}
-			}
-
-			if (selected) {
-				backgroundNormal = theme.color(QuillThemeData.ColorRole.SELECTED_BG);
-				backgroundHover = backgroundNormal;
-				borderNormal = theme.color(QuillThemeData.ColorRole.ACCENT);
-				borderHover = theme.color(QuillThemeData.ColorRole.ACCENT_HOVER);
-				textNormal = theme.color(QuillThemeData.ColorRole.TITLE);
-				textHover = textNormal;
-			}
-		}
-
-		int background = QuillColors.lerp(backgroundNormal, backgroundHover, hover);
-		int border = QuillColors.lerp(borderNormal, borderHover, hover);
-		int textColor = QuillColors.lerp(textNormal, textHover, hover);
-		if (active && isFocused() && variant == Variant.GHOST) {
-			border = theme.color(QuillThemeData.ColorRole.FOCUS_RING);
+		QuillButtonStyle resolved = style != null ? style : defaultStyle();
+		int background = resolved.backgroundAt(hover);
+		int border = resolved.borderAt(hover);
+		int textColor = resolved.textAt(hover);
+		if (active && isFocused() && variant == Variant.GHOST && style == null) {
+			border = resolved.focusRing();
 		}
 
 		if (background != 0) {
@@ -170,7 +117,7 @@ public class QuillButton extends AbstractWidget {
 		}
 
 		if (active && isFocused()) {
-			QuillRender.border(graphics, x - 1, y - 1, width + 2, height + 2, theme.color(QuillThemeData.ColorRole.FOCUS_RING));
+			QuillRender.border(graphics, x - 1, y - 1, width + 2, height + 2, resolved.focusRing());
 		}
 
 		if (selected) {
@@ -228,6 +175,21 @@ public class QuillButton extends AbstractWidget {
 		}
 
 		return false;
+	}
+
+	private QuillButtonStyle defaultStyle() {
+		if (!active) {
+			return QuillButtonStyle.disabled(theme);
+		}
+		if (selected) {
+			return QuillButtonStyle.selected(theme);
+		}
+		return switch (variant) {
+			case PRIMARY -> QuillButtonStyle.primary(theme);
+			case DANGER -> QuillButtonStyle.danger(theme);
+			case GHOST -> QuillButtonStyle.ghost(theme);
+			default -> QuillButtonStyle.secondary(theme);
+		};
 	}
 
 	private void playClickSound() {

@@ -24,6 +24,10 @@ add(QuillButton.ghost("Cancel", this::cancel), column.next(24));
 Widgets created during `buildContent()` inherit the screen theme through `QuillThemeScope`; the
 explicit `theme` constructor remains available when a component needs a different theme.
 
+Variant colours are resolved by `QuillButtonStyle` (`primary`, `secondary`, `danger`, `ghost`,
+`selected`, `disabled`). Pass `style(...)` to reuse a custom component style across buttons without
+adding a variant.
+
 ## QuillLabel
 
 `QuillLabel` is a non-interactive text widget. It never receives focus, and `measure(font, maxWidth)`
