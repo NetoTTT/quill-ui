@@ -2,6 +2,7 @@ package com.quillui.widget;
 
 import com.quillui.overlay.QuillPopupMenu;
 import com.quillui.render.QuillRender;
+import com.quillui.render.QuillRenderContext;
 import com.quillui.screen.QuillScreen;
 import com.quillui.theme.QuillThemeData;
 import java.util.List;
@@ -93,8 +94,8 @@ public final class QuillDropdown extends AbstractWidget {
 		}
 		if (Minecraft.getInstance().gui.screen() instanceof QuillScreen screen) {
 			screen.openOverlay(new QuillPopupMenu(
-					getX(),
-					getY() + getHeight(),
+					QuillRenderContext.screenX(getX()),
+					QuillRenderContext.screenY(getY() + getHeight()),
 					getWidth(),
 					18,
 					options,

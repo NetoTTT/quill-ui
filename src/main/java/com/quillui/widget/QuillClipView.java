@@ -150,12 +150,18 @@ public final class QuillClipView extends AbstractWidget {
 			return false;
 		}
 		MouseButtonEvent mapped = map(event);
-		for (int index = children.size() - 1; index >= 0; index--) {
-			AbstractWidget child = children.get(index);
-			if (child.visible && child.mouseClicked(mapped, doubleClick)) {
-				focusChild(child);
-				return true;
+		QuillMouseContext.push(0, currentOffset());
+		try {
+			for (int index = children.size() - 1; index >= 0; index--) {
+				AbstractWidget child = children.get(index);
+				if (child.visible && child.mouseClicked(mapped, doubleClick)) {
+					focusChild(child);
+					return true;
+				}
 			}
+		}
+		finally {
+			QuillMouseContext.pop();
 		}
 		focusChild(null);
 		return true;
