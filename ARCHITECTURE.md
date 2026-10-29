@@ -14,7 +14,14 @@ core can later be reused by a NeoForge client port.
 | `com.quillui.widget` | Buttons, cards, lists, tabs and toggles | Minecraft client |
 | `com.quillui.screen` | Screen shell and content lifecycle | Minecraft client |
 | `com.quillui.action` | Backend boundary and command sink | Minecraft/Fabric client |
+| `com.quillui.map` | Optional world map widget (`quill-ui-extras`) | Minecraft client |
+| `com.quillui.hud` | Optional HUD indicator (`quill-ui-extras`) | Minecraft client |
 | `com.quillui.internal` | Implementation details; never public | any |
+
+The repository builds two modules:
+
+- `:core` produces `quill-ui-<version>.jar`; it has no reference to map or HUD classes.
+- `:extras` produces `quill-ui-extras-<version>.jar`; it depends on core and ships map/HUD only.
 
 The root package should contain no public classes once the layout migration is complete. It may keep
 only module-level documentation.
@@ -36,6 +43,7 @@ widget -> theme, render, layout, action
 screen -> theme, render, widget, layout, action
 action -> Minecraft/Fabric only
 internal -> all of the above
+extras -> core packages + Minecraft client
 ```
 
 Rules:

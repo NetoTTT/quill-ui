@@ -25,8 +25,8 @@ repositories {
 }
 
 dependencies {
-    implementation "maven.modrinth:quill-ui:0.2.0-alpha.8"
-    include "maven.modrinth:quill-ui:0.2.0-alpha.8"
+    implementation "maven.modrinth:quill-ui:0.3.0-alpha.1"
+    include "maven.modrinth:quill-ui:0.3.0-alpha.1"
 }
 ```
 
@@ -47,12 +47,13 @@ Notes:
 ## Standalone
 
 The consumer compiles against Quill UI but does not bundle it. Players install
-`quill-ui-0.2.0-alpha.8.jar` on the client. This is appropriate when the consumer is client-only or
+`quill-ui-0.3.0-alpha.1.jar` on the client. Add `quill-ui-extras-0.3.0-alpha.1.jar` when the mod uses
+`QuillMap` or the HUD indicator. This is appropriate when the consumer is client-only or
 when a modpack already ships Quill UI.
 
 ```gradle
 dependencies {
-    implementation "maven.modrinth:quill-ui:0.2.0-alpha.8"
+    implementation "maven.modrinth:quill-ui:0.3.0-alpha.1"
 }
 ```
 
@@ -76,7 +77,7 @@ Only use a hard dependency when the consumer itself is client-only:
 ```json
 {
   "depends": {
-    "quillui": ">=0.2.0-alpha.8"
+    "quillui": ">=0.3.0-alpha.1"
   }
 }
 ```
@@ -91,7 +92,7 @@ Modrinth automatically publishes every uploaded version through its Maven reposi
 `quill-ui` and the version number or version ID:
 
 ```text
-maven.modrinth:quill-ui:0.2.0-alpha.8
+maven.modrinth:quill-ui:0.3.0-alpha.1
 ```
 
 The Modrinth Maven does not provide transitive dependencies; Quill UI currently has no third-party

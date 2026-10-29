@@ -10,3 +10,6 @@ pluginManagement {
 }
 
 rootProject.name = 'quillui'
+
+include 'core'
+include 'extras'

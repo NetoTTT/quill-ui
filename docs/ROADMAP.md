@@ -27,6 +27,7 @@ This is the agreed order. Stop after each item so the build and visuals can be t
 - `0.3.0-alpha.1` starts the ergonomics line: measured text (`QuillTextNode`/`QuillLabel`),
   `QuillButtonStyle`, saturating layout sums, the overlay stack, and removal of the static
   `QuillTheme` facade (`API_LEVEL = 3`).
+- The map and HUD moved to the optional `:extras` module (`quill-ui-extras`).
 
 ## UI foundation backlog
 

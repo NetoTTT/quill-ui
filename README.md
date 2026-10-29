@@ -10,7 +10,7 @@ independent from any economy, jobs or gameplay code, so other mods can use it.
 
 ## Status
 
-`0.2.0-alpha.8` - focus traversal, scroll-following focus and map clipping/zoom fixes, building on
+`0.3.0-alpha.1` - focus traversal, scroll-following focus and map clipping/zoom fixes, building on
 the measured layout engine, clipping content host and responsive screen shell. The API is
 intentionally small and may evolve before a stable `1.0.0`. This build is published on the
 **alpha** channel, not as a stable release.
@@ -29,8 +29,8 @@ The public API surface and compatibility policy are documented in
 | Widgets | `com.quillui.widget` | `QuillButton`, `QuillCard`, `QuillPanel`, `QuillScrollList`, `QuillScrollView`, `QuillScrollBar`, `QuillClipView`, `QuillWidgetBox`, `QuillMeasuredWidget`, `QuillLabel`, `QuillButtonStyle`, `QuillCardBox`, `QuillTabBar`, `QuillToggle`, `QuillTextField`, `QuillSlider`, `QuillCheckbox`, `QuillRadio`, `QuillRadioGroup`, `QuillDropdown` |
 | Screen | `com.quillui.screen` | `QuillScreen` |
 | Backend boundary | `com.quillui.action` | `QuillActionSink`, `QuillCommandSink` |
-| Map | `com.quillui.map` | `QuillMap`, `QuillMapZone`, `QuillMapMarker` |
-| HUD | `com.quillui.hud` | `QuillTargetIndicator`, `QuillTargetIndicatorHud` |
+| Map (extras) | `com.quillui.map` | `QuillMap`, `QuillMapZone`, `QuillMapMarker` |
+| HUD (extras) | `com.quillui.hud` | `QuillTargetIndicator`, `QuillTargetIndicatorHud` |
 | Motion | `com.quillui.motion` | `QuillTicker`, `QuillAnimation`, `QuillCurves`, `QuillTransition`, `QuillMotion` |
 | Text | `com.quillui.text` | `QuillText`, `QuillTextStyle`, `QuillTextMeasurer`, `QuillTextNode` |
 | Input styles | `com.quillui.input` | `QuillSelectionStyle`, `QuillSelectionStyles` |
@@ -44,12 +44,14 @@ The public API surface and compatibility policy are documented in
 gradlew.bat build --console=plain --no-daemon
 ```
 
-The jar is written to `build/libs/quill-ui-0.2.0-alpha.8.jar`.
+The core jar is written to `core/build/libs/quill-ui-0.3.0-alpha.1.jar`. The optional map/HUD module
+is written to `extras/build/libs/quill-ui-extras-0.3.0-alpha.1.jar`.
 
 ## Install
 
-Quill UI is a separate client mod. Put its jar next to Fabric API in `mods/`. Mods that compile
-against it should declare it as a dependency; it has no LaborCraft dependency. Dedicated servers do
+Quill UI is a separate client mod. Put the core jar next to Fabric API in `mods/`. The extras jar is
+only needed for `QuillMap` and `QuillTargetIndicator`. Mods that compile against Quill should declare
+it as a dependency; it has no LaborCraft dependency. Dedicated servers do
 not need this jar; client screens that use it do.
 
 ## Quick start

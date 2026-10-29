@@ -13,8 +13,8 @@ in [COMPATIBILITY.md](COMPATIBILITY.md).
 | `com.quillui.layout` | `QuillRect`, `QuillSize`, `QuillInsets`, `QuillConstraints`, `QuillBoxConstraints`, `QuillAlign`, `QuillLayoutNode`, `QuillNode`, `QuillStack`, `QuillFlex`, `QuillWrap`, `QuillBreakpoints`, `QuillColumn`, `QuillRow`, `QuillGrid`, `QuillSizedBox`, `QuillPaddingBox`, `QuillMarginBox`, `QuillConstrainedBox`, `QuillFlexBox`, `QuillWrapBox`, `QuillStackBox`, `QuillScrollBox`, `QuillLayoutValidator` |
 | `com.quillui.screen` | `QuillScreen` |
 | `com.quillui.widget` | `QuillButton`, `QuillScrollList`, `QuillScrollView`, `QuillScrollBar`, `QuillClipView`, `QuillWidgetBox`, `QuillMeasuredWidget`, `QuillLabel`, `QuillButtonStyle`, `QuillCardBox`, `QuillTabBar`, `QuillCard`, `QuillPanel`, `QuillToggle`, `QuillTextField`, `QuillSlider`, `QuillCheckbox`, `QuillRadio`, `QuillRadioGroup`, `QuillDropdown` |
-| `com.quillui.map` | `QuillMap`, `QuillMapZone`, `QuillMapMarker` |
-| `com.quillui.hud` | `QuillTargetIndicator`, `QuillTargetIndicatorHud` |
+| `com.quillui.map` | `QuillMap`, `QuillMapZone`, `QuillMapMarker` (extras jar) |
+| `com.quillui.hud` | `QuillTargetIndicator`, `QuillTargetIndicatorHud` (extras jar) |
 | `com.quillui.motion` | `QuillTicker`, `QuillAnimation`, `QuillCurves`, `QuillCurve`, `QuillTransition`, `QuillMotion` |
 | `com.quillui.text` | `QuillText`, `QuillTextStyle`, `QuillTextMeasurer`, `QuillTextNode` |
 | `com.quillui.input` | `QuillSelectionStyle`, `QuillSelectionStyles` |
@@ -24,6 +24,9 @@ in [COMPATIBILITY.md](COMPATIBILITY.md).
 
 Classes outside these packages are implementation details. There are no such packages in
 `0.2.0-alpha.7`; this boundary exists so future internals can change without becoming API.
+
+`com.quillui.map` and `com.quillui.hud` live in the optional `quill-ui-extras` jar. The core jar
+does not reference them, so consumers that do not use a map or HUD indicator only install core.
 
 `QuillScrollView` is deprecated since `0.2.0-alpha.7`; use `QuillClipView` with a `ContentRenderer`
 and `QuillScrollBar` for new screens.

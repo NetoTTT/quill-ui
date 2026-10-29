@@ -1,0 +1,24 @@
+{
+	"schemaVersion": 1,
+	"id": "quillui_extras",
+	"version": "${version}",
+	"name": "Quill UI Extras",
+	"description": "Optional map and HUD widgets for Quill UI.",
+	"authors": [
+		"NetoTTT"
+	],
+	"contact": {
+		"homepage": "https://github.com/NetoTTT/quill-ui",
+		"sources": "https://github.com/NetoTTT/quill-ui",
+		"issues": "https://github.com/NetoTTT/quill-ui/issues"
+	},
+	"license": "LGPL-3.0-or-later",
+	"environment": "client",
+	"depends": {
+		"fabricloader": ">=0.19.5",
+		"minecraft": "~26.3",
+		"java": ">=25",
+		"fabric-api": "*",
+		"quillui": ">=${version}"
+	}
+}
