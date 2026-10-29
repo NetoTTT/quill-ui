@@ -27,7 +27,8 @@ measure and arrange passes.
 ## Constraints
 
 `QuillBoxConstraints` contains `minWidth`, `minHeight`, `maxWidth` and `maxHeight`.
-`Integer.MAX_VALUE` means unbounded.
+`Integer.MAX_VALUE` means unbounded. Layout sums saturate at that value instead of overflowing
+into a negative size.
 
 - `tight(size)` — exact size.
 - `loose(max)` — zero minimum, bounded maximum.

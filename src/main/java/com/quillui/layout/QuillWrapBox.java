@@ -38,12 +38,15 @@ public final class QuillWrapBox extends QuillNode {
 		int contentWidth = 0;
 		for (int index = 0; index < items.size(); index++) {
 			sizes[index] = items.get(index).measure(childConstraints);
-			contentWidth += sizes[index].width();
+			contentWidth = QuillLayoutMath.saturatedAdd(contentWidth, sizes[index].width());
 		}
 
 		int availableWidth = constraints.hasBoundedWidth()
 				? constraints.maxWidth()
-				: contentWidth + gapX * Math.max(0, items.size() - 1);
+				: QuillLayoutMath.saturatedAdd(
+						contentWidth,
+						gapX * Math.max(0, items.size() - 1)
+				);
 		int[] rows = rowLayout(sizes, availableWidth);
 		childSizes = List.of(sizes);
 		return constraints.constrain(QuillSize.of(rows[0], rows[1]));
@@ -57,15 +60,21 @@ public final class QuillWrapBox extends QuillNode {
 		int rowHeight = 0;
 		for (int index = 0; index < items.size(); index++) {
 			QuillSize size = childSizes.get(index);
-			if (cursorX > bounds.x() && cursorX + size.width() > bounds.right()) {
+			if (cursorX > bounds.x() && QuillLayoutMath.saturatedAdd(cursorX, size.width()) > bounds.right()) {
 				cursorX = bounds.x();
-				cursorY += rowHeight + gapY;
+				cursorY = QuillLayoutMath.saturatedAdd(
+						cursorY,
+						QuillLayoutMath.saturatedAdd(rowHeight, gapY)
+				);
 				rowHeight = 0;
 			}
 			items.get(index).arrange(new QuillRect(
 					cursorX, cursorY, size.width(), size.height()
 			));
-			cursorX += size.width() + gapX;
+			cursorX = QuillLayoutMath.saturatedAdd(
+					cursorX,
+					QuillLayoutMath.saturatedAdd(size.width(), gapX)
+			);
 			rowHeight = Math.max(rowHeight, size.height());
 		}
 	}
@@ -86,20 +95,29 @@ public final class QuillWrapBox extends QuillNode {
 		int totalHeight = 0;
 		boolean rowHasItems = false;
 		for (QuillSize size : sizes) {
-			boolean wrap = rowHasItems && rowWidth + gapX + size.width() > availableWidth;
+			boolean wrap = rowHasItems && QuillLayoutMath.saturatedAdd(
+					QuillLayoutMath.saturatedAdd(rowWidth, gapX),
+					size.width()
+			) > availableWidth;
 			if (wrap) {
 				maxWidth = Math.max(maxWidth, rowWidth);
-				totalHeight += rowHeight + gapY;
+				totalHeight = QuillLayoutMath.saturatedAdd(
+						totalHeight,
+						QuillLayoutMath.saturatedAdd(rowHeight, gapY)
+				);
 				rowWidth = 0;
 				rowHeight = 0;
 				rowHasItems = false;
 			}
-			rowWidth += (rowHasItems ? gapX : 0) + size.width();
+			rowWidth = QuillLayoutMath.saturatedAdd(
+					rowWidth,
+					QuillLayoutMath.saturatedAdd(rowHasItems ? gapX : 0, size.width())
+			);
 			rowHeight = Math.max(rowHeight, size.height());
 			rowHasItems = true;
 		}
 		maxWidth = Math.max(maxWidth, rowWidth);
-		totalHeight += rowHeight;
+		totalHeight = QuillLayoutMath.saturatedAdd(totalHeight, rowHeight);
 		return new int[] {maxWidth, totalHeight};
 	}
 }

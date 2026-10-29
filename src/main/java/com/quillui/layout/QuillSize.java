@@ -20,8 +20,8 @@ public record QuillSize(int width, int height) {
 
 	public QuillSize plus(QuillInsets insets) {
 		return new QuillSize(
-				width + insets.horizontal(),
-				height + insets.vertical()
+				QuillLayoutMath.saturatedAdd(width, insets.horizontal()),
+				QuillLayoutMath.saturatedAdd(height, insets.vertical())
 		);
 	}
 }

@@ -88,7 +88,7 @@ public final class QuillFlexBox extends QuillNode {
 			}
 			QuillSize size = item.node().measure(looseChild(horizontal, maxMain, maxCross, stretchCross));
 			sizes[index] = size;
-			fixedMain += mainOf(size, horizontal);
+			fixedMain = QuillLayoutMath.saturatedAdd(fixedMain, mainOf(size, horizontal));
 		}
 
 		if (flexTotal == 0 || availableMain == QuillBoxConstraints.UNBOUNDED) {
@@ -131,10 +131,10 @@ public final class QuillFlexBox extends QuillNode {
 		int cross = 0;
 		for (int index = 0; index < sizes.length; index++) {
 			QuillSize size = sizes[index];
-			main += mainOf(size, horizontal);
+			main = QuillLayoutMath.saturatedAdd(main, mainOf(size, horizontal));
 			cross = Math.max(cross, crossOf(size, horizontal));
 		}
-		main += (int) totalGap;
+		main = QuillLayoutMath.saturatedAdd(main, (int) totalGap);
 		if (availableMain != QuillBoxConstraints.UNBOUNDED && flexTotal > 0) {
 			main = availableMain + (int) totalGap;
 		}
@@ -174,7 +174,10 @@ public final class QuillFlexBox extends QuillNode {
 							size.height()
 					);
 			items.get(index).node().arrange(childBounds);
-			cursor += mainOf(size, horizontal) + gap;
+			cursor = QuillLayoutMath.saturatedAdd(
+					cursor,
+					QuillLayoutMath.saturatedAdd(mainOf(size, horizontal), gap)
+			);
 		}
 	}
 
