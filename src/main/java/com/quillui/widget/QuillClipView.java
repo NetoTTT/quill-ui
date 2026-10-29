@@ -10,6 +10,7 @@ import java.util.function.IntSupplier;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
@@ -232,6 +233,16 @@ public final class QuillClipView extends AbstractWidget {
 	@Override
 	public boolean keyPressed(KeyEvent event) {
 		return focusedChild != null && focusedChild.keyPressed(event);
+	}
+
+	@Override
+	public boolean charTyped(CharacterEvent event) {
+		return focusedChild != null && focusedChild.charTyped(event);
+	}
+
+	@Override
+	public boolean capturesInput() {
+		return focusedChild != null && focusedChild.capturesInput();
 	}
 
 	@Override

@@ -9,6 +9,7 @@ import com.quillui.theme.QuillThemeData;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.input.MouseButtonInfo;
 import net.minecraft.network.chat.Component;
@@ -63,6 +64,25 @@ class QuillClipViewTest {
 	}
 
 	@Test
+	void forwardsTypedCharactersToFocusedChild() {
+		TestWidget widget = new TestWidget();
+		QuillClipView view = new QuillClipView(
+				new QuillRect(0, 0, 100, 100),
+				() -> 0,
+				() -> 0,
+				value -> {
+				},
+				QuillThemeData.DEFAULT
+		);
+		view.add(widget);
+		view.mouseClicked(new MouseButtonEvent(10, 10, new MouseButtonInfo(0, 0)), false);
+
+		assertTrue(view.charTyped(new CharacterEvent('a')));
+		assertEquals('a', widget.typed);
+		assertTrue(view.capturesInput());
+	}
+
+	@Test
 	void mouseContextMapsContentToScreen() {
 		QuillMouseContext.push(0, 50);
 		try {
@@ -76,6 +96,7 @@ class QuillClipViewTest {
 
 	private static final class TestWidget extends AbstractWidget {
 		private int clickedY = -1;
+		private int typed = -1;
 
 		private TestWidget() {
 			super(0, 0, 80, 20, Component.literal("test"));
@@ -84,6 +105,17 @@ class QuillClipViewTest {
 		@Override
 		public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
 			clickedY = (int) event.y();
+			return true;
+		}
+
+		@Override
+		public boolean charTyped(CharacterEvent event) {
+			typed = event.codepoint();
+			return true;
+		}
+
+		@Override
+		public boolean capturesInput() {
 			return true;
 		}
 
