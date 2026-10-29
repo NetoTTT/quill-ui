@@ -79,8 +79,9 @@ applies the final rectangle with `setX`/`setY`/`setWidth`/`setHeight`. Widgets i
 incoming width instead of a hardcoded rectangle.
 
 `QuillScreen.setContent(root)` measures and arranges a tree inside `contentBounds()`, then registers
-every `QuillWidgetBox` in it. `control(widget, height)` and `text(component)` are the small
-constructors used by screens:
+every `QuillWidgetBox` in it. When the natural height exceeds the viewport, the tree is hosted in a
+`QuillClipView` with a `QuillScrollBar`, so scrolled content keeps content coordinates and focus
+handling. `control(widget, height)` and `text(component)` are the small constructors used by screens:
 
 ```java
 @Override
@@ -124,8 +125,8 @@ row.arrange(new QuillRect(20, 20, size.width(), size.height()));
 
 ## Current limits
 
-- `QuillScreen` consumes a measured content tree through `setContent`, but scroll hosts still use
-  `QuillClipView` instead of `QuillScrollBox`.
+- `QuillScreen` consumes a measured content tree through `setContent`; overflow uses
+  `QuillClipView` plus `QuillScrollBar`. `QuillScrollBox` is still the engine-only measurement path.
 - `QuillWidgetBox.clipTo` hides widgets outside the viewport, but does not scissor partially visible widgets.
 - `QuillTextNode` measures wrapped lines but does not yet draw ellipsized multi-line text.
 

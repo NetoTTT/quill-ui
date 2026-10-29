@@ -16,7 +16,9 @@ import com.quillui.theme.QuillThemeData;
 import com.quillui.theme.QuillThemeScope;
 import com.quillui.text.QuillTextStyle;
 import com.quillui.widget.QuillButton;
+import com.quillui.widget.QuillClipView;
 import com.quillui.widget.QuillLabel;
+import com.quillui.widget.QuillScrollBar;
 import com.quillui.widget.QuillWidgetBox;
 import java.util.ArrayList;
 import java.util.List;
@@ -184,18 +186,51 @@ public abstract class QuillScreen extends Screen {
 
 	/**
 	 * Measures and arranges a layout tree inside {@link #contentBounds()}, then registers every
-	 * {@link QuillWidgetBox} it contains. Call from {@link #buildContent()}.
+	 * {@link QuillWidgetBox} it contains. When the tree is taller than the viewport it is hosted in
+	 * a clipping scroll view with a scrollbar. Call from {@link #buildContent()}.
 	 */
 	protected void setContent(QuillLayoutNode root) {
 		if (root == null) {
 			throw new IllegalArgumentException("root must not be null");
 		}
 		QuillRect content = contentBounds();
-		QuillSize size = root.measure(
-				QuillBoxConstraints.loose(content.width(), content.height())
+		QuillSize natural = root.measure(
+				QuillBoxConstraints.loose(content.width(), QuillBoxConstraints.UNBOUNDED)
 		);
-		root.arrange(new QuillRect(content.x(), content.y(), size.width(), size.height()));
-		registerWidgets(root);
+		int maxScroll = Math.max(0, natural.height() - content.height());
+
+		if (maxScroll == 0) {
+			QuillSize size = root.measure(
+					QuillBoxConstraints.loose(content.width(), content.height())
+			);
+			root.arrange(new QuillRect(content.x(), content.y(), content.width(), size.height()));
+			registerWidgets(root, null);
+			return;
+		}
+
+		root.arrange(new QuillRect(
+				content.x(),
+				content.y(),
+				content.width(),
+				natural.height()
+		));
+		int[] scroll = {0};
+		QuillClipView host = new QuillClipView(
+				content,
+				() -> maxScroll,
+				() -> scroll[0],
+				value -> scroll[0] = value,
+				theme
+		);
+		registerWidgets(root, host);
+		addRenderableWidget(host);
+		addRenderableWidget(new QuillScrollBar(
+				content,
+				() -> maxScroll,
+				() -> scroll[0],
+				value -> scroll[0] = value,
+				theme
+		).visibleWhenNeeded());
 	}
 
 	/** Wraps a widget for the measured tree, using its current height. */
@@ -221,12 +256,17 @@ public abstract class QuillScreen extends Screen {
 		return text(text, null);
 	}
 
-	private void registerWidgets(QuillLayoutNode node) {
+	private void registerWidgets(QuillLayoutNode node, QuillClipView host) {
 		if (node instanceof QuillWidgetBox box) {
-			addRenderableWidget(box.widget());
+			if (host == null) {
+				addRenderableWidget(box.widget());
+			}
+			else {
+				host.add(box.widget());
+			}
 		}
 		for (QuillLayoutNode child : node.children()) {
-			registerWidgets(child);
+			registerWidgets(child, host);
 		}
 	}
 
