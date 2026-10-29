@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.quillui.layout.QuillBoxConstraints;
+import com.quillui.layout.QuillCrossAxisAlignment;
+import com.quillui.layout.QuillFlexBox;
 import com.quillui.layout.QuillRect;
 import com.quillui.layout.QuillSize;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -49,6 +51,22 @@ class QuillWidgetBoxTest {
 
 		assertEquals(QuillSize.of(64, 16), box.measure(QuillBoxConstraints.loose(200, 100)));
 		assertEquals(QuillSize.of(40, 16), box.measure(QuillBoxConstraints.loose(40, 100)));
+	}
+
+	@Test
+	void flexColumnArrangesAWidgetAcrossTheContentWidth() {
+		TestWidget widget = new TestWidget(80, 20);
+		QuillFlexBox column = QuillFlexBox.column(8)
+				.crossAxisAlignment(QuillCrossAxisAlignment.STRETCH)
+				.add(new QuillWidgetBox(widget));
+
+		QuillSize size = column.measure(QuillBoxConstraints.loose(200, 100));
+		column.arrange(new QuillRect(10, 10, size.width(), size.height()));
+
+		assertEquals(200, widget.getWidth());
+		assertEquals(20, widget.getHeight());
+		assertEquals(10, widget.getX());
+		assertEquals(10, widget.getY());
 	}
 
 	private static final class TestWidget extends AbstractWidget {
