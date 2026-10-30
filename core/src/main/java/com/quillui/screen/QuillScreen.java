@@ -87,12 +87,26 @@ public abstract class QuillScreen extends Screen {
 		int margin = Math.max(0, screenMargin());
 		int availableWidth = Math.max(1, width - margin * 2);
 		int availableHeight = Math.max(1, height - margin * 2);
-		this.panelWidth = Math.min(requestedPanelWidth, availableWidth);
-		this.panelHeight = Math.min(requestedPanelHeight, availableHeight);
+		if (constrainPanel()) {
+			this.panelWidth = Math.min(requestedPanelWidth, availableWidth);
+			this.panelHeight = Math.min(requestedPanelHeight, availableHeight);
+		}
+		else {
+			this.panelWidth = requestedPanelWidth;
+			this.panelHeight = requestedPanelHeight;
+		}
 		this.panelX = (width - panelWidth) / 2;
 		this.panelY = (height - panelHeight) / 2;
 		contentDirty = false;
 		QuillThemeScope.run(theme, this::buildContent);
+	}
+
+	/**
+	 * Whether the panel shrinks to fit the viewport. Screens still using absolute layouts can opt
+	 * out until their content is measured.
+	 */
+	protected boolean constrainPanel() {
+		return true;
 	}
 
 	/**
