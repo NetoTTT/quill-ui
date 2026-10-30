@@ -4,7 +4,8 @@
 
 | Quill UI | Minecraft | Fabric Loader | Status |
 | --- | --- | --- | --- |
-| `0.3.0-alpha.1` | 26.3 | 0.19.5+ | Current |
+| `0.3.0-alpha.2` | 26.3 | 0.19.5+ | Current |
+| `0.3.0-alpha.1` | 26.3 | 0.19.5+ | Previous |
 | `0.2.0-alpha.8` | 26.3 | 0.19.5+ | Previous |
 
 ## Policy
@@ -22,8 +23,8 @@
 Use SemVer for the Quill API and a build suffix for the game version:
 
 ```text
-0.3.0-alpha.1+mc26.3
-0.3.0-alpha.1+mc26.4
+0.3.0-alpha.2+mc26.3
+0.3.0-alpha.2+mc26.4
 ```
 
 The two artifacts may expose the same Quill API level while using different Minecraft adapters.

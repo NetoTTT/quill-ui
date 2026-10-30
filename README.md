@@ -10,12 +10,11 @@ independent from any economy, jobs or gameplay code, so other mods can use it.
 
 ## Status
 
-`0.3.0-alpha.1` - the ergonomics line: measured content trees (`setContent`, `control`, `text`,
-`refreshContent`), node-based `QuillListView` and `QuillNodes` tabs, measured text, `QuillButtonStyle`,
-theme sizing metrics and the core/extras split. `API_LEVEL` is `3`; the static `QuillTheme` facade was
-removed and map/HUD moved to the optional `quill-ui-extras` add-on module. The API is intentionally
-small and may evolve before a stable `1.0.0`. This build is published on the **alpha** channel, not as
-a stable release.
+`0.3.0-alpha.2` - maintenance alpha for the measured content line. `QuillScreen.constrainPanel()` lets
+legacy absolute screens keep their designed panel size until their internals are converted. The rest
+of the 0.3 ergonomics line is unchanged. `API_LEVEL` is `3`; the static `QuillTheme` facade was
+removed and map/HUD live in `quill-ui-extras`. The API is intentionally small and may evolve before a
+stable `1.0.0`. This build is published on the **alpha** channel, not as a stable release.
 The public API surface and compatibility policy are documented in
 [docs/API.md](docs/API.md) and [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md).
 
