@@ -48,8 +48,8 @@ contents are the map and HUD packages; future optional modules can join it.
 gradlew.bat build --console=plain --no-daemon
 ```
 
-The core jar is written to `core/build/libs/quill-ui-0.3.0-alpha.1.jar`. The optional add-on jar
-(currently map/HUD) is written to `extras/build/libs/quill-ui-extras-0.3.0-alpha.1.jar`.
+The core jar is written to `core/build/libs/quill-ui-0.3.0-alpha.3.jar`. The optional add-on jar
+(currently map/HUD) is written to `extras/build/libs/quill-ui-extras-0.3.0-alpha.3.jar`.
 
 ## Install
 
