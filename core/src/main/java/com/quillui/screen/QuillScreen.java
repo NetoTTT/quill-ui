@@ -52,9 +52,11 @@ public abstract class QuillScreen extends Screen {
 	private final QuillOverlayStack overlays = new QuillOverlayStack();
 	private int contentOffset;
 	private int contentMaxScroll;
+	private int navigatorHeight;
 	private boolean contentScrolls;
 	private boolean contentDirty;
 	private final List<QuillPaintable> contentPaintables = new ArrayList<>();
+	private final List<QuillPaintable> navigatorPaintables = new ArrayList<>();
 	protected int panelX;
 	protected int panelY;
 
@@ -99,6 +101,7 @@ public abstract class QuillScreen extends Screen {
 		this.panelY = (height - panelHeight) / 2;
 		contentDirty = false;
 		QuillThemeScope.run(theme, () -> {
+			buildNavigator();
 			buildContent();
 			buildHeaderAccessory();
 		});
@@ -131,6 +134,7 @@ public abstract class QuillScreen extends Screen {
 		clearWidgets();
 		setFocused((GuiEventListener) null);
 		QuillThemeScope.run(theme, () -> {
+			buildNavigator();
 			buildContent();
 			buildHeaderAccessory();
 		});
@@ -144,6 +148,37 @@ public abstract class QuillScreen extends Screen {
 
 	protected abstract void buildContent();
 
+	/** Optional measured navigation row, fixed below the header and outside the scrolling content. */
+	protected QuillLayoutNode navigator() {
+		return null;
+	}
+
+	/** Whether the title/subtitle header is drawn. Inventory-like screens can turn it off. */
+	protected boolean showHeader() {
+		return true;
+	}
+
+	private void buildNavigator() {
+		navigatorHeight = 0;
+		QuillLayoutNode node = navigator();
+		if (node == null) {
+			return;
+		}
+		int inset = contentInset();
+		int width = Math.max(1, panelWidth() - inset * 2);
+		QuillSize size = node.measure(
+				QuillBoxConstraints.loose(width, QuillBoxConstraints.UNBOUNDED)
+		);
+		navigatorHeight = size.height();
+		node.arrange(new QuillRect(
+				panelX + inset,
+				panelY + headerHeight() + HEADER_CONTENT_GAP,
+				width,
+				navigatorHeight
+		));
+		registerWidgets(node, null, navigatorPaintables);
+	}
+
 	/**
 	 * Optional measured content shown in the header, right-aligned before the close control.
 	 * Rebuilt with the content on resize and refresh, so it can depend on screen state.
@@ -153,6 +188,9 @@ public abstract class QuillScreen extends Screen {
 	}
 
 	private void buildHeaderAccessory() {
+		if (!showHeader()) {
+			return;
+		}
 		QuillLayoutNode accessory = headerAccessory();
 		if (accessory == null) {
 			return;
@@ -186,6 +224,9 @@ public abstract class QuillScreen extends Screen {
 	}
 
 	protected int headerHeight() {
+		if (!showHeader()) {
+			return 0;
+		}
 		return hasSubtitle()
 				? layout.headerHeight()
 				: layout.titleOnlyHeaderHeight();
@@ -193,7 +234,11 @@ public abstract class QuillScreen extends Screen {
 
 	/** Top edge for screen content, derived from the actual header height. */
 	protected int contentTop() {
-		return panelY + headerHeight() + HEADER_CONTENT_GAP;
+		int top = panelY + headerHeight() + HEADER_CONTENT_GAP;
+		if (navigatorHeight > 0) {
+			top += navigatorHeight + HEADER_CONTENT_GAP;
+		}
+		return top;
 	}
 
 	/** Bottom edge available to content, above the footer. */
@@ -370,6 +415,12 @@ public abstract class QuillScreen extends Screen {
 	}
 
 	private void registerWidgets(QuillLayoutNode node, QuillClipView host) {
+		registerWidgets(node, host, contentPaintables);
+	}
+
+	private void registerWidgets(
+			QuillLayoutNode node, QuillClipView host, List<QuillPaintable> paintables
+	) {
 		if (node instanceof QuillWidgetBox box) {
 			if (host == null) {
 				addRenderableWidget(box.widget());
@@ -379,10 +430,10 @@ public abstract class QuillScreen extends Screen {
 			}
 		}
 		if (node instanceof QuillPaintable paintable) {
-			contentPaintables.add(paintable);
+			paintables.add(paintable);
 		}
 		for (QuillLayoutNode child : node.children()) {
-			registerWidgets(child, host);
+			registerWidgets(child, host, paintables);
 		}
 	}
 
@@ -393,7 +444,7 @@ public abstract class QuillScreen extends Screen {
 	}
 
 	protected boolean hasSubtitle() {
-		return !subtitle().getString().isBlank();
+		return showHeader() && !subtitle().getString().isBlank();
 	}
 
 	/** Override to move the header, title, subtitle or close button. */
@@ -526,7 +577,42 @@ public abstract class QuillScreen extends Screen {
 			GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta
 	) {
 		QuillScreenLayout current = layout();
-		QuillRender.header(graphics, panelX, panelY, panelWidth, headerHeight(), theme);
+		if (showHeader()) {
+			QuillRender.header(graphics, panelX, panelY, panelWidth, headerHeight(), theme);
+			int accentHeight = Math.max(
+					4,
+					Math.min(20, headerHeight() - current.titleInsetY() - 6)
+			);
+			graphics.fill(
+					panelX + current.titleInsetX() - 10,
+					panelY + current.titleInsetY(),
+					panelX + current.titleInsetX() - 7,
+					panelY + current.titleInsetY() + accentHeight,
+					theme.color(QuillThemeData.ColorRole.ACCENT)
+			);
+			QuillRender.text(
+					graphics,
+					font,
+					title,
+					panelX + current.titleInsetX(),
+					panelY + current.titleInsetY(),
+					theme.color(QuillThemeData.ColorRole.TITLE)
+			);
+			if (hasSubtitle()) {
+				QuillRender.text(
+						graphics,
+						font,
+						subtitle(),
+						panelX + current.titleInsetX(),
+						panelY + current.subtitleInsetY(),
+						theme.color(QuillThemeData.ColorRole.TEXT_SOFT)
+				);
+			}
+		}
+
+		for (QuillPaintable paintable : navigatorPaintables) {
+			paintable.paint(graphics, font);
+		}
 		int accentHeight = Math.max(
 				4,
 				Math.min(
