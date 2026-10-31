@@ -28,6 +28,24 @@ Variant colours are resolved by `QuillButtonStyle` (`primary`, `secondary`, `dan
 `selected`, `disabled`). Pass `style(...)` to reuse a custom component style across buttons without
 adding a variant.
 
+## QuillChip and header accessories
+
+`QuillChip` is a compact read-only pill with optional icon and text, used for short status values:
+
+```java
+QuillChip balance = QuillChip.of(Component.literal("1.240"))
+        .icon(new ItemStack(Items.GOLD_INGOT))
+        .accent();
+
+@Override
+protected QuillLayoutNode headerAccessory() {
+    return QuillNodes.widget(balance);
+}
+```
+
+The accessory is measured, right-aligned before the close control and rebuilt with the content
+on resize and refresh. Keep it short; long titles leave less room for it.
+
 ## QuillLabel
 
 `QuillLabel` is a non-interactive text widget. It never receives focus, and `measure(font, maxWidth)`

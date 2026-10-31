@@ -116,6 +116,7 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 	private MouseBindings mouseBindings = MouseBindings.DEFAULT;
 	private boolean showRadiusLimit;
 	private boolean scissorEnabled = true;
+	private boolean mergeZones;
 	private final Map<TileKey, MapTile> tileCache = new LinkedHashMap<>(512, 0.75F, true) {
 		@Override
 		protected boolean removeEldestEntry(Map.Entry<TileKey, MapTile> eldest) {
@@ -285,6 +286,15 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 	/** Disables the internal map scissor when an outer host already clips this map. */
 	public void setScissorEnabled(boolean enabled) {
 		this.scissorEnabled = enabled;
+	}
+
+	/** Draws touching zones that share a style as one shape, without inner borders. */
+	public void setMergeZones(boolean merge) {
+		this.mergeZones = merge;
+	}
+
+	public boolean mergeZones() {
+		return mergeZones;
 	}
 
 	public void setSelection(BlockPos from, BlockPos to) {
@@ -780,16 +790,122 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 	}
 
 	private void drawZones(GuiGraphicsExtractor graphics) {
+		if (!mergeZones) {
+			for (QuillMapZone zone : zones) {
+				drawZone(graphics, zone);
+			}
+			return;
+		}
+
+		Map<ZoneStyle, List<QuillMapZone>> groups = new LinkedHashMap<>();
 		for (QuillMapZone zone : zones) {
-			int x0 = blockToScreenX(zone.minX());
-			int y0 = blockToScreenZ(zone.minZ());
-			int x1 = blockToScreenX(zone.maxX()) + pixelsPerBlock;
-			int y1 = blockToScreenZ(zone.maxZ()) + pixelsPerBlock;
-			graphics.fill(x0, y0, x1, y1, zone.fillColor());
-			if (zone.dashed()) {
-				drawDashedRect(graphics, x0, y0, x1, y1, zone.borderColor());
-			} else {
-				QuillRender.border(graphics, x0, y0, x1 - x0, y1 - y0, zone.borderColor());
+			groups.computeIfAbsent(
+					new ZoneStyle(zone.fillColor(), zone.borderColor(), zone.dashed()),
+					key -> new ArrayList<>()
+			).add(zone);
+		}
+		for (List<QuillMapZone> group : groups.values()) {
+			if (group.size() == 1) {
+				drawZone(graphics, group.getFirst());
+			}
+			else {
+				drawMergedZones(graphics, group);
+			}
+		}
+	}
+
+	private record ZoneStyle(int fillColor, int borderColor, boolean dashed) {
+	}
+
+	private void drawZone(GuiGraphicsExtractor graphics, QuillMapZone zone) {
+		int x0 = blockToScreenX(zone.minX());
+		int y0 = blockToScreenZ(zone.minZ());
+		int x1 = blockToScreenX(zone.maxX()) + pixelsPerBlock;
+		int y1 = blockToScreenZ(zone.maxZ()) + pixelsPerBlock;
+		graphics.fill(x0, y0, x1, y1, zone.fillColor());
+		if (zone.dashed()) {
+			drawDashedRect(graphics, x0, y0, x1, y1, zone.borderColor());
+		}
+		else {
+			QuillRender.border(graphics, x0, y0, x1 - x0, y1 - y0, zone.borderColor());
+		}
+	}
+
+	/**
+	 * Paints a group of zones as a single filled region. Internal edges are skipped, so adjacent
+	 * rectangles lose the lines that would otherwise split one area into several.
+	 */
+	private void drawMergedZones(GuiGraphicsExtractor graphics, List<QuillMapZone> group) {
+		int minX = Integer.MAX_VALUE;
+		int maxX = Integer.MIN_VALUE;
+		int minZ = Integer.MAX_VALUE;
+		int maxZ = Integer.MIN_VALUE;
+		for (QuillMapZone zone : group) {
+			minX = Math.min(minX, zone.minX());
+			maxX = Math.max(maxX, zone.maxX());
+			minZ = Math.min(minZ, zone.minZ());
+			maxZ = Math.max(maxZ, zone.maxZ());
+		}
+
+		int width = maxX - minX + 1;
+		int depth = maxZ - minZ + 1;
+		if ((long) width * depth > 262_144L) {
+			for (QuillMapZone zone : group) {
+				drawZone(graphics, zone);
+			}
+			return;
+		}
+
+		boolean[] filled = new boolean[width * depth];
+		for (QuillMapZone zone : group) {
+			for (int z = zone.minZ(); z <= zone.maxZ(); z++) {
+				for (int x = zone.minX(); x <= zone.maxX(); x++) {
+					filled[(z - minZ) * width + (x - minX)] = true;
+				}
+			}
+		}
+
+		int fillColor = group.getFirst().fillColor();
+		for (int z = 0; z < depth; z++) {
+			int runStart = -1;
+			for (int x = 0; x <= width; x++) {
+				boolean inside = x < width && filled[z * width + x];
+				if (inside && runStart < 0) {
+					runStart = x;
+				}
+				else if (!inside && runStart >= 0) {
+					int start = blockToScreenX(minX + runStart);
+					int top = blockToScreenZ(minZ + z);
+					int end = blockToScreenX(minX + x - 1) + pixelsPerBlock;
+					graphics.fill(start, top, end, top + pixelsPerBlock, fillColor);
+					runStart = -1;
+				}
+			}
+		}
+
+		int borderColor = group.getFirst().borderColor();
+		for (int z = 0; z < depth; z++) {
+			for (int x = 0; x < width; x++) {
+				if (!filled[z * width + x]) {
+					continue;
+				}
+
+				int x0 = blockToScreenX(minX + x);
+				int y0 = blockToScreenZ(minZ + z);
+				int x1 = x0 + pixelsPerBlock;
+				int y1 = y0 + pixelsPerBlock;
+				if (z == 0 || !filled[(z - 1) * width + x]) {
+					graphics.fill(x0, y0, x1, y0 + 1, borderColor);
+				}
+				if (z == depth - 1 || !filled[(z + 1) * width + x]) {
+					graphics.fill(x0, y1 - 1, x1, y1, borderColor);
+				}
+				if (x == 0 || !filled[z * width + x - 1]) {
+					graphics.fill(x0, y0, x0 + 1, y1, borderColor);
+				}
+				if (x == width - 1 || !filled[z * width + x + 1]) {
+					graphics.fill(x1 - 1, y0, x1, y1, borderColor);
+				}
 			}
 		}
 	}

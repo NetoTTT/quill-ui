@@ -98,7 +98,10 @@ public abstract class QuillScreen extends Screen {
 		this.panelX = (width - panelWidth) / 2;
 		this.panelY = (height - panelHeight) / 2;
 		contentDirty = false;
-		QuillThemeScope.run(theme, this::buildContent);
+		QuillThemeScope.run(theme, () -> {
+			buildContent();
+			buildHeaderAccessory();
+		});
 	}
 
 	/**
@@ -127,7 +130,10 @@ public abstract class QuillScreen extends Screen {
 		int previousOffset = contentOffset;
 		clearWidgets();
 		setFocused((GuiEventListener) null);
-		QuillThemeScope.run(theme, this::buildContent);
+		QuillThemeScope.run(theme, () -> {
+			buildContent();
+			buildHeaderAccessory();
+		});
 		contentOffset = Math.min(previousOffset, contentMaxScroll);
 	}
 
@@ -137,6 +143,31 @@ public abstract class QuillScreen extends Screen {
 	}
 
 	protected abstract void buildContent();
+
+	/**
+	 * Optional measured content shown in the header, right-aligned before the close control.
+	 * Rebuilt with the content on resize and refresh, so it can depend on screen state.
+	 */
+	protected QuillLayoutNode headerAccessory() {
+		return null;
+	}
+
+	private void buildHeaderAccessory() {
+		QuillLayoutNode accessory = headerAccessory();
+		if (accessory == null) {
+			return;
+		}
+		QuillScreenLayout current = layout();
+		int right = panelWidth() - current.closeInsetRight() - current.closeSize() - 6;
+		int maxWidth = Math.max(1, Math.min(panelWidth() / 2, right - current.titleInsetX()));
+		QuillSize size = accessory.measure(
+				QuillBoxConstraints.loose(maxWidth, headerHeight())
+		);
+		int x = panelX + Math.max(current.titleInsetX(), right - size.width());
+		int y = panelY + Math.max(0, (headerHeight() - size.height()) / 2);
+		accessory.arrange(new QuillRect(x, y, size.width(), size.height()));
+		registerWidgets(accessory, null);
+	}
 
 	protected Component subtitle() {
 		return Component.empty();
