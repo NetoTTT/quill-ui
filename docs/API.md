@@ -12,7 +12,7 @@ in [COMPATIBILITY.md](COMPATIBILITY.md).
 | `com.quillui.action` | `QuillActionSink`, `QuillCommandSink` |
 | `com.quillui.layout` | `QuillRect`, `QuillSize`, `QuillInsets`, `QuillConstraints`, `QuillBoxConstraints`, `QuillAlign`, `QuillLayoutNode`, `QuillNode`, `QuillStack`, `QuillFlex`, `QuillWrap`, `QuillBreakpoints`, `QuillColumn`, `QuillRow`, `QuillGrid`, `QuillSizedBox`, `QuillPaddingBox`, `QuillMarginBox`, `QuillConstrainedBox`, `QuillFlexBox`, `QuillFlexible`, `QuillWrapBox`, `QuillStackBox`, `QuillScrollBox`, `QuillLayoutValidator` |
 | `com.quillui.screen` | `QuillScreen` |
-| `com.quillui.widget` | `QuillButton`, `QuillScrollList`, `QuillScrollView`, `QuillScrollBar`, `QuillClipView`, `QuillWidgetBox`, `QuillMeasuredWidget`, `QuillListView`, `QuillNodes`, `QuillLabel`, `QuillButtonStyle`, `QuillCardBox`, `QuillTabBar`, `QuillCard`, `QuillPanel`, `QuillToggle`, `QuillTextField`, `QuillSlider`, `QuillCheckbox`, `QuillRadio`, `QuillRadioGroup`, `QuillDropdown` |
+| `com.quillui.widget` | `QuillButton`, `QuillIcon`, `QuillIcons`, `QuillScrollList`, `QuillScrollView`, `QuillScrollBar`, `QuillClipView`, `QuillWidgetBox`, `QuillMeasuredWidget`, `QuillListView`, `QuillNodes`, `QuillLabel`, `QuillButtonStyle`, `QuillCardBox`, `QuillTabBar`, `QuillCard`, `QuillPanel`, `QuillToggle`, `QuillTextField`, `QuillSlider`, `QuillCheckbox`, `QuillRadio`, `QuillRadioGroup`, `QuillDropdown` |
 | `com.quillui.map` | `QuillMap`, `QuillMapZone`, `QuillMapMarker` (extras jar) |
 | `com.quillui.hud` | `QuillTargetIndicator`, `QuillTargetIndicatorHud` (extras jar) |
 | `com.quillui.motion` | `QuillTicker`, `QuillAnimation`, `QuillCurves`, `QuillCurve`, `QuillTransition`, `QuillMotion` |

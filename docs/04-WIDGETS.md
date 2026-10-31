@@ -9,7 +9,7 @@
 - `DANGER`: destructive action.
 - `GHOST`: navigation/utility.
 
-`selected(boolean)` adds a persistent accent bar. `tip(Tooltip)` uses `QuillTooltips.of(title, body,
+`icon(QuillIcon)` or `icon(ItemStack)` draws a glyph inside the button; with a label the icon sits before the text, and `iconGap(int)` controls the spacing. Icon-only buttons should carry a tooltip. `selected(boolean)` adds a persistent accent bar. `tip(Tooltip)` uses `QuillTooltips.of(title, body,
 command)`. `enabled(boolean)` is the fluent replacement for the public `active` field.
 
 For screens, use the concise factories and `QuillScreen.add(widget, rect)` together with

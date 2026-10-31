@@ -4,10 +4,12 @@ import com.quillui.motion.QuillAnimation;
 import com.quillui.motion.QuillCurves;
 import com.quillui.motion.QuillTicker;
 import com.quillui.render.QuillRender;
+import com.quillui.theme.QuillColors;
 import com.quillui.theme.QuillThemeData;
 import com.quillui.theme.QuillThemeScope;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Tooltip;
@@ -16,6 +18,7 @@ import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.sounds.SoundEvent;
 
 /**
@@ -34,6 +37,8 @@ public class QuillButton extends AbstractWidget {
 	private final QuillThemeData theme;
 	private final Runnable action;
 	private QuillButtonStyle style;
+	private QuillIcon icon;
+	private int iconGap = 4;
 	private boolean selected;
 	private Tooltip tooltip;
 	private SoundEvent clickSound;
@@ -61,6 +66,31 @@ public class QuillButton extends AbstractWidget {
 		this.variant = variant;
 		this.action = action;
 		this.theme = theme;
+	}
+
+	/** Draws an icon inside the button, either alone or before the label. */
+	public QuillButton icon(QuillIcon icon) {
+		this.icon = icon;
+		return this;
+	}
+
+	/** Draws an item stack as the button icon, at its native 16x16 size. */
+	public QuillButton icon(ItemStack stack) {
+		return icon(QuillIcons.item(stack));
+	}
+
+	/** Space between the icon and the label. */
+	public QuillButton iconGap(int gap) {
+		this.iconGap = Math.max(0, gap);
+		return this;
+	}
+
+	public QuillIcon icon() {
+		return icon;
+	}
+
+	public int iconGap() {
+		return iconGap;
 	}
 
 	public QuillButton selected(boolean selected) {
@@ -164,14 +194,19 @@ public class QuillButton extends AbstractWidget {
 			graphics.fill(x, y, x + 2, y + height, theme.color(QuillThemeData.ColorRole.ACCENT));
 		}
 
-		QuillRender.centeredText(
-				graphics,
-				Minecraft.getInstance().font,
-				getMessage(),
-				x + width / 2,
-				y + (height - 8) / 2 + 1,
-				textColor
-		);
+		if (icon == null) {
+			QuillRender.centeredText(
+					graphics,
+					Minecraft.getInstance().font,
+					getMessage(),
+					x + width / 2,
+					y + (height - 8) / 2 + 1,
+					textColor
+			);
+		}
+		else {
+			drawIcon(graphics, x, y, textColor);
+		}
 
 		if (tooltip != null && isMouseOver(mouseX, mouseY)) {
 			graphics.setTooltipForNextFrame(
@@ -179,6 +214,61 @@ public class QuillButton extends AbstractWidget {
 					tooltip.toCharSequence(Minecraft.getInstance()),
 					QuillMouseContext.screenX(mouseX),
 					QuillMouseContext.screenY(mouseY)
+			);
+		}
+	}
+
+	private void drawIcon(
+			GuiGraphicsExtractor graphics, int x, int y, int textColor
+	) {
+		Font font = Minecraft.getInstance().font;
+		int iconWidth = Math.max(1, icon.width());
+		int iconHeight = Math.max(1, icon.height());
+		boolean hasText = !getMessage().getString().isEmpty();
+		int maxIconWidth = hasText
+				? Math.max(1, width / 2)
+				: Math.max(1, width - 2);
+		int drawHeight = Math.min(iconHeight, Math.max(1, height - 2));
+		float scale = Math.min(1.0F, drawHeight / (float) iconHeight);
+		int drawWidth = Math.max(1, Math.round(iconWidth * scale));
+		if (drawWidth > maxIconWidth) {
+			drawWidth = maxIconWidth;
+			drawHeight = Math.max(1, Math.round(iconHeight * (drawWidth / (float) iconWidth)));
+		}
+
+		int textWidth = hasText ? font.width(getMessage()) : 0;
+		int contentWidth = drawWidth + (hasText ? iconGap + textWidth : 0);
+		int startX = x + Math.max(0, (width - contentWidth) / 2);
+		int iconY = y + Math.max(0, (height - drawHeight) / 2);
+		float drawScale = drawWidth / (float) iconWidth;
+
+		graphics.pose().pushMatrix();
+		graphics.pose().translate((float) startX, (float) iconY);
+		graphics.pose().scale(drawScale, drawScale);
+		icon.paint(graphics, 0, 0);
+		graphics.pose().popMatrix();
+
+		if (!active) {
+			graphics.fill(
+					startX,
+					iconY,
+					startX + drawWidth,
+					iconY + drawHeight,
+					QuillColors.withAlpha(
+							theme.color(QuillThemeData.ColorRole.PANEL_BG),
+							0x99
+					)
+			);
+		}
+
+		if (hasText) {
+			QuillRender.text(
+					graphics,
+					font,
+					getMessage(),
+					startX + drawWidth + iconGap,
+					y + (height - 8) / 2 + 1,
+					textColor
 			);
 		}
 	}
