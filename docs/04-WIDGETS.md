@@ -259,3 +259,25 @@ protected void buildContent() {
 
 The framework intentionally does not use vanilla button textures, so consumers get one consistent
 look instead of blending vanilla widgets with custom panels.
+## Speech bubbles (extras)
+
+`QuillBubbleHud` is a generic HUD element for world-anchored bubbles. Supply a source and the
+current theme:
+
+```java
+HudElementRegistry.addLast(id, new QuillBubbleHud(
+        partialTick -> List.of(new QuillSpeechBubble(
+                entity.getUUID(),
+                entity.getPosition(partialTick).add(0.0D, entity.getBbHeight() + 0.5D, 0.0D),
+                Component.translatable("my.notice"),
+                QuillColors.rgb(224, 169, 59),
+                10.0D,
+                false
+        )),
+        () -> theme
+));
+```
+
+The HUD handles projection, smoothing, distance fade, occlusion and the themed bubble with a
+tail and a soft shadow.
+

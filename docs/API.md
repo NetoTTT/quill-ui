@@ -14,7 +14,7 @@ in [COMPATIBILITY.md](COMPATIBILITY.md).
 | `com.quillui.screen` | `QuillScreen` |
 | `com.quillui.widget` | `QuillButton`, `QuillIcon`, `QuillIcons`, `QuillScrollList`, `QuillScrollView`, `QuillScrollBar`, `QuillClipView`, `QuillWidgetBox`, `QuillMeasuredWidget`, `QuillListView`, `QuillNodes`, `QuillLabel`, `QuillButtonStyle`, `QuillCardBox`, `QuillChip`, `QuillTabBar`, `QuillCard`, `QuillPanel`, `QuillToggle`, `QuillTextField`, `QuillSlider`, `QuillCheckbox`, `QuillRadio`, `QuillRadioGroup`, `QuillDropdown` |
 | `com.quillui.map` | `QuillMap`, `QuillMapZone`, `QuillMapMarker` (extras jar) |
-| `com.quillui.hud` | `QuillTargetIndicator`, `QuillTargetIndicatorHud` (extras jar) |
+| `com.quillui.hud` | `QuillTargetIndicator`, `QuillTargetIndicatorHud`, `QuillSpeechBubble`, `QuillSpeechBubbleSource`, `QuillBubbleHud` (extras jar) |
 | `com.quillui.motion` | `QuillTicker`, `QuillAnimation`, `QuillCurves`, `QuillCurve`, `QuillTransition`, `QuillMotion` |
 | `com.quillui.text` | `QuillText`, `QuillTextStyle`, `QuillTextMeasurer`, `QuillTextNode` |
 | `com.quillui.input` | `QuillSelectionStyle`, `QuillSelectionStyles` |

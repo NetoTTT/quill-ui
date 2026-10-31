@@ -10,7 +10,7 @@ independent from any economy, jobs or gameplay code, so other mods can use it.
 
 ## Status
 
-`0.3.0-alpha.4` - adds header accessories (`QuillScreen.headerAccessory`) and `QuillChip`, on top of button icons and the measured content line. `QuillScreen.constrainPanel()` lets
+`0.3.0-alpha.5` - adds world speech bubbles in the extras jar (`QuillBubbleHud`), on top of header accessories, chips, button icons and the measured content line. `QuillScreen.constrainPanel()` lets
 legacy absolute screens keep their designed panel size until their internals are converted. The rest
 of the 0.3 ergonomics line is unchanged. `API_LEVEL` is `3`; the static `QuillTheme` facade was
 removed and map/HUD live in `quill-ui-extras`. The API is intentionally small and may evolve before a
