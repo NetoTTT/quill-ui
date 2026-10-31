@@ -420,6 +420,11 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 		entityMarkerFactory = null;
 	}
 
+	/** World Y of the visible layer (surface or underground pivot). */
+	public int layerY() {
+		return effectivePivotY();
+	}
+
 	public Component layerLabel() {
 		return layerLabel;
 	}
