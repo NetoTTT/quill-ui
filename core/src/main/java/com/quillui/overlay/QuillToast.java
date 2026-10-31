@@ -27,6 +27,7 @@ public final class QuillToast implements QuillOverlay {
 	private final QuillThemeData theme;
 	private final long lifetimeMillis;
 	private final long expiresAt;
+	private int stackOffset;
 	private boolean open = true;
 
 	public QuillToast(Component message, float seconds, QuillThemeData theme) {
@@ -54,7 +55,7 @@ public final class QuillToast implements QuillOverlay {
 		int width = textWidth + PADDING_X * 2 + ACCENT_WIDTH;
 		int height = lines.size() * font.lineHeight + PADDING_Y * 2;
 		int x = graphics.guiWidth() - width - MARGIN;
-		int y = MARGIN;
+		int y = MARGIN + stackOffset;
 
 		float fade = fade();
 		int panelBackground = QuillColors.withAlpha(
@@ -76,6 +77,18 @@ public final class QuillToast implements QuillOverlay {
 			graphics.text(font, line, lineX, lineY, textColor, false);
 			lineY += font.lineHeight;
 		}
+	}
+
+	/** Places this toast below any toast already stacked above it. */
+	public void setStackOffset(int stackOffset) {
+		this.stackOffset = Math.max(0, stackOffset);
+	}
+
+	/** Rendered height, so a stack can reserve space without duplicating layout math. */
+	public int height() {
+		Font font = Minecraft.getInstance().font;
+		int lines = Math.max(1, font.split(message, MAX_TEXT_WIDTH).size());
+		return lines * font.lineHeight + PADDING_Y * 2;
 	}
 
 	@Override

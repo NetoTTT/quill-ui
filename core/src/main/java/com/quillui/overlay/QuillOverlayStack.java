@@ -72,11 +72,20 @@ public final class QuillOverlayStack {
 		return false;
 	}
 
+	/** Toasts share the top-right corner, so they stack instead of covering each other. */
+	private static final int TOAST_GAP = 6;
+
 	public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+		int toastOffset = 0;
 		for (QuillOverlay overlay : overlays) {
-			if (overlay.isOpen()) {
-				overlay.render(graphics, mouseX, mouseY, delta);
+			if (!overlay.isOpen()) {
+				continue;
 			}
+			if (overlay instanceof QuillToast toast) {
+				toast.setStackOffset(toastOffset);
+				toastOffset += toast.height() + TOAST_GAP;
+			}
+			overlay.render(graphics, mouseX, mouseY, delta);
 		}
 		prune();
 	}

@@ -10,7 +10,7 @@ independent from any economy, jobs or gameplay code, so other mods can use it.
 
 ## Status
 
-`0.3.0-alpha.9` - adds block-space map connector lines (`QuillMapPath`), on top of headerless screens, fixed navigators, layer-aware map clicks, speech bubbles, header accessories, chips, button icons and the measured content line. `QuillScreen.constrainPanel()` lets
+`0.3.0-alpha.10` - stacks multiple toasts instead of overlapping them, on top of block-space map connector lines, headerless screens, fixed navigators, layer-aware map clicks, speech bubbles, header accessories, chips, button icons and the measured content line. `QuillScreen.constrainPanel()` lets
 legacy absolute screens keep their designed panel size until their internals are converted. The rest
 of the 0.3 ergonomics line is unchanged. `API_LEVEL` is `3`; the static `QuillTheme` facade was
 removed and map/HUD live in `quill-ui-extras`. The API is intentionally small and may evolve before a
