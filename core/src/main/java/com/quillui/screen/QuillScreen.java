@@ -613,38 +613,6 @@ public abstract class QuillScreen extends Screen {
 		for (QuillPaintable paintable : navigatorPaintables) {
 			paintable.paint(graphics, font);
 		}
-		int accentHeight = Math.max(
-				4,
-				Math.min(
-						20,
-						headerHeight() - current.titleInsetY() - 6
-				)
-		);
-		graphics.fill(
-				panelX + current.titleInsetX() - 10,
-				panelY + current.titleInsetY(),
-				panelX + current.titleInsetX() - 7,
-				panelY + current.titleInsetY() + accentHeight,
-				theme.color(QuillThemeData.ColorRole.ACCENT)
-		);
-		QuillRender.text(
-				graphics,
-				font,
-				title,
-				panelX + current.titleInsetX(),
-				panelY + current.titleInsetY(),
-				theme.color(QuillThemeData.ColorRole.TITLE)
-		);
-		if (hasSubtitle()) {
-			QuillRender.text(
-					graphics,
-					font,
-					subtitle(),
-					panelX + current.titleInsetX(),
-					panelY + current.subtitleInsetY(),
-					theme.color(QuillThemeData.ColorRole.TEXT_SOFT)
-			);
-		}
 
 		if (!contentScrolls) {
 			paintContent(graphics);
