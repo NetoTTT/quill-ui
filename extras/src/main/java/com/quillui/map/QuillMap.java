@@ -98,6 +98,7 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 	private final QuillThemeData theme;
 	private final Identifier textureId;
 	private final List<QuillMapZone> zones = new ArrayList<>();
+	private final List<QuillMapPath> paths = new ArrayList<>();
 	private final List<QuillMapMarker> markers = new ArrayList<>();
 
 	private DynamicTexture texture;
@@ -348,6 +349,24 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 		return List.copyOf(zones);
 	}
 
+	/** Replaces the block-space connector lines drawn above the zones. */
+	public void setPaths(List<QuillMapPath> paths) {
+		this.paths.clear();
+		if (paths != null) {
+			this.paths.addAll(paths);
+		}
+	}
+
+	public void addPath(QuillMapPath path) {
+		if (path != null) {
+			paths.add(path);
+		}
+	}
+
+	public List<QuillMapPath> paths() {
+		return List.copyOf(paths);
+	}
+
 	public void setMarkers(List<QuillMapMarker> markers) {
 		this.markers.clear();
 		if (markers != null) {
@@ -471,6 +490,7 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 		graphics.blit(textureId, getX(), getY(), getX() + width, getY() + height, 0.0F, 1.0F, 0.0F, 1.0F);
 		drawGrid(graphics);
 		drawZones(graphics);
+		drawPaths(graphics);
 		if (showRadiusLimit) {
 			drawRadiusLimit(graphics);
 		}
@@ -937,6 +957,53 @@ public final class QuillMap extends AbstractWidget implements AutoCloseable {
 				: theme.color(QuillThemeData.ColorRole.DANGER);
 		graphics.fill(x0, y0, x1, y1, withAlpha(color, 0x45));
 		QuillRender.border(graphics, x0, y0, x1 - x0, y1 - y0, color);
+	}
+
+	private void drawPaths(GuiGraphicsExtractor graphics) {
+		if (paths.isEmpty()) {
+			return;
+		}
+		int half = pixelsPerBlock / 2;
+		int thickness = pixelsPerBlock >= 4 ? 2 : 1;
+		for (QuillMapPath path : paths) {
+			drawLine(
+					graphics,
+					blockToScreenX(path.from().getX()) + half,
+					blockToScreenZ(path.from().getZ()) + half,
+					blockToScreenX(path.to().getX()) + half,
+					blockToScreenZ(path.to().getZ()) + half,
+					thickness,
+					path.color()
+			);
+		}
+	}
+
+	private void drawLine(
+			GuiGraphicsExtractor graphics, int x0, int y0, int x1, int y1, int thickness, int color
+	) {
+		int dx = Math.abs(x1 - x0);
+		int dy = Math.abs(y1 - y0);
+		int sx = x0 < x1 ? 1 : -1;
+		int sy = y0 < y1 ? 1 : -1;
+		int error = dx - dy;
+		int x = x0;
+		int y = y0;
+		int steps = Math.max(dx, dy) + 1;
+		for (int step = 0; step < steps; step++) {
+			graphics.fill(x, y, x + thickness, y + thickness, color);
+			if (x == x1 && y == y1) {
+				break;
+			}
+			int doubled = error * 2;
+			if (doubled > -dy) {
+				error -= dy;
+				x += sx;
+			}
+			if (doubled < dx) {
+				error += dx;
+				y += sy;
+			}
+		}
 	}
 
 	private void drawMarkers(GuiGraphicsExtractor graphics) {
